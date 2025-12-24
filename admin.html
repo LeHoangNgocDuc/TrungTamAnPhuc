@@ -5,19 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Nhập Đề</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 </head>
 <body class="bg-light">
     <div class="container py-4">
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">NHẬP ĐỀ THI MỚI</h5>
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-gear-fill"></i> QUẢN TRỊ ĐỀ THI</h5>
+                <div>
+                    <button onclick="resetForm()" class="btn btn-sm btn-outline-light me-2"><i class="bi bi-plus-circle"></i> Nhập Đề Tiếp</button>
+                    <a href="index.html" class="btn btn-sm btn-light fw-bold" target="_blank"><i class="bi bi-eye"></i> Xem Trang HS</a>
+                </div>
             </div>
             <div class="card-body">
-                <h6 class="text-primary fw-bold border-bottom pb-2">1. Phân loại</h6>
+                <h6 class="text-primary fw-bold border-bottom pb-2">1. Phân loại & Thông tin</h6>
                 <div class="row g-3 mb-3">
-                    <div class="col-md-4">
-                        <label class="fw-bold">Lớp</label>
+                    <div class="col-md-3">
+                        <label class="fw-bold small">Lớp</label>
                         <select id="exam-class" class="form-select">
                             <option value="6">Lớp 6</option><option value="7">Lớp 7</option>
                             <option value="8">Lớp 8</option><option value="9">Lớp 9</option>
@@ -25,19 +30,17 @@
                             <option value="12">Lớp 12</option><option value="TN">TN THPT</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
-                        <label class="fw-bold">Loại Kỳ Thi</label>
+                    <div class="col-md-3">
+                        <label class="fw-bold small">Loại Kỳ Thi</label>
                         <select id="exam-type" class="form-select" onchange="toggleChapter()">
-                            <option value="tx">Kiểm tra thường xuyên</option>
-                            <option value="gk1">Giữa kỳ 1</option>
-                            <option value="ck1">Cuối kỳ 1</option>
-                            <option value="gk2">Giữa kỳ 2</option>
-                            <option value="ck2">Cuối kỳ 2</option>
+                            <option value="tx">K.Tra Thường xuyên</option>
+                            <option value="gk1">Giữa kỳ 1</option><option value="ck1">Cuối kỳ 1</option>
+                            <option value="gk2">Giữa kỳ 2</option><option value="ck2">Cuối kỳ 2</option>
                             <option value="thpt">Thử THPT QG</option>
                         </select>
                     </div>
-                    <div class="col-md-4" id="div-chapter">
-                        <label class="fw-bold">Chương</label>
+                    <div class="col-md-3" id="div-chapter">
+                        <label class="fw-bold small">Chương</label>
                         <select id="exam-chapter" class="form-select">
                             <option value="1">Chương 1</option><option value="2">Chương 2</option>
                             <option value="3">Chương 3</option><option value="4">Chương 4</option>
@@ -45,50 +48,56 @@
                             <option value="7">Chương 7</option><option value="8">Chương 8</option>
                         </select>
                     </div>
+                    <div class="col-md-3">
+                        <label class="fw-bold small">Thời gian (phút)</label>
+                        <input type="number" id="exam-duration" class="form-control" value="45">
+                    </div>
                 </div>
 
-                <h6 class="text-primary fw-bold border-bottom pb-2 mt-4">2. Thông tin & Link Drive</h6>
                 <div class="row g-3 mb-3">
-                    <div class="col-md-3"><input type="text" id="exam-id" class="form-control" placeholder="Mã Đề (VD: TOAN6-01)"></div>
-                    <div class="col-md-9"><input type="text" id="exam-title" class="form-control" placeholder="Tên Đề Thi"></div>
-                    
+                    <div class="col-md-3"><input type="text" id="exam-id" class="form-control" placeholder="Mã Đề (VD: TOAN10-01)"></div>
+                    <div class="col-md-9"><input type="text" id="exam-title" class="form-control" placeholder="Tên Đề Thi (VD: Đề ôn tập chương 1...)"></div>
+                </div>
+
+                <div class="row g-3 mb-4 bg-light p-3 rounded border mx-0">
                     <div class="col-md-6">
-                        <label class="text-danger fw-bold">Link Đề (PDF) *</label>
-                        <input type="text" id="link-exam" class="form-control" placeholder="Dán link Google Drive vào đây">
+                        <label class="text-danger fw-bold small"><i class="bi bi-file-pdf"></i> Link Đề (PDF) *</label>
+                        <input type="text" id="link-exam" class="form-control" placeholder="Dán link Google Drive đề thi vào đây...">
                     </div>
                     <div class="col-md-6">
-                        <label class="text-success fw-bold">Link Đáp Án (PDF) (Để HS xem sau khi thi)</label>
-                        <input type="text" id="link-sol" class="form-control" placeholder="Dán link Google Drive vào đây">
+                        <label class="text-success fw-bold small"><i class="bi bi-file-earmark-check"></i> Link Lời Giải (PDF)</label>
+                        <input type="text" id="link-sol" class="form-control" placeholder="Dán link Google Drive đáp án (nếu có)...">
                     </div>
-                    
-                    <div class="col-md-4">
-                        <input type="number" id="exam-duration" class="form-control" value="45" placeholder="Phút">
-                    </div>
-                    <div class="col-md-8 pt-2">
+                    <div class="col-12">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="is-essay">
-                            <label class="form-check-label fw-bold">Có phần Tự luận (Nộp ảnh)</label>
+                            <label class="form-check-label fw-bold">Có phần Tự luận (Học sinh nộp ảnh)</label>
                         </div>
                     </div>
                 </div>
 
-                <h6 class="text-primary fw-bold border-bottom pb-2 mt-4">3. Nhập Ma trận Đáp án (Chấm tự động)</h6>
-                <div class="mb-3">
+                <h6 class="text-primary fw-bold border-bottom pb-2">3. Cấu hình Đáp án (Tự động)</h6>
+                <div class="mb-3 d-flex gap-2">
                     <input type="file" id="word-upload" accept=".docx" class="d-none" onchange="handleWordUpload(this)">
-                    <button onclick="document.getElementById('word-upload').click()" class="btn btn-warning fw-bold">
-                        📂 Chọn file Word Đáp Án (.docx)
+                    <button onclick="document.getElementById('word-upload').click()" class="btn btn-warning btn-sm fw-bold shadow-sm">
+                        <i class="bi bi-magic"></i> Import từ file Word (.docx)
+                    </button>
+                    <button onclick="generateForm()" class="btn btn-secondary btn-sm shadow-sm">
+                        <i class="bi bi-pencil-square"></i> Vẽ Form Thủ Công
                     </button>
                 </div>
 
-                <div class="row g-2 bg-white p-3 border rounded mb-3">
-                    <div class="col-md-4"><label>Số câu TN</label><input type="number" id="num-mcq" class="form-control" value="0"></div>
-                    <div class="col-md-4"><label>Số câu Đ/S</label><input type="number" id="num-tf" class="form-control" value="0"></div>
-                    <div class="col-md-4"><label>Số câu Ngắn</label><input type="number" id="num-short" class="form-control" value="0"></div>
-                    <div class="col-12 text-end"><button onclick="generateForm()" class="btn btn-secondary mt-2">Vẽ Form</button></div>
+                <div class="row g-2 mb-3">
+                    <div class="col-md-4"><div class="input-group input-group-sm"><span class="input-group-text">TN (4 chọn)</span><input type="number" id="num-mcq" class="form-control" value="0"></div></div>
+                    <div class="col-md-4"><div class="input-group input-group-sm"><span class="input-group-text">Đúng/Sai</span><input type="number" id="num-tf" class="form-control" value="0"></div></div>
+                    <div class="col-md-4"><div class="input-group input-group-sm"><span class="input-group-text">Trả lời ngắn</span><input type="number" id="num-short" class="form-control" value="0"></div></div>
                 </div>
-                <div id="answer-area" class="d-none bg-light p-3 border rounded mb-3"></div>
 
-                <button onclick="saveExam()" id="btn-save" class="btn btn-primary w-100 py-3 fw-bold fs-5">LƯU ĐỀ THI</button>
+                <div id="answer-area" class="d-none bg-white p-3 border rounded mb-3 shadow-sm" style="max-height: 400px; overflow-y: auto;"></div>
+
+                <button onclick="saveExam()" id="btn-save" class="btn btn-success w-100 py-3 fw-bold fs-5 shadow">
+                    <i class="bi bi-cloud-upload"></i> LƯU ĐỀ THI
+                </button>
             </div>
         </div>
     </div>
@@ -102,41 +111,63 @@
             document.getElementById('div-chapter').style.display = (type === 'tx') ? 'block' : 'none';
         }
 
-        // --- XỬ LÝ WORD (GIỮ NGUYÊN) ---
+        function resetForm() {
+            if(confirm("Bạn có muốn xóa form để nhập đề mới?")) location.reload();
+        }
+
+        // --- XỬ LÝ WORD ---
         function handleWordUpload(input) {
             const f = input.files[0]; if(!f) return;
             const r = new FileReader();
             r.onload = e => mammoth.convertToHtml({arrayBuffer:e.target.result}).then(r=>parseDoc(r.value));
             r.readAsArrayBuffer(f);
         }
+
         function parseDoc(html) {
             const p = new DOMParser(); const doc = p.parseFromString(html,'text/html');
             const txt = doc.body.innerText; const tables = doc.querySelectorAll('table');
             let data = {}, mcq=0, tf=0, sh=0;
 
-            // 1. TN
-            let m; const re = /(\d+)[\.\s]*([A-D])/g;
-            while((m=re.exec(txt))!==null) { const q=parseInt(m[1]); if(q<100){data[`p1_c${q}`]=m[2]; if(q>mcq)mcq=q;} }
+            // 1. Trắc nghiệm (Tìm 1.A, 2.B)
+            const re = /(\d+)[\.\s]*([A-D])/g; let m;
+            while((m=re.exec(txt))!==null) { 
+                const q=parseInt(m[1]); 
+                if(q<100){data[`p1_c${q}`]=m[2]; if(q>mcq)mcq=q;} 
+            }
 
-            // 2. Bang
+            // 2. Bảng (Đúng sai & Ngắn)
             tables.forEach(t => {
                 const trs = t.querySelectorAll('tr'); const tText = t.innerText;
+                
+                // Đúng Sai
                 if(tText.includes("Đúng")||tText.includes("Sai")){
                     let colMap={};
-                    trs[0].querySelectorAll('td').forEach((td,i)=>{const mx=td.innerText.match(/Câu\s*(\d+)/i); if(mx) colMap[i]=parseInt(mx[1])});
+                    trs[0].querySelectorAll('td').forEach((td,i)=>{
+                        const mx=td.innerText.match(/Câu\s*(\d+)/i); 
+                        if(mx) colMap[i]=parseInt(mx[1])
+                    });
                     for(let i=1;i<trs.length;i++){
                         trs[i].querySelectorAll('td').forEach((td,idx)=>{
-                            const q=colMap[idx]; if(q){
+                            const q=colMap[idx]; 
+                            if(q){
                                 const sub=td.innerText.match(/^([a-d])/i);
                                 const val=td.innerText.match(/(Đúng|Sai|Đ|S)/i);
-                                if(sub&&val){ data[`p2_c${q}_${sub[1].toLowerCase()}`]=val[1].toUpperCase()[0]=='Đ'?'D':'S'; if(q>tf)tf=q; }
+                                if(sub&&val){ 
+                                    data[`p2_c${q}_${sub[1].toLowerCase()}`]=val[1].toUpperCase()[0]=='Đ'?'D':'S'; 
+                                    if(q>tf)tf=q; 
+                                }
                             }
                         });
                     }
                 }
+                
+                // Trả lời ngắn
                 if(tText.includes("Chọn")||tText.includes("Đáp án")){
                     let hRow, vRow;
-                    trs.forEach(r=>{ if(r.innerText.includes("Câu")) hRow=r; if(r.innerText.includes("Chọn")||r.innerText.includes("Đáp")) vRow=r; });
+                    trs.forEach(r=>{ 
+                        if(r.innerText.includes("Câu")) hRow=r; 
+                        if(r.innerText.includes("Chọn")||r.innerText.includes("Đáp")) vRow=r; 
+                    });
                     if(hRow&&vRow){
                         const h=hRow.querySelectorAll('td'), v=vRow.querySelectorAll('td');
                         for(let i=0; i<Math.min(h.length,v.length); i++){
@@ -150,21 +181,71 @@
                 }
             });
             
+            // Cập nhật ô số lượng
             document.getElementById('num-mcq').value=mcq;
             document.getElementById('num-tf').value=tf;
             document.getElementById('num-short').value=sh;
-            answerData = data; generateForm();
+            
+            // Lưu dữ liệu và vẽ lại form ngay lập tức để GV kiểm tra
+            answerData = data; 
+            generateForm(); 
+            fillFormData(data); // Hàm điền dữ liệu vào form vừa vẽ
+            
+            alert(`✅ Đã nhập thành công:\n- ${mcq} câu TN\n- ${tf} câu Đ/S\n- ${sh} câu Ngắn`);
         }
 
-        function generateForm() { /* (Giữ nguyên logic vẽ form như cũ) */ } // Bạn dùng lại hàm generateForm cũ nhé
+        function generateForm() {
+            const mcq = parseInt(document.getElementById('num-mcq').value)||0;
+            const tf = parseInt(document.getElementById('num-tf').value)||0;
+            const short = parseInt(document.getElementById('num-short').value)||0;
+            const div = document.getElementById('answer-area');
+            div.innerHTML = '';
+            div.classList.remove('d-none');
 
+            // Render HTML (Giữ nguyên logic cũ)
+            if(mcq>0) {
+                let h = `<h6 class="text-primary small fw-bold">I. TRẮC NGHIỆM</h6><div class="row g-1 mb-3">`;
+                for(let i=1; i<=mcq; i++) h += `<div class="col-4 col-md-2"><div class="input-group input-group-sm"><span class="input-group-text">${i}</span><select class="form-select" id="in-p1-${i}" onchange="updKey('p1_c${i}',this.value)"><option value="">-</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div></div>`;
+                div.innerHTML += h + '</div>';
+            }
+            if(tf>0) {
+                let h = `<h6 class="text-primary small fw-bold">II. ĐÚNG SAI</h6><div class="row g-2 mb-3">`;
+                for(let i=1; i<=tf; i++) {
+                    h += `<div class="col-md-6 border rounded p-2 bg-light"><span class="fw-bold me-2 small">Câu ${i}:</span>` + ['a','b','c','d'].map(s=>`<span class="me-1 small">${s})</span><select class="d-inline-block form-select-sm border py-0 px-1 me-2" style="width:45px" id="in-p2-${i}-${s}" onchange="updKey('p2_c${i}_${s}',this.value)"><option value="">-</option><option value="D">Đ</option><option value="S">S</option></select>`).join('') + `</div>`;
+                }
+                div.innerHTML += h + '</div>';
+            }
+            if(short>0) {
+                let h = `<h6 class="text-primary small fw-bold">III. TRẢ LỜI NGẮN</h6><div class="row g-2">`;
+                for(let i=1; i<=short; i++) h+= `<div class="col-6 col-md-3"><div class="input-group input-group-sm"><span class="input-group-text">${i}</span><input type="text" class="form-control" id="in-p3-${i}" onblur="updKey('p3_c${i}',this.value)"></div></div>`;
+                div.innerHTML += h + '</div>';
+            }
+        }
+
+        function fillFormData(data) {
+            for(let k in data) {
+                // Map key data sang ID input
+                // p1_c1 -> in-p1-1
+                let id = "";
+                if(k.startsWith("p1")) id = "in-p1-" + k.replace("p1_c", "");
+                else if(k.startsWith("p2")) id = "in-p2-" + k.replace("p2_c", "").replace("_", "-");
+                else if(k.startsWith("p3")) id = "in-p3-" + k.replace("p3_c", "");
+                
+                const el = document.getElementById(id);
+                if(el) el.value = data[k];
+            }
+        }
+
+        function updKey(k,v) { answerData[k] = v.trim().toUpperCase(); }
+
+        // --- LƯU ĐỀ ---
         async function saveExam() {
             const btn = document.getElementById('btn-save');
             const id = document.getElementById('exam-id').value;
             const linkExam = document.getElementById('link-exam').value;
-            if(!id || !linkExam) return alert("Thiếu Mã hoặc Link Đề!");
+            if(!id || !linkExam) return alert("Vui lòng nhập đủ: Mã đề và Link đề!");
 
-            btn.innerText = "ĐANG LƯU..."; btn.disabled = true;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> ĐANG LƯU...`; btn.disabled = true;
             
             const payload = {
                 action: "addExam",
@@ -172,7 +253,6 @@
                 pdfLink: linkExam, solLink: document.getElementById('link-sol').value,
                 duration: document.getElementById('exam-duration').value,
                 isEssay: document.getElementById('is-essay').checked,
-                // LƯU PHÂN LOẠI
                 classGrade: document.getElementById('exam-class').value,
                 examType: document.getElementById('exam-type').value,
                 chapter: document.getElementById('exam-type').value === 'tx' ? document.getElementById('exam-chapter').value : "",
@@ -183,8 +263,9 @@
 
             try {
                 await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), headers: {'Content-Type': 'text/plain'} });
-                alert("Lưu thành công!"); location.reload();
-            } catch(e) { alert("Lỗi: "+e); btn.disabled=false; }
+                alert("✅ Lưu thành công!");
+                location.reload();
+            } catch(e) { alert("Lỗi: "+e); btn.innerHTML = "LƯU LẠI"; btn.disabled=false; }
         }
     </script>
 </body>
