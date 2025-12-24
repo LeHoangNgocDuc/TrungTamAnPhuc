@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phòng Thi Online - An Phúc Education</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root { --primary-blue: #0056b3; --active-purple: #6f42c1; }
+        body { background: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+        
+        /* Menu Lớp (Pill) */
+        .class-filter-btn {
+            border: 1px solid #dee2e6; background: white; color: #555;
+            border-radius: 20px; padding: 5px 15px; margin-right: 5px; transition: 0.2s;
+        }
+        .class-filter-btn.active { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
+        
+        /* Tab Loại thi */
+        .type-tab {
+            cursor: pointer; padding: 10px 15px; font-weight: 500; color: #666;
+            border-bottom: 3px solid transparent; display: inline-block;
+        }
+        .type-tab.active { color: var(--primary-blue); border-bottom-color: var(--primary-blue); font-weight: bold; }
+        
+        /* Chip Chương */
+        .chapter-chip {
+            font-size: 0.85rem; border: 1px solid var(--active-purple); color: var(--active-purple);
+            background: white; border-radius: 8px; padding: 3px 10px; margin: 3px; cursor: pointer;
+        }
+        .chapter-chip.active { background: var(--active-purple); color: white; }
+
+        /* Card đề thi */
+        .exam-card { cursor: pointer; transition: 0.2s; border: none; border-radius: 12px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .exam-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+<div id="exam-list-screen" class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-primary m-0"><i class="bi bi-mortarboard-fill"></i> PHÒNG THI ONLINE</h4>
+        <a href="admin.html" class="btn btn-outline-secondary btn-sm"><i class="bi bi-gear"></i> GV</a>
+    </div>
+
+    <div class="mb-3 d-flex flex-wrap" id="class-filters">
+        </div>
+
+    <div class="border-bottom mb-3" style="white-space: nowrap; overflow-x: auto;">
+        <div id="type-filters" class="d-flex">
+            <div class="type-tab active" onclick="selectType('tx')">Kiểm tra thường xuyên</div>
+            <div class="type-tab" onclick="selectType('gk1')">Giữa kỳ 1</div>
+            <div class="type-tab" onclick="selectType('ck1')">Cuối kỳ 1</div>
+            <div class="type-tab" onclick="selectType('gk2')">Giữa kỳ 2</div>
+            <div class="type-tab" onclick="selectType('ck2')">Cuối kỳ 2</div>
+            <div class="type-tab" onclick="selectType('thpt')">Thử THPT QG</div>
+        </div>
+    </div>
+
+    <div id="chapter-filters" class="mb-4 d-flex flex-wrap" style="display: block;">
+        </div>
+
+    <div id="loading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+    <div id="exam-grid" class="row g-3"></div>
+</div>
+
+<div id="exam-screen" style="display:none">
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <div class="col-lg-8 h-100 p-0 border-end"><iframe id="pdf-frame" style="width:100%;height:100vh;border:none"></iframe></div>
+            <div class="col-lg-4 h-100 overflow-auto p-3 bg-white" id="right-panel">
+                <button onclick="location.reload()" class="btn btn-sm btn-outline-secondary mb-2">Thoát</button>
+                <div id="questions-container"></div>
+                <button onclick="submitExam()" class="btn btn-success w-100 mt-3">Nộp Bài</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzZWaaHxROI9_r4LluKvL-cWdLsTmaZ90Euw27tO53AGUkRQ5N-YLegV7u_5zAr5QTYHg/exec"; // THAY LINK
+    
+    let allExams = []; // Chứa toàn bộ đề
+    let currentFilter = {
+        classGrade: '6', // Mặc định lớp 6
+        type: 'tx',      // Mặc định thường xuyên
+        chapter: '1'     // Mặc định chương 1
+    };
+
+    window.onload = async function() {
+        renderClassButtons();
+        renderChapterButtons();
+        await fetchExams();
+    };
+
+    // 1. RENDER NÚT LỚP
+    function renderClassButtons() {
+        const div = document.getElementById('class-filters');
+        let html = '';
+        [6, 7, 8, 9, 10, 11, 12].forEach(c => {
+            html += `<button class="class-filter-btn ${c==6?'active':''}" onclick="selectClass('${c}', this)">Lớp ${c}</button>`;
+        });
+        html += `<button class="class-filter-btn" onclick="selectClass('TN', this)">TN THPT</button>`;
+        div.innerHTML = html;
+    }
+
+    // 2. RENDER NÚT CHƯƠNG
+    function renderChapterButtons() {
+        const div = document.getElementById('chapter-filters');
+        let html = '';
+        for(let i=1; i<=8; i++) {
+            html += `<span class="chapter-chip ${i==1?'active':''}" onclick="selectChapter('${i}', this)">Chương ${i}</span>`;
+        }
+        div.innerHTML = html;
+    }
+
+    // --- LOGIC LỌC ---
+    function selectClass(cls, btn) {
+        currentFilter.classGrade = cls.toString();
+        // Highlight active
+        document.querySelectorAll('.class-filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filterExams();
+    }
+
+    function selectType(type) {
+        currentFilter.type = type;
+        // Highlight active tab
+        document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        // Chỉ hiện chương nếu là 'tx'
+        const chapterDiv = document.getElementById('chapter-filters');
+        if(type === 'tx') {
+            chapterDiv.style.display = 'flex';
+            currentFilter.chapter = '1'; // Reset về chương 1
+            renderChapterButtons(); // Re-render để reset active
+        } else {
+            chapterDiv.style.display = 'none';
+            currentFilter.chapter = ""; // Không lọc chương
+        }
+        filterExams();
+    }
+
+    function selectChapter(ch, btn) {
+        currentFilter.chapter = ch.toString();
+        document.querySelectorAll('.chapter-chip').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        filterExams();
+    }
+
+    // --- TẢI VÀ LỌC DỮ LIỆU ---
+    async function fetchExams() {
+        try {
+            const res = await fetch(API_URL + "?action=getExams&t=" + Date.now());
+            const json = await res.json();
+            allExams = json.data;
+            document.getElementById('loading').style.display = 'none';
+            filterExams(); // Lọc lần đầu
+        } catch(e) { alert("Lỗi tải đề: "+e); }
+    }
+
+    function filterExams() {
+        const grid = document.getElementById('exam-grid');
+        grid.innerHTML = '';
+
+        // Logic Lọc Chính
+        const filtered = allExams.filter(ex => {
+            // 1. Lọc Lớp
+            const matchClass = ex.classGrade == currentFilter.classGrade;
+            // 2. Lọc Loại
+            const matchType = ex.examType == currentFilter.type;
+            // 3. Lọc Chương (Chỉ khi là thường xuyên)
+            let matchChapter = true;
+            if(currentFilter.type === 'tx') {
+                matchChapter = ex.chapter == currentFilter.chapter;
+            }
+            
+            return matchClass && matchType && matchChapter;
+        });
+
+        if(filtered.length === 0) {
+            grid.innerHTML = `<div class="col-12 text-center text-muted py-5">
+                Chưa có đề thi nào cho <b>Lớp ${currentFilter.classGrade}</b> - Mục này.
+            </div>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map(ex => `
+            <div class="col-md-6 col-lg-4 col-xl-3">
+                <div class="exam-card h-100 p-3 text-center border">
+                    <h6 class="fw-bold text-truncate">${ex.title}</h6>
+                    <div class="mb-3 text-muted small">
+                        <i class="bi bi-clock"></i> ${ex.duration}' | ${ex.totalQuestions} câu
+                    </div>
+                    <button class="btn btn-sm btn-primary w-100" onclick='startExam(${JSON.stringify(ex).replace(/'/g,"&#39;")})'>Vào Thi</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // --- CÁC HÀM LÀM BÀI (startExam, submitExam...) ---
+    // (Bạn copy nguyên xi các hàm startExam, renderQuestions, submitExam từ file index.html trước đó vào đây nhé)
+    // Code logic làm bài không thay đổi, chỉ thay đổi cách hiển thị danh sách đề bên ngoài.
+    
+    function startExam(exam) {
+        // ... (Code cũ) ...
+        alert("Bắt đầu làm: " + exam.title); // Demo
+        // document.getElementById('exam-list-screen').style.display = 'none';
+        // document.getElementById('exam-screen').style.display = 'block';
+        // ...
+    }
+</script>
+</body>
+</html>

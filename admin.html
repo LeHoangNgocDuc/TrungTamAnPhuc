@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Nhập Đề Thi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script>if (!sessionStorage.getItem("isAdmin")) window.location.href = "login.html";</script>
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white d-flex justify-content-between">
+                <h5 class="mb-0 fw-bold">QUẢN LÝ ĐỀ THI</h5>
+                <a href="index.html" class="btn btn-sm btn-light fw-bold" target="_blank">Xem trang HS</a>
+            </div>
+            <div class="card-body">
+                
+                <h6 class="text-primary fw-bold border-bottom pb-2">1. Phân loại Đề thi</h6>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Lớp học</label>
+                        <select id="exam-class" class="form-select">
+                            <option value="6">Toán 6</option>
+                            <option value="7">Toán 7</option>
+                            <option value="8">Toán 8</option>
+                            <option value="9">Toán 9</option>
+                            <option value="10">Toán 10</option>
+                            <option value="11">Toán 11</option>
+                            <option value="12">Toán 12</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Loại kỳ thi</label>
+                        <select id="exam-type" class="form-select" onchange="toggleChapter()">
+                            <option value="tx">Kiểm tra thường xuyên</option>
+                            <option value="gk1">Giữa kỳ 1</option>
+                            <option value="ck1">Cuối kỳ 1</option>
+                            <option value="gk2">Giữa kỳ 2</option>
+                            <option value="ck2">Cuối kỳ 2</option>
+                            <option value="thpt">Thử THPT QG</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4" id="div-chapter">
+                        <label class="form-label fw-bold">Chương (1-8)</label>
+                        <select id="exam-chapter" class="form-select">
+                            <option value="1">Chương 1</option>
+                            <option value="2">Chương 2</option>
+                            <option value="3">Chương 3</option>
+                            <option value="4">Chương 4</option>
+                            <option value="5">Chương 5</option>
+                            <option value="6">Chương 6</option>
+                            <option value="7">Chương 7</option>
+                            <option value="8">Chương 8</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h6 class="text-primary fw-bold border-bottom pb-2 mt-4">2. Thông tin & Link Drive</h6>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <input type="text" id="exam-id" class="form-control" placeholder="Mã Đề (VD: TOAN6-C1-01)">
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" id="exam-title" class="form-control" placeholder="Tên Đề Thi (VD: Ôn tập chương 1...)">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" id="link-exam" class="form-control" placeholder="Link Drive Đề (PDF) *">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" id="link-sol" class="form-control" placeholder="Link Drive Đáp án (PDF)">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="number" id="exam-duration" class="form-control" value="45" placeholder="Phút">
+                    </div>
+                    <div class="col-md-8 pt-2">
+                         <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="is-essay">
+                            <label class="form-check-label fw-bold" for="is-essay">Có Tự luận (Nộp ảnh)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="text-primary fw-bold border-bottom pb-2 mt-4">3. Nhập Đáp Án (Tự động từ Word)</h6>
+                <div class="mb-3">
+                    <input type="file" id="word-upload" accept=".docx" class="d-none" onchange="handleWordUpload(this)">
+                    <button onclick="document.getElementById('word-upload').click()" class="btn btn-warning btn-sm fw-bold">📂 Chọn file Đáp Án (.docx)</button>
+                </div>
+
+                <div class="row g-2 bg-white p-3 border rounded mb-3">
+                    <div class="col-md-4"><label>Số câu TN</label><input type="number" id="num-mcq" class="form-control" value="0"></div>
+                    <div class="col-md-4"><label>Số câu Đ/S</label><input type="number" id="num-tf" class="form-control" value="0"></div>
+                    <div class="col-md-4"><label>Số câu Ngắn</label><input type="number" id="num-short" class="form-control" value="0"></div>
+                    <div class="col-12 text-end"><button onclick="generateForm()" class="btn btn-secondary btn-sm mt-2">Vẽ Form</button></div>
+                </div>
+
+                <div id="answer-area" class="d-none bg-light p-3 border rounded mb-3"></div>
+
+                <button onclick="saveExamFinal()" id="btn-save" class="btn btn-success w-100 py-3 fw-bold fs-5">LƯU ĐỀ THI</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbzZWaaHxROI9_r4LluKvL-cWdLsTmaZ90Euw27tO53AGUkRQ5N-YLegV7u_5zAr5QTYHg/exec"; // THAY LINK CỦA BẠN
+        let answerData = {};
+
+        function toggleChapter() {
+            const type = document.getElementById('exam-type').value;
+            // Chỉ hiện chương khi chọn Kiểm tra thường xuyên
+            document.getElementById('div-chapter').style.display = (type === 'tx') ? 'block' : 'none';
+        }
+
+        // --- CODE XỬ LÝ WORD VÀ FORM (GIỮ NGUYÊN NHƯ CŨ - ĐÃ TỐT) ---
+        // (Bạn copy lại đoạn xử lý handleWordUpload, parseDocContent, generateForm từ phiên bản trước dán vào đây)
+        // Tôi viết tắt phần này để tập trung vào logic mới
+        function handleWordUpload(input) { /* ... Code xử lý Word cũ ... */ }
+        function parseDocContent(html) { /* ... Code xử lý Word cũ ... */ }
+        function generateForm() { /* ... Code xử lý Form cũ ... */ }
+        function saveKey(k,v) { answerData[k] = v.trim().toUpperCase(); }
+
+        // --- HÀM LƯU MỚI (THÊM PHÂN LOẠI) ---
+        async function saveExamFinal() {
+            const btn = document.getElementById('btn-save');
+            const id = document.getElementById('exam-id').value;
+            const linkExam = document.getElementById('link-exam').value;
+            
+            if(!id || !linkExam) return alert("Thiếu Mã đề hoặc Link Đề!");
+
+            btn.innerHTML = "ĐANG LƯU..."; btn.disabled = true;
+
+            const payload = {
+                action: "addExam",
+                id: id, title: document.getElementById('exam-title').value,
+                duration: document.getElementById('exam-duration').value,
+                isEssay: document.getElementById('is-essay').checked,
+                pdfLink: linkExam,
+                solLink: document.getElementById('link-sol').value,
+                
+                // Dữ liệu phân loại mới
+                classGrade: document.getElementById('exam-class').value,
+                examType: document.getElementById('exam-type').value,
+                chapter: document.getElementById('exam-type').value === 'tx' ? document.getElementById('exam-chapter').value : "",
+
+                totalQuestions: (parseInt(document.getElementById('num-mcq').value)||0)+(parseInt(document.getElementById('num-tf').value)||0)+(parseInt(document.getElementById('num-short').value)||0),
+                structure: {
+                    config: {
+                        mcq: parseInt(document.getElementById('num-mcq').value)||0,
+                        tf: parseInt(document.getElementById('num-tf').value)||0,
+                        short: parseInt(document.getElementById('num-short').value)||0
+                    },
+                    answers: answerData
+                }
+            };
+
+            try {
+                await fetch(API_URL, { method: 'POST', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify(payload) });
+                alert("✅ Đã lưu đề thi!"); location.reload();
+            } catch(e) { alert("Lỗi: "+e); btn.innerHTML = "LƯU LẠI"; btn.disabled = false; }
+        }
+    </script>
+</body>
+</html>
