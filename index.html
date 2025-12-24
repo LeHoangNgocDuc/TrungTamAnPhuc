@@ -10,32 +10,60 @@
         :root { --primary: #0056b3; --success: #198754; --danger: #dc3545; }
         body { background: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
         
-        /* === STYLE NÚT CHỌN === */
-        /* Trắc nghiệm ABCD */
+        /* === STYLE NÚT CHỌN (SỬA LẠI CHO ĐẬM VÀ RÕ) === */
+        
+        /* 1. Trắc nghiệm ABCD */
         .opt-btn { 
             width: 40px; height: 40px; border-radius: 50%; border: 2px solid #dee2e6; 
-            background: white; font-weight: 700; color: #555; margin: 0 4px; transition: 0.2s;
+            background: white; font-weight: 600; color: #555; margin: 0 5px; transition: all 0.2s;
         }
         .opt-btn:hover { background: #e9ecef; }
-        .active-opt { background-color: var(--primary) !important; color: white !important; border-color: var(--primary) !important; transform: scale(1.1); }
-
-        /* Đúng Sai (Đã sửa theo yêu cầu) */
-        .tf-btn {
-            width: 60px; padding: 5px 0; font-weight: 700; border: 2px solid #dee2e6; 
-            background: white; border-radius: 6px; color: #555; transition: 0.2s;
+        /* Hiệu ứng khi chọn ABCD */
+        .active-opt { 
+            background-color: var(--primary) !important; 
+            color: white !important; 
+            border-color: #004494 !important; 
+            font-weight: 800 !important;
+            transform: scale(1.15); /* Phóng to nút */
+            box-shadow: 0 4px 8px rgba(0, 86, 179, 0.3); /* Đổ bóng */
         }
-        .tf-active-d { background-color: var(--success) !important; color: white !important; border-color: var(--success) !important; transform: scale(1.05); }
-        .tf-active-s { background-color: var(--danger) !important; color: white !important; border-color: var(--danger) !important; transform: scale(1.05); }
+
+        /* 2. Đúng Sai (ĐÃ SỬA LẠI MẠNH HƠN) */
+        .tf-btn {
+            width: 65px; padding: 6px 0; font-weight: 600; border: 2px solid #ced4da; 
+            background: white; border-radius: 8px; color: #666; transition: all 0.2s;
+        }
+        /* Hiệu ứng khi chọn ĐÚNG */
+        .tf-active-d { 
+            background-color: #198754 !important; /* Xanh lá đậm */
+            color: white !important; 
+            border-color: #0f5132 !important; 
+            font-weight: 900 !important; /* Chữ siêu đậm */
+            transform: scale(1.1); /* Phóng to */
+            box-shadow: 0 0 10px rgba(25, 135, 84, 0.5) !important; /* Phát sáng */
+        }
+        /* Hiệu ứng khi chọn SAI */
+        .tf-active-s { 
+            background-color: #dc3545 !important; /* Đỏ đậm */
+            color: white !important; 
+            border-color: #842029 !important; 
+            font-weight: 900 !important;
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(220, 53, 69, 0.5) !important;
+        }
 
         /* === STYLE XEM LẠI BÀI (REVIEW) === */
-        .review-correct { background-color: #d1e7dd; border-color: #badbcc; } /* Nền xanh */
-        .review-wrong { background-color: #f8d7da; border-color: #f5c6cb; } /* Nền đỏ */
-        .badge-ans { font-size: 0.8rem; margin-left: 5px; }
+        /* Câu làm đúng */
+        .review-correct { background-color: #d1e7dd; border: 1px solid #badbcc; } 
+        /* Câu làm sai */
+        .review-wrong { background-color: #f8d7da; border: 1px solid #f5c6cb; } 
+        /* Nhãn đáp án đúng hiện ra khi sai */
+        .correct-ans-label { font-weight: bold; color: #198754; font-size: 0.9rem; margin-left: 10px; background: #fff; padding: 2px 8px; border-radius: 4px; border: 1px solid #198754; }
 
-        /* === LEADERBOARD === */
-        .rank-1 { color: #ffc107; font-weight: bold; }
-        .rank-2 { color: #adb5bd; font-weight: bold; }
-        .rank-3 { color: #cd7f32; font-weight: bold; }
+        /* === BẢNG XẾP HẠNG === */
+        .rank-1 { color: #ffc107; font-weight: 900; text-shadow: 1px 1px 0 #000; font-size: 1.1em; }
+        .rank-2 { color: #adb5bd; font-weight: 800; font-size: 1.05em; }
+        .rank-3 { color: #cd7f32; font-weight: 800; font-size: 1.05em; }
 
         /* Layout */
         #exam-screen { display: none; height: 100vh; }
@@ -43,13 +71,12 @@
         #right-panel { height: 100%; overflow-y: auto; background: white; padding: 15px; }
         iframe { width: 100%; height: 100%; border: none; }
         
-        /* Loading */
-        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; display: flex; justify-content: center; align-items: center; }
     </style>
 </head>
 <body>
 
-<div id="loading"><div class="spinner-border text-primary"></div></div>
+<div id="loading"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>
 
 <div id="list-screen" class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -80,39 +107,47 @@
                 <div class="fw-bold text-primary text-truncate" style="max-width: 200px;" id="exam-title-lbl"></div>
             </div>
             
-            <div class="card bg-light border-0 mb-3 p-3">
+            <div class="card bg-light border-0 mb-3 p-3 shadow-sm">
                 <label class="small fw-bold text-secondary">Thông tin thí sinh:</label>
-                <input id="hs-name" class="form-control form-control-sm mb-2" placeholder="Họ và Tên">
-                <input id="hs-id" class="form-control form-control-sm" placeholder="Mã Số (Bắt buộc)">
+                <input id="hs-name" class="form-control form-control-sm mb-2" placeholder="Họ và Tên (Bắt buộc)">
+                <input id="hs-id" class="form-control form-control-sm" placeholder="Mã Số (Bắt buộc - Khớp với DS Excel)">
             </div>
 
             <div id="result-box" class="d-none mb-3">
-                <div class="alert alert-success text-center p-2">
-                    <h3 class="fw-bold m-0" id="score-display">0.0</h3>
-                    <small>Điểm số của bạn</small>
+                <div class="alert alert-success text-center p-3 shadow-sm">
+                    <h2 class="fw-bold m-0 text-success" id="score-display">0.0</h2>
+                    <small class="fw-bold text-uppercase">Điểm của bạn</small>
                 </div>
-                <div id="rank-list" class="card p-2 small">
-                    <h6 class="fw-bold border-bottom pb-1 mb-1"><i class="bi bi-trophy-fill text-warning"></i> Bảng Xếp Hạng (Top 10)</h6>
-                    <ul class="list-group list-group-flush" id="rank-ul"></ul>
+                
+                <div id="sol-link-area" class="mb-3 text-center"></div>
+
+                <div id="rank-list" class="card p-2 small border-warning">
+                    <h6 class="fw-bold border-bottom pb-2 mb-2 text-center text-warning-emphasis">
+                        <i class="bi bi-trophy-fill text-warning"></i> BẢNG XẾP HẠNG (Top 10)
+                    </h6>
+                    <ul class="list-group list-group-flush" id="rank-ul">
+                        <li class="list-group-item text-center text-muted fst-italic">Đang tải xếp hạng...</li>
+                    </ul>
                 </div>
-                <div id="sol-link-area" class="mt-2 text-center"></div>
             </div>
 
-            <div id="questions-box" class="flex-grow-1 overflow-auto pe-2"></div>
+            <div id="questions-box" class="flex-grow-1 overflow-auto pe-2 pb-5"></div>
 
-            <div class="mt-3 border-top pt-2" id="submit-area">
+            <div class="mt-3 border-top pt-3 bg-white sticky-bottom" id="submit-area">
                 <div id="essay-area" class="d-none mb-2">
-                    <label class="small fw-bold">Nộp ảnh tự luận:</label>
+                    <label class="small fw-bold text-primary"><i class="bi bi-camera-fill"></i> Nộp ảnh tự luận:</label>
                     <input type="file" id="essay-files" class="form-control form-control-sm" multiple accept="image/*">
                 </div>
-                <button onclick="submitExam()" id="btn-submit" class="btn btn-success w-100 fw-bold py-2 shadow">NỘP BÀI</button>
+                <button onclick="submitExam()" id="btn-submit" class="btn btn-success w-100 fw-bold py-2 shadow text-uppercase">
+                    <i class="bi bi-send-fill"></i> Nộp Bài Ngay
+                </button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxsH2uP6wpdeWoegt2d16tT7RxY7bAgr5at4fEXSwYd7H3XF1o5yG8vBWpC85ND82s2Yg/exec"; // THAY LINK
+    const API_URL = "https://script.google.com/macros/s/AKfycbxsH2uP6wpdeWoegt2d16tT7RxY7bAgr5at4fEXSwYd7H3XF1o5yG8vBWpC85ND82s2Yg/exec"; // THAY LINK API CỦA BẠN VÀO ĐÂY
     
     let allExams = [], currentFilter = { class: '6', type: 'tx', chapter: '1' }, currentExam = null, userAnswers = {};
     let isReviewMode = false;
@@ -122,9 +157,8 @@
         await loadExams();
     };
 
-    // (Giữ nguyên các hàm renderFilters, loadExams, filterExams, setClass, setType, setChapter từ bài trước)
-    // ... Code bộ lọc ...
-    function renderFilters() { /* Copy từ bài trước */ 
+    // --- CÁC HÀM BỘ LỌC & TẢI ĐỀ (GIỮ NGUYÊN) ---
+    function renderFilters() {
         const cDiv = document.getElementById('class-filters');
         let h = '';
         [6,7,8,9,10,11,12].forEach(c => h+=`<button class="filter-btn ${c==6?'active':''}" onclick="setClass('${c}',this)">Lớp ${c}</button>`);
@@ -148,11 +182,11 @@
         grid.innerHTML = list.length ? list.map(e => `
             <div class="col-md-6 col-lg-4 col-xl-3">
                 <div class="exam-card p-3 h-100 d-flex flex-column text-center border" onclick='startExam(${JSON.stringify(e).replace(/'/g,"&#39;")})'>
-                    <h6 class="fw-bold text-truncate">${e.title}</h6>
-                    <div class="small text-muted mb-3 flex-grow-1">${e.duration}' | ${e.totalQuestions} câu</div>
-                    <button class="btn btn-primary btn-sm w-100 fw-bold">Vào Thi</button>
+                    <h6 class="fw-bold text-truncate text-primary">${e.title}</h6>
+                    <div class="small text-muted mb-3 flex-grow-1"><i class="bi bi-clock"></i> ${e.duration}' | ${e.totalQuestions} câu</div>
+                    <button class="btn btn-outline-primary btn-sm w-100 fw-bold rounded-pill">Vào Thi</button>
                 </div>
-            </div>`).join('') : '<div class="col-12 text-center text-muted py-5">Không có đề.</div>';
+            </div>`).join('') : '<div class="col-12 text-center text-muted py-5">Chưa có đề thi nào.</div>';
     }
     function setClass(c, btn) { currentFilter.class=c; document.querySelectorAll('#class-filters .active').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); filterExams(); }
     function setType(t, btn) { currentFilter.type=t; document.querySelectorAll('#type-filters button').forEach(b=>{b.classList.remove('text-primary','fw-bold');b.classList.add('text-secondary')}); btn.classList.remove('text-secondary'); btn.classList.add('text-primary','fw-bold'); document.getElementById('chapter-filters').style.display=t==='tx'?'block':'none'; filterExams(); }
@@ -167,7 +201,7 @@
         document.getElementById('exam-title-lbl').innerText = exam.title;
         document.getElementById('pdf-frame').src = exam.pdfLink.replace('/view','/preview');
         
-        // Reset UI
+        // Reset giao diện
         document.getElementById('result-box').classList.add('d-none');
         document.getElementById('submit-area').classList.remove('d-none');
         document.getElementById('hs-name').disabled = false;
@@ -176,56 +210,63 @@
         renderQuestions(exam.structure);
     }
 
-    // --- RENDER CÂU HỎI (UPDATE CSS NÚT Đ/S) ---
+    // --- VẼ CÂU HỎI (ĐÃ CẬP NHẬT GIAO DIỆN) ---
     function renderQuestions(struct) {
         const qBox = document.getElementById('questions-box'); qBox.innerHTML = '';
         let cfg = (typeof struct === 'string' ? JSON.parse(struct) : struct).config || {mcq:0, tf:0, short:0};
 
         // 1. Trắc nghiệm
         if(cfg.mcq>0) {
-            let h = `<div class="fw-bold text-primary mt-2 small">I. TRẮC NGHIỆM</div><div class="row g-2">`;
-            for(let i=1;i<=cfg.mcq;i++) h+=`<div class="col-6 col-md-12"><div class="border rounded p-2 d-flex justify-content-between align-items-center" id="p1-box-${i}"><span class="fw-bold ms-2">${i}</span><div>${['A','B','C','D'].map(o=>`<button class="opt-btn" id="p1-c${i}-${o}" onclick="selMCQ('p1_c${i}','${o}')">${o}</button>`).join('')}</div></div></div>`;
+            let h = `<div class="fw-bold text-primary mt-2 small border-bottom pb-1 mb-2">I. TRẮC NGHIỆM</div><div class="row g-2">`;
+            for(let i=1;i<=cfg.mcq;i++) h+=`<div class="col-6 col-md-12"><div class="border rounded p-2 d-flex justify-content-between align-items-center bg-white shadow-sm" id="p1-box-${i}"><span class="fw-bold ms-2 badge bg-light text-dark border">${i}</span><div class="d-flex">${['A','B','C','D'].map(o=>`<button class="opt-btn" id="p1-c${i}-${o}" onclick="selMCQ('p1_c${i}','${o}')">${o}</button>`).join('')}</div></div></div>`;
             qBox.innerHTML+=h+'</div>';
         }
-        // 2. Đúng Sai (UPDATE)
+        // 2. Đúng Sai (NÚT TO RÕ)
         if(cfg.tf>0) {
-            let h = `<div class="fw-bold text-primary mt-3 small">II. ĐÚNG SAI</div>`;
-            for(let i=1;i<=cfg.tf;i++) h+=`<div class="border rounded p-2 mb-2" id="p2-box-${i}"><div class="fw-bold small text-secondary">Câu ${i}</div>${['a','b','c','d'].map(s=>`<div class="d-flex justify-content-between align-items-center mt-2 border-bottom pb-2"><span class="fw-bold ms-2">(${s})</span><div><button class="tf-btn" id="p2-c${i}_${s}-D" onclick="selTF('p2_c${i}_${s}','D')">Đ</button><button class="tf-btn ms-2" id="p2-c${i}_${s}-S" onclick="selTF('p2_c${i}_${s}','S')">S</button></div></div>`).join('')}</div>`;
+            let h = `<div class="fw-bold text-primary mt-4 small border-bottom pb-1 mb-2">II. ĐÚNG SAI</div>`;
+            for(let i=1;i<=cfg.tf;i++) h+=`<div class="border rounded p-2 mb-3 bg-white shadow-sm" id="p2-box-${i}"><div class="fw-bold small text-secondary mb-2">Câu ${i}</div>${['a','b','c','d'].map(s=>`<div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom"><span class="fw-bold ms-2 text-dark">(${s})</span><div><button class="tf-btn" id="p2-c${i}_${s}-D" onclick="selTF('p2_c${i}_${s}','D')">Đ</button><button class="tf-btn ms-2" id="p2-c${i}_${s}-S" onclick="selTF('p2_c${i}_${s}','S')">S</button></div></div>`).join('')}</div>`;
             qBox.innerHTML+=h;
         }
         // 3. Ngắn
         if(cfg.short>0) {
-            let h = `<div class="fw-bold text-primary mt-3 small">III. TRẢ LỜI NGẮN</div><div class="row g-2">`;
-            for(let i=1;i<=cfg.short;i++) h+=`<div class="col-6 col-md-12"><div class="input-group"><span class="input-group-text fw-bold bg-white">${i}</span><input class="form-control" id="p3-c${i}" onblur="userAnswers['p3_c${i}']=this.value.trim()"></div></div>`;
+            let h = `<div class="fw-bold text-primary mt-4 small border-bottom pb-1 mb-2">III. TRẢ LỜI NGẮN</div><div class="row g-2">`;
+            for(let i=1;i<=cfg.short;i++) h+=`<div class="col-6 col-md-12"><div class="input-group"><span class="input-group-text fw-bold bg-white">${i}</span><input class="form-control" id="p3-c${i}" placeholder="Nhập đáp án..." onblur="userAnswers['p3_c${i}']=this.value.trim()"></div></div>`;
             qBox.innerHTML+=h+'</div>';
         }
         
         if(currentExam.isEssay == true) document.getElementById('essay-area').classList.remove('d-none');
     }
 
-    // --- LOGIC CHỌN ---
+    // --- LOGIC CHỌN ĐÁP ÁN (HIỆU ỨNG MỚI) ---
     function selMCQ(k,v) { 
         if(isReviewMode) return;
         userAnswers[k]=v; 
         ['A','B','C','D'].forEach(o=>document.getElementById(k.replace('_','-')+'-'+o).classList.remove('active-opt')); 
         document.getElementById(k.replace('_','-')+'-'+v).classList.add('active-opt'); 
     }
+    
     function selTF(k,v) { 
         if(isReviewMode) return;
         userAnswers[k]=v; 
         const base = k.replace(/_/g,'-');
-        document.getElementById(base+'-D').classList.remove('tf-active-d');
-        document.getElementById(base+'-S').classList.remove('tf-active-s');
-        if(v==='D') document.getElementById(base+'-D').classList.add('tf-active-d');
-        else document.getElementById(base+'-S').classList.add('tf-active-s');
+        const btnD = document.getElementById(base+'-D');
+        const btnS = document.getElementById(base+'-S');
+        
+        // Reset
+        btnD.classList.remove('tf-active-d');
+        btnS.classList.remove('tf-active-s');
+        
+        // Active
+        if(v==='D') btnD.classList.add('tf-active-d');
+        else btnS.classList.add('tf-active-s');
     }
 
     // --- NỘP BÀI ---
     async function submitExam() {
         const hs = document.getElementById('hs-name').value;
         const id = document.getElementById('hs-id').value;
-        if(!hs || !id) return alert("Nhập tên và mã HS!");
-        if(!confirm("Nộp bài?")) return;
+        if(!hs || !id) return alert("Vui lòng nhập Họ tên và Mã HS!");
+        if(!confirm("Bạn có chắc chắn muốn nộp bài?")) return;
         
         document.getElementById('loading').classList.remove('d-none');
 
@@ -235,18 +276,24 @@
         let config = struct.config || {};
         
         let scoreP1=0, scoreP2=0, scoreP3=0;
+        let maxP1 = config.scoreP1 || 3.0; // Điểm tối đa P1
+        let maxP3 = config.scoreP3 || 3.0; // Điểm tối đa P3
         
-        // P1
-        for(let i=1; i<=config.mcq; i++) {
-            if(userAnswers[`p1_c${i}`] === key[`p1_c${i}`]) scoreP1 += (3.0/config.mcq);
-        }
-        // P3
+        // P1 (Chia đều)
+        let countP1 = 0;
+        for(let i=1; i<=config.mcq; i++) { if(userAnswers[`p1_c${i}`] === key[`p1_c${i}`]) countP1++; }
+        if(config.mcq>0) scoreP1 = (maxP1/config.mcq)*countP1;
+
+        // P3 (Chia đều)
+        let countP3 = 0;
         for(let i=1; i<=config.short; i++) {
-            let u = (userAnswers[`p3_c${i}`]||"").toUpperCase();
-            let k = (key[`p3_c${i}`]||"").toUpperCase();
-            if(u===k && k!=="") scoreP3 += (3.0/config.short);
+            let u = (userAnswers[`p3_c${i}`]||"").toUpperCase().replace(/\s/g,'');
+            let k = (key[`p3_c${i}`]||"").toUpperCase().replace(/\s/g,'');
+            if(u===k && k!=="") countP3++;
         }
-        // P2 (Thang 0.1-0.25-0.5-1.0)
+        if(config.short>0) scoreP3 = (maxP3/config.short)*countP3;
+
+        // P2 (Thang điểm 0.1 - 0.25 - 0.5 - 1.0)
         for(let i=1; i<=config.tf; i++) {
             let c=0;
             ['a','b','c','d'].forEach(s=>{ if(userAnswers[`p2_c${i}_${s}`] === key[`p2_c${i}_${s}`]) c++; });
@@ -256,20 +303,20 @@
         let total = (scoreP1+scoreP2+scoreP3).toFixed(2);
         if(total>10) total=10;
 
-        // Upload ảnh
+        // Upload ảnh tự luận
         let imgs = []; const files = document.getElementById('essay-files').files;
         if(files.length) {
             const toB64=f=>new Promise((r,j)=>{const fr=new FileReader();fr.readAsDataURL(f);fr.onload=()=>r(fr.result);fr.onerror=j});
             for(let f of files) imgs.push(await toB64(f));
         }
 
-        // Gửi server
+        // Gửi kết quả
         await fetch(API_URL, {method:'POST', body:JSON.stringify({
             action:'submitExam', maHS:id, tenHS:hs, maDe:currentExam.id, 
             score:total, studentAnswers:userAnswers, detailResult:{}, images:imgs
         })});
 
-        // Load BXH
+        // Lấy BXH
         const rankRes = await fetch(API_URL + `?action=getRankings&maDe=${currentExam.id}`);
         const rankJson = await rankRes.json();
         
@@ -277,12 +324,14 @@
         document.getElementById('loading').classList.add('d-none');
     }
 
-    // --- HIỂN THỊ KẾT QUẢ & REVIEW ---
+    // --- HIỂN THỊ KẾT QUẢ & XEM LẠI BÀI (REVIEW) ---
     function showResult(score, ranks, key, config) {
         isReviewMode = true;
         document.getElementById('submit-area').classList.add('d-none');
         document.getElementById('result-box').classList.remove('d-none');
         document.getElementById('score-display').innerText = score;
+        
+        // Khóa input
         document.getElementById('hs-name').disabled = true;
         document.getElementById('hs-id').disabled = true;
 
@@ -291,34 +340,37 @@
         ranks.forEach((r, i) => {
             let cls = i===0?'rank-1':(i===1?'rank-2':(i===2?'rank-3':''));
             let icon = i<3 ? '<i class="bi bi-star-fill"></i>' : '';
-            rankUl.innerHTML += `<li class="list-group-item d-flex justify-content-between">
+            rankUl.innerHTML += `<li class="list-group-item d-flex justify-content-between py-1">
                 <span>${i+1}. ${r.tenHS} ${icon}</span> <span class="${cls}">${r.diem}</span>
             </li>`;
         });
 
-        // Link đáp án
-        if(currentExam.solutionLink && parseFloat(score)>=5.0) {
-            document.getElementById('sol-link-area').innerHTML = `<a href="${currentExam.solutionLink.replace('/view','/preview')}" target="_blank" class="btn btn-primary w-100 fw-bold">XEM LỜI GIẢI CHI TIẾT</a>`;
+        // Link đáp án (Hiện luôn, không cần điều kiện điểm số theo ý bạn)
+        if(currentExam.solutionLink) {
+            document.getElementById('sol-link-area').innerHTML = `<a href="${currentExam.solutionLink.replace('/view','/preview')}" target="_blank" class="btn btn-primary w-100 fw-bold shadow"><i class="bi bi-file-earmark-check-fill"></i> XEM LỜI GIẢI CHI TIẾT</a>`;
         }
 
-        // --- REVIEW CHI TIẾT (Tô màu đúng sai) ---
+        // --- TÔ MÀU ĐÁP ÁN (REVIEW) ---
         
-        // P1
+        // P1: Trắc nghiệm
         for(let i=1; i<=config.mcq; i++) {
             let u = userAnswers[`p1_c${i}`];
             let k = key[`p1_c${i}`];
             let box = document.getElementById(`p1-box-${i}`);
             
+            // Khóa nút
+            ['A','B','C','D'].forEach(o=>document.getElementById(`p1-c${i}-${o}`).disabled=true);
+
             if(u===k) { 
-                box.classList.add('review-correct'); 
-                box.innerHTML += `<span class="badge bg-success ms-2"><i class="bi bi-check"></i></span>`;
+                box.classList.add('review-correct'); // Đúng -> Xanh
             } else {
-                box.classList.add('review-wrong');
-                box.innerHTML += `<span class="badge bg-danger ms-2">Đúng: ${k}</span>`;
+                box.classList.add('review-wrong'); // Sai -> Đỏ
+                // Hiện đáp án đúng
+                box.innerHTML += `<span class="correct-ans-label">Đúng: ${k}</span>`;
             }
         }
 
-        // P2
+        // P2: Đúng Sai
         for(let i=1; i<=config.tf; i++) {
             ['a','b','c','d'].forEach(s => {
                 let u = userAnswers[`p2_c${i}_${s}`];
@@ -326,24 +378,21 @@
                 let btnD = document.getElementById(`p2-c${i}_${s}-D`);
                 let btnS = document.getElementById(`p2-c${i}_${s}-S`);
                 
-                // Disable
                 btnD.disabled=true; btnS.disabled=true;
 
                 if(u !== k) {
-                    // Highlight lỗi sai
-                    if(u==='D') btnD.style.border = "2px solid red";
-                    if(u==='S') btnS.style.border = "2px solid red";
+                    // Tô viền đỏ vào lựa chọn sai của HS
+                    if(u==='D') btnD.style.borderColor = "red";
+                    if(u==='S') btnS.style.borderColor = "red";
                     
-                    // Show đáp án đúng
-                    let span = document.createElement('span');
-                    span.className = "badge bg-success ms-2";
-                    span.innerText = k==='D' ? "Đúng" : "Sai";
-                    btnS.parentNode.appendChild(span);
+                    // Hiện đáp án đúng bên cạnh
+                    let div = btnS.parentNode;
+                    div.innerHTML += `<span class="correct-ans-label">${k==='D'?'Đúng':'Sai'}</span>`;
                 }
             });
         }
 
-        // P3
+        // P3: Trả lời ngắn
         for(let i=1; i<=config.short; i++) {
             let inp = document.getElementById(`p3-c${i}`);
             let u = (inp.value||"").toUpperCase();
@@ -353,8 +402,8 @@
             else {
                 inp.classList.add('is-invalid');
                 let div = document.createElement('div');
-                div.className = "text-success small fw-bold";
-                div.innerText = `Đáp án: ${k}`;
+                div.className = "text-success small fw-bold mt-1";
+                div.innerText = `Đáp án đúng: ${k}`;
                 inp.parentNode.appendChild(div);
             }
         }
