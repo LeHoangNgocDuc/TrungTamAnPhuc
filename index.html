@@ -6,64 +6,62 @@
     <title>Phòng Thi Online</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
     <style>
         :root { --primary: #0056b3; --success: #198754; --danger: #dc3545; }
         body { background: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
         
-        /* === STYLE NÚT CHỌN (SỬA LẠI CHO ĐẬM VÀ RÕ) === */
-        
-        /* 1. Trắc nghiệm ABCD */
+        /* === 1. NÚT TRẮC NGHIỆM A,B,C,D === */
         .opt-btn { 
-            width: 40px; height: 40px; border-radius: 50%; border: 2px solid #dee2e6; 
-            background: white; font-weight: 600; color: #555; margin: 0 5px; transition: all 0.2s;
+            width: 40px; height: 40px; border-radius: 8px; /* Bo góc vuông nhẹ cho giống hình mẫu */
+            border: 2px solid #dee2e6; background: white; 
+            font-weight: 700; color: #555; margin: 0 4px; transition: all 0.2s;
         }
         .opt-btn:hover { background: #e9ecef; }
-        /* Hiệu ứng khi chọn ABCD */
         .active-opt { 
             background-color: var(--primary) !important; 
             color: white !important; 
-            border-color: #004494 !important; 
-            font-weight: 800 !important;
-            transform: scale(1.15); /* Phóng to nút */
-            box-shadow: 0 4px 8px rgba(0, 86, 179, 0.3); /* Đổ bóng */
+            border-color: #004085 !important; 
+            box-shadow: 0 4px 8px rgba(0,86,179,0.4);
+            transform: translateY(-2px);
         }
 
-        /* 2. Đúng Sai (ĐÃ SỬA LẠI MẠNH HƠN) */
+        /* === 2. NÚT ĐÚNG/SAI (SỬA LẠI CHO NỔI BẬT) === */
         .tf-btn {
-            width: 65px; padding: 6px 0; font-weight: 600; border: 2px solid #ced4da; 
-            background: white; border-radius: 8px; color: #666; transition: all 0.2s;
+            width: 70px; /* Nút to hơn */
+            padding: 6px 0; 
+            font-weight: 700; 
+            border: 2px solid #ced4da; 
+            background: white; 
+            border-radius: 6px; 
+            color: #666; 
+            transition: all 0.15s ease-in-out;
         }
-        /* Hiệu ứng khi chọn ĐÚNG */
+        
+        /* Khi chọn ĐÚNG -> XANH ĐẬM */
         .tf-active-d { 
             background-color: #198754 !important; /* Xanh lá đậm */
             color: white !important; 
-            border-color: #0f5132 !important; 
-            font-weight: 900 !important; /* Chữ siêu đậm */
-            transform: scale(1.1); /* Phóng to */
-            box-shadow: 0 0 10px rgba(25, 135, 84, 0.5) !important; /* Phát sáng */
+            border-color: #146c43 !important; 
+            box-shadow: 0 4px 8px rgba(25, 135, 84, 0.4) !important;
+            transform: scale(1.05); /* Phóng to nhẹ */
         }
-        /* Hiệu ứng khi chọn SAI */
+
+        /* Khi chọn SAI -> ĐỎ ĐẬM */
         .tf-active-s { 
             background-color: #dc3545 !important; /* Đỏ đậm */
             color: white !important; 
-            border-color: #842029 !important; 
-            font-weight: 900 !important;
-            transform: scale(1.1);
-            box-shadow: 0 0 10px rgba(220, 53, 69, 0.5) !important;
+            border-color: #b02a37 !important; 
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4) !important;
+            transform: scale(1.05); /* Phóng to nhẹ */
         }
 
-        /* === STYLE XEM LẠI BÀI (REVIEW) === */
-        /* Câu làm đúng */
+        /* === 3. GIAO DIỆN XEM LẠI (REVIEW) === */
         .review-correct { background-color: #d1e7dd; border: 1px solid #badbcc; } 
-        /* Câu làm sai */
-        .review-wrong { background-color: #f8d7da; border: 1px solid #f5c6cb; } 
-        /* Nhãn đáp án đúng hiện ra khi sai */
-        .correct-ans-label { font-weight: bold; color: #198754; font-size: 0.9rem; margin-left: 10px; background: #fff; padding: 2px 8px; border-radius: 4px; border: 1px solid #198754; }
-
-        /* === BẢNG XẾP HẠNG === */
-        .rank-1 { color: #ffc107; font-weight: 900; text-shadow: 1px 1px 0 #000; font-size: 1.1em; }
-        .rank-2 { color: #adb5bd; font-weight: 800; font-size: 1.05em; }
-        .rank-3 { color: #cd7f32; font-weight: 800; font-size: 1.05em; }
+        .review-wrong { background-color: #f8d7da; border: 1px solid #f5c6cb; }
+        .ans-badge { font-size: 0.85rem; font-weight: bold; margin-left: 10px; padding: 3px 8px; border-radius: 4px; }
+        .ans-badge-correct { background: #198754; color: white; }
+        .ans-badge-wrong { background: #dc3545; color: white; }
 
         /* Layout */
         #exam-screen { display: none; height: 100vh; }
@@ -71,6 +69,12 @@
         #right-panel { height: 100%; overflow-y: auto; background: white; padding: 15px; }
         iframe { width: 100%; height: 100%; border: none; }
         
+        /* Bộ lọc & Card */
+        .filter-btn { border: 1px solid #ddd; background: white; color: #555; padding: 5px 15px; border-radius: 20px; margin: 3px; }
+        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .exam-card { border-radius: 12px; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; }
+        .exam-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+
         #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; display: flex; justify-content: center; align-items: center; }
     </style>
 </head>
@@ -81,8 +85,9 @@
 <div id="list-screen" class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="text-primary fw-bold m-0"><i class="bi bi-mortarboard-fill"></i> PHÒNG THI ONLINE</h4>
-        <a href="admin.html" class="btn btn-outline-secondary btn-sm">GV</a>
+        <a href="admin.html" class="btn btn-outline-secondary btn-sm">Giáo Viên</a>
     </div>
+
     <div class="card border-0 shadow-sm p-3 mb-4">
         <div id="class-filters" class="mb-2"></div>
         <div class="d-flex overflow-auto border-bottom mb-2 pb-2" id="type-filters" style="white-space: nowrap;">
@@ -95,22 +100,24 @@
         </div>
         <div id="chapter-filters"></div>
     </div>
+
     <div id="exam-grid" class="row g-3"></div>
 </div>
 
 <div id="exam-screen" class="container-fluid">
     <div class="row h-100">
         <div class="col-lg-8 p-0" id="left-panel"><iframe id="pdf-frame"></iframe></div>
+        
         <div class="col-lg-4 d-flex flex-column" id="right-panel">
             <div class="d-flex justify-content-between mb-3">
                 <button onclick="location.reload()" class="btn btn-sm btn-outline-secondary">Thoát</button>
                 <div class="fw-bold text-primary text-truncate" style="max-width: 200px;" id="exam-title-lbl"></div>
             </div>
             
-            <div class="card bg-light border-0 mb-3 p-3 shadow-sm">
+            <div class="card bg-light border-0 mb-3 p-3">
                 <label class="small fw-bold text-secondary">Thông tin thí sinh:</label>
                 <input id="hs-name" class="form-control form-control-sm mb-2" placeholder="Họ và Tên (Bắt buộc)">
-                <input id="hs-id" class="form-control form-control-sm" placeholder="Mã Số (Bắt buộc - Khớp với DS Excel)">
+                <input id="hs-id" class="form-control form-control-sm" placeholder="Mã Số (Bắt buộc)">
             </div>
 
             <div id="result-box" class="d-none mb-3">
@@ -123,7 +130,7 @@
 
                 <div id="rank-list" class="card p-2 small border-warning">
                     <h6 class="fw-bold border-bottom pb-2 mb-2 text-center text-warning-emphasis">
-                        <i class="bi bi-trophy-fill text-warning"></i> BẢNG XẾP HẠNG (Top 10)
+                        <i class="bi bi-trophy-fill text-warning"></i> BẢNG XẾP HẠNG
                     </h6>
                     <ul class="list-group list-group-flush" id="rank-ul">
                         <li class="list-group-item text-center text-muted fst-italic">Đang tải xếp hạng...</li>
@@ -147,17 +154,14 @@
 </div>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxsH2uP6wpdeWoegt2d16tT7RxY7bAgr5at4fEXSwYd7H3XF1o5yG8vBWpC85ND82s2Yg/exec"; // THAY LINK API CỦA BẠN VÀO ĐÂY
+    const API_URL = "https://script.google.com/macros/s/AKfycbxsH2uP6wpdeWoegt2d16tT7RxY7bAgr5at4fEXSwYd7H3XF1o5yG8vBWpC85ND82s2Yg/exec"; // THAY LINK CỦA BẠN
     
     let allExams = [], currentFilter = { class: '6', type: 'tx', chapter: '1' }, currentExam = null, userAnswers = {};
     let isReviewMode = false;
 
-    window.onload = async () => {
-        renderFilters();
-        await loadExams();
-    };
+    window.onload = async () => { renderFilters(); await loadExams(); };
 
-    // --- CÁC HÀM BỘ LỌC & TẢI ĐỀ (GIỮ NGUYÊN) ---
+    // --- CÁC HÀM LỌC ĐỀ (GIỮ NGUYÊN) ---
     function renderFilters() {
         const cDiv = document.getElementById('class-filters');
         let h = '';
@@ -173,7 +177,7 @@
         try {
             const res = await fetch(API_URL + "?action=getExams&t=" + Date.now());
             const json = await res.json(); allExams = json.data; filterExams();
-        } catch(e) { alert("Lỗi: "+e); }
+        } catch(e) { alert("Lỗi tải đề: "+e); }
         document.getElementById('loading').classList.add('d-none');
     }
     function filterExams() {
@@ -186,12 +190,11 @@
                     <div class="small text-muted mb-3 flex-grow-1"><i class="bi bi-clock"></i> ${e.duration}' | ${e.totalQuestions} câu</div>
                     <button class="btn btn-outline-primary btn-sm w-100 fw-bold rounded-pill">Vào Thi</button>
                 </div>
-            </div>`).join('') : '<div class="col-12 text-center text-muted py-5">Chưa có đề thi nào.</div>';
+            </div>`).join('') : '<div class="col-12 text-center text-muted py-5">Không có đề thi nào.</div>';
     }
     function setClass(c, btn) { currentFilter.class=c; document.querySelectorAll('#class-filters .active').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); filterExams(); }
     function setType(t, btn) { currentFilter.type=t; document.querySelectorAll('#type-filters button').forEach(b=>{b.classList.remove('text-primary','fw-bold');b.classList.add('text-secondary')}); btn.classList.remove('text-secondary'); btn.classList.add('text-primary','fw-bold'); document.getElementById('chapter-filters').style.display=t==='tx'?'block':'none'; filterExams(); }
     function setChapter(c, btn) { currentFilter.chapter=c; document.querySelectorAll('#chapter-filters .active').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); filterExams(); }
-
 
     // --- VÀO THI ---
     function startExam(exam) {
@@ -201,7 +204,6 @@
         document.getElementById('exam-title-lbl').innerText = exam.title;
         document.getElementById('pdf-frame').src = exam.pdfLink.replace('/view','/preview');
         
-        // Reset giao diện
         document.getElementById('result-box').classList.add('d-none');
         document.getElementById('submit-area').classList.remove('d-none');
         document.getElementById('hs-name').disabled = false;
@@ -210,7 +212,7 @@
         renderQuestions(exam.structure);
     }
 
-    // --- VẼ CÂU HỎI (ĐÃ CẬP NHẬT GIAO DIỆN) ---
+    // --- VẼ CÂU HỎI (ĐÃ SỬA CSS NÚT ĐÚNG SAI) ---
     function renderQuestions(struct) {
         const qBox = document.getElementById('questions-box'); qBox.innerHTML = '';
         let cfg = (typeof struct === 'string' ? JSON.parse(struct) : struct).config || {mcq:0, tf:0, short:0};
@@ -221,12 +223,25 @@
             for(let i=1;i<=cfg.mcq;i++) h+=`<div class="col-6 col-md-12"><div class="border rounded p-2 d-flex justify-content-between align-items-center bg-white shadow-sm" id="p1-box-${i}"><span class="fw-bold ms-2 badge bg-light text-dark border">${i}</span><div class="d-flex">${['A','B','C','D'].map(o=>`<button class="opt-btn" id="p1-c${i}-${o}" onclick="selMCQ('p1_c${i}','${o}')">${o}</button>`).join('')}</div></div></div>`;
             qBox.innerHTML+=h+'</div>';
         }
-        // 2. Đúng Sai (NÚT TO RÕ)
+        
+        // 2. Đúng Sai (NÚT TO RÕ - CÓ HIỆU ỨNG MỚI)
         if(cfg.tf>0) {
             let h = `<div class="fw-bold text-primary mt-4 small border-bottom pb-1 mb-2">II. ĐÚNG SAI</div>`;
-            for(let i=1;i<=cfg.tf;i++) h+=`<div class="border rounded p-2 mb-3 bg-white shadow-sm" id="p2-box-${i}"><div class="fw-bold small text-secondary mb-2">Câu ${i}</div>${['a','b','c','d'].map(s=>`<div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom"><span class="fw-bold ms-2 text-dark">(${s})</span><div><button class="tf-btn" id="p2-c${i}_${s}-D" onclick="selTF('p2_c${i}_${s}','D')">Đ</button><button class="tf-btn ms-2" id="p2-c${i}_${s}-S" onclick="selTF('p2_c${i}_${s}','S')">S</button></div></div>`).join('')}</div>`;
+            for(let i=1;i<=cfg.tf;i++) h+=`
+                <div class="border rounded p-2 mb-3 bg-white shadow-sm" id="p2-box-${i}">
+                    <div class="fw-bold small text-secondary mb-2">Câu ${i}</div>
+                    ${['a','b','c','d'].map(s=>`
+                    <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                        <span class="fw-bold ms-2 text-dark">(${s})</span>
+                        <div>
+                            <button class="tf-btn" id="p2-c${i}_${s}-D" onclick="selTF('p2_c${i}_${s}','D')">Đ</button>
+                            <button class="tf-btn ms-2" id="p2-c${i}_${s}-S" onclick="selTF('p2_c${i}_${s}','S')">S</button>
+                        </div>
+                    </div>`).join('')}
+                </div>`;
             qBox.innerHTML+=h;
         }
+        
         // 3. Ngắn
         if(cfg.short>0) {
             let h = `<div class="fw-bold text-primary mt-4 small border-bottom pb-1 mb-2">III. TRẢ LỜI NGẮN</div><div class="row g-2">`;
@@ -237,7 +252,7 @@
         if(currentExam.isEssay == true) document.getElementById('essay-area').classList.remove('d-none');
     }
 
-    // --- LOGIC CHỌN ĐÁP ÁN (HIỆU ỨNG MỚI) ---
+    // --- LOGIC CHỌN ĐÁP ÁN (HIỆU ỨNG TÔ ĐẬM) ---
     function selMCQ(k,v) { 
         if(isReviewMode) return;
         userAnswers[k]=v; 
@@ -249,16 +264,14 @@
         if(isReviewMode) return;
         userAnswers[k]=v; 
         const base = k.replace(/_/g,'-');
-        const btnD = document.getElementById(base+'-D');
-        const btnS = document.getElementById(base+'-S');
         
-        // Reset
-        btnD.classList.remove('tf-active-d');
-        btnS.classList.remove('tf-active-s');
+        // Xóa class active cũ
+        document.getElementById(base+'-D').classList.remove('tf-active-d');
+        document.getElementById(base+'-S').classList.remove('tf-active-s');
         
-        // Active
-        if(v==='D') btnD.classList.add('tf-active-d');
-        else btnS.classList.add('tf-active-s');
+        // Thêm class active mới (Xanh hoặc Đỏ)
+        if(v==='D') document.getElementById(base+'-D').classList.add('tf-active-d');
+        else document.getElementById(base+'-S').classList.add('tf-active-s');
     }
 
     // --- NỘP BÀI ---
@@ -276,15 +289,15 @@
         let config = struct.config || {};
         
         let scoreP1=0, scoreP2=0, scoreP3=0;
-        let maxP1 = config.scoreP1 || 3.0; // Điểm tối đa P1
-        let maxP3 = config.scoreP3 || 3.0; // Điểm tối đa P3
+        let maxP1 = config.scoreP1 || 3.0; 
+        let maxP3 = config.scoreP3 || 3.0; 
         
-        // P1 (Chia đều)
+        // P1
         let countP1 = 0;
         for(let i=1; i<=config.mcq; i++) { if(userAnswers[`p1_c${i}`] === key[`p1_c${i}`]) countP1++; }
         if(config.mcq>0) scoreP1 = (maxP1/config.mcq)*countP1;
 
-        // P3 (Chia đều)
+        // P3
         let countP3 = 0;
         for(let i=1; i<=config.short; i++) {
             let u = (userAnswers[`p3_c${i}`]||"").toUpperCase().replace(/\s/g,'');
@@ -293,7 +306,7 @@
         }
         if(config.short>0) scoreP3 = (maxP3/config.short)*countP3;
 
-        // P2 (Thang điểm 0.1 - 0.25 - 0.5 - 1.0)
+        // P2 (Quy tắc 0.1 - 0.25 - 0.5 - 1.0)
         for(let i=1; i<=config.tf; i++) {
             let c=0;
             ['a','b','c','d'].forEach(s=>{ if(userAnswers[`p2_c${i}_${s}`] === key[`p2_c${i}_${s}`]) c++; });
@@ -303,20 +316,17 @@
         let total = (scoreP1+scoreP2+scoreP3).toFixed(2);
         if(total>10) total=10;
 
-        // Upload ảnh tự luận
         let imgs = []; const files = document.getElementById('essay-files').files;
         if(files.length) {
             const toB64=f=>new Promise((r,j)=>{const fr=new FileReader();fr.readAsDataURL(f);fr.onload=()=>r(fr.result);fr.onerror=j});
             for(let f of files) imgs.push(await toB64(f));
         }
 
-        // Gửi kết quả
         await fetch(API_URL, {method:'POST', body:JSON.stringify({
             action:'submitExam', maHS:id, tenHS:hs, maDe:currentExam.id, 
             score:total, studentAnswers:userAnswers, detailResult:{}, images:imgs
         })});
 
-        // Lấy BXH
         const rankRes = await fetch(API_URL + `?action=getRankings&maDe=${currentExam.id}`);
         const rankJson = await rankRes.json();
         
@@ -324,53 +334,52 @@
         document.getElementById('loading').classList.add('d-none');
     }
 
-    // --- HIỂN THỊ KẾT QUẢ & XEM LẠI BÀI (REVIEW) ---
+    // --- HIỂN THỊ KẾT QUẢ & REVIEW ---
     function showResult(score, ranks, key, config) {
         isReviewMode = true;
         document.getElementById('submit-area').classList.add('d-none');
         document.getElementById('result-box').classList.remove('d-none');
         document.getElementById('score-display').innerText = score;
         
-        // Khóa input
         document.getElementById('hs-name').disabled = true;
         document.getElementById('hs-id').disabled = true;
 
-        // Render BXH
+        // BXH
         const rankUl = document.getElementById('rank-ul'); rankUl.innerHTML = '';
         ranks.forEach((r, i) => {
             let cls = i===0?'rank-1':(i===1?'rank-2':(i===2?'rank-3':''));
-            let icon = i<3 ? '<i class="bi bi-star-fill"></i>' : '';
-            rankUl.innerHTML += `<li class="list-group-item d-flex justify-content-between py-1">
-                <span>${i+1}. ${r.tenHS} ${icon}</span> <span class="${cls}">${r.diem}</span>
-            </li>`;
+            rankUl.innerHTML += `<li class="list-group-item d-flex justify-content-between py-1"><span>${i+1}. ${r.tenHS}</span> <span class="${cls}">${r.diem}</span></li>`;
         });
 
-        // Link đáp án (Hiện luôn, không cần điều kiện điểm số theo ý bạn)
+        // NÚT XEM LỜI GIẢI (MỞ TAB MỚI) - LUÔN HIỆN NẾU CÓ LINK
         if(currentExam.solutionLink) {
-            document.getElementById('sol-link-area').innerHTML = `<a href="${currentExam.solutionLink.replace('/view','/preview')}" target="_blank" class="btn btn-primary w-100 fw-bold shadow"><i class="bi bi-file-earmark-check-fill"></i> XEM LỜI GIẢI CHI TIẾT</a>`;
+            // Thay thế view thành preview để xem tốt hơn, và thêm target="_blank"
+            let finalLink = currentExam.solutionLink.replace(/\/view.*/, '/preview');
+            document.getElementById('sol-link-area').innerHTML = `
+                <a href="${finalLink}" target="_blank" class="btn btn-primary w-100 fw-bold shadow">
+                    <i class="bi bi-file-earmark-check-fill"></i> XEM LỜI GIẢI CHI TIẾT
+                </a>`;
         }
 
-        // --- TÔ MÀU ĐÁP ÁN (REVIEW) ---
-        
-        // P1: Trắc nghiệm
+        // --- TÔ MÀU BÀI LÀM (REVIEW) ---
+        // P1
         for(let i=1; i<=config.mcq; i++) {
             let u = userAnswers[`p1_c${i}`];
             let k = key[`p1_c${i}`];
             let box = document.getElementById(`p1-box-${i}`);
             
-            // Khóa nút
             ['A','B','C','D'].forEach(o=>document.getElementById(`p1-c${i}-${o}`).disabled=true);
 
             if(u===k) { 
-                box.classList.add('review-correct'); // Đúng -> Xanh
+                box.classList.add('review-correct'); 
             } else {
-                box.classList.add('review-wrong'); // Sai -> Đỏ
+                box.classList.add('review-wrong'); 
                 // Hiện đáp án đúng
-                box.innerHTML += `<span class="correct-ans-label">Đúng: ${k}</span>`;
+                box.innerHTML += `<span class="ans-badge ans-badge-correct">ĐA: ${k}</span>`;
             }
         }
 
-        // P2: Đúng Sai
+        // P2
         for(let i=1; i<=config.tf; i++) {
             ['a','b','c','d'].forEach(s => {
                 let u = userAnswers[`p2_c${i}_${s}`];
@@ -381,18 +390,20 @@
                 btnD.disabled=true; btnS.disabled=true;
 
                 if(u !== k) {
-                    // Tô viền đỏ vào lựa chọn sai của HS
-                    if(u==='D') btnD.style.borderColor = "red";
-                    if(u==='S') btnS.style.borderColor = "red";
+                    // Tô viền đỏ lựa chọn sai
+                    if(u==='D') btnD.style.border = "2px solid red";
+                    if(u==='S') btnS.style.border = "2px solid red";
                     
-                    // Hiện đáp án đúng bên cạnh
-                    let div = btnS.parentNode;
-                    div.innerHTML += `<span class="correct-ans-label">${k==='D'?'Đúng':'Sai'}</span>`;
+                    // Hiện đáp án đúng
+                    let span = document.createElement('span');
+                    span.className = "ans-badge ans-badge-correct";
+                    span.innerText = k==='D' ? "Đúng" : "Sai";
+                    btnS.parentNode.appendChild(span);
                 }
             });
         }
 
-        // P3: Trả lời ngắn
+        // P3
         for(let i=1; i<=config.short; i++) {
             let inp = document.getElementById(`p3-c${i}`);
             let u = (inp.value||"").toUpperCase();
