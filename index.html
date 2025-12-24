@@ -3,214 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phòng Thi Online - An Phúc Education</title>
+    <title>Phòng Thi Online</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
     <style>
-        :root { --primary-blue: #0056b3; --active-purple: #6f42c1; }
-        body { background: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+        :root { --primary: #0056b3; --accent: #dc3545; }
+        body { background: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
         
-        /* Menu Lớp (Pill) */
-        .class-filter-btn {
-            border: 1px solid #dee2e6; background: white; color: #555;
-            border-radius: 20px; padding: 5px 15px; margin-right: 5px; transition: 0.2s;
-        }
-        .class-filter-btn.active { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
+        /* Bộ lọc */
+        .filter-btn { border: 1px solid #ddd; background: white; color: #555; padding: 5px 15px; border-radius: 20px; transition: 0.2s; margin-right: 5px; margin-bottom: 5px; }
+        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .type-tab { padding: 8px 15px; cursor: pointer; color: #666; font-weight: 500; border-bottom: 3px solid transparent; }
+        .type-tab.active { color: var(--primary); border-color: var(--primary); font-weight: bold; }
         
-        /* Tab Loại thi */
-        .type-tab {
-            cursor: pointer; padding: 10px 15px; font-weight: 500; color: #666;
-            border-bottom: 3px solid transparent; display: inline-block;
-        }
-        .type-tab.active { color: var(--primary-blue); border-bottom-color: var(--primary-blue); font-weight: bold; }
-        
-        /* Chip Chương */
-        .chapter-chip {
-            font-size: 0.85rem; border: 1px solid var(--active-purple); color: var(--active-purple);
-            background: white; border-radius: 8px; padding: 3px 10px; margin: 3px; cursor: pointer;
-        }
-        .chapter-chip.active { background: var(--active-purple); color: white; }
-
         /* Card đề thi */
-        .exam-card { cursor: pointer; transition: 0.2s; border: none; border-radius: 12px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .exam-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .exam-card { border: none; border-radius: 12px; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer; }
+        .exam-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+        /* Làm bài */
+        #exam-screen { display: none; height: 100vh; }
+        #left-panel { height: 100%; border-right: 1px solid #ddd; padding: 0; background: #555; }
+        #right-panel { height: 100%; overflow-y: auto; background: white; padding: 15px; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* Nút chọn */
+        .opt-btn { width: 35px; height: 35px; border-radius: 50%; border: 1px solid #ccc; background: white; font-weight: 600; color: #555; margin: 0 2px; }
+        .active-opt { background-color: var(--primary) !important; color: white !important; border-color: var(--primary) !important; }
+        
+        .tf-btn { width: 45px; font-size: 0.8rem; font-weight: bold; }
+        .tf-active-d { background: #198754 !important; color: white !important; }
+        .tf-active-s { background: #dc3545 !important; color: white !important; }
+        .tf-selected { font-weight: 900; transform: scale(1.1); } /* Hiệu ứng in đậm khi chọn */
     </style>
 </head>
 <body>
 
-<div id="exam-list-screen" class="container py-4">
+<div id="loading" class="position-fixed top-0 start-0 w-100 h-100 bg-white d-flex justify-content-center align-items-center" style="z-index:9999; opacity:0.9">
+    <div class="spinner-border text-primary"></div>
+</div>
+
+<div id="list-screen" class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold text-primary m-0"><i class="bi bi-mortarboard-fill"></i> PHÒNG THI ONLINE</h4>
-        <a href="admin.html" class="btn btn-outline-secondary btn-sm"><i class="bi bi-gear"></i> GV</a>
+        <h4 class="text-primary fw-bold m-0"><i class="bi bi-mortarboard-fill"></i> PHÒNG THI ONLINE</h4>
+        <a href="admin.html" class="btn btn-outline-secondary btn-sm">GV</a>
     </div>
 
-    <div class="mb-3 d-flex flex-wrap" id="class-filters">
+    <div class="card border-0 shadow-sm p-3 mb-4">
+        <div class="mb-3" id="class-filters"></div> <div class="d-flex overflow-auto border-bottom mb-3" id="type-filters">
+            <div class="type-tab active" onclick="setType('tx')">Kiểm tra thường xuyên</div>
+            <div class="type-tab" onclick="setType('gk1')">Giữa kỳ 1</div>
+            <div class="type-tab" onclick="setType('ck1')">Cuối kỳ 1</div>
+            <div class="type-tab" onclick="setType('gk2')">Giữa kỳ 2</div>
+            <div class="type-tab" onclick="setType('ck2')">Cuối kỳ 2</div>
+            <div class="type-tab" onclick="setType('thpt')">Thử THPT QG</div>
         </div>
+        <div id="chapter-filters" style="display: block;"></div> </div>
 
-    <div class="border-bottom mb-3" style="white-space: nowrap; overflow-x: auto;">
-        <div id="type-filters" class="d-flex">
-            <div class="type-tab active" onclick="selectType('tx')">Kiểm tra thường xuyên</div>
-            <div class="type-tab" onclick="selectType('gk1')">Giữa kỳ 1</div>
-            <div class="type-tab" onclick="selectType('ck1')">Cuối kỳ 1</div>
-            <div class="type-tab" onclick="selectType('gk2')">Giữa kỳ 2</div>
-            <div class="type-tab" onclick="selectType('ck2')">Cuối kỳ 2</div>
-            <div class="type-tab" onclick="selectType('thpt')">Thử THPT QG</div>
-        </div>
-    </div>
-
-    <div id="chapter-filters" class="mb-4 d-flex flex-wrap" style="display: block;">
-        </div>
-
-    <div id="loading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
     <div id="exam-grid" class="row g-3"></div>
 </div>
 
-<div id="exam-screen" style="display:none">
-    <div class="container-fluid h-100">
-        <div class="row h-100">
-            <div class="col-lg-8 h-100 p-0 border-end"><iframe id="pdf-frame" style="width:100%;height:100vh;border:none"></iframe></div>
-            <div class="col-lg-4 h-100 overflow-auto p-3 bg-white" id="right-panel">
-                <button onclick="location.reload()" class="btn btn-sm btn-outline-secondary mb-2">Thoát</button>
-                <div id="questions-container"></div>
-                <button onclick="submitExam()" class="btn btn-success w-100 mt-3">Nộp Bài</button>
+<div id="exam-screen" class="container-fluid">
+    <div class="row h-100">
+        <div class="col-lg-8 p-0" id="left-panel"><iframe id="pdf-frame"></iframe></div>
+        <div class="col-lg-4 d-flex flex-column" id="right-panel">
+            <div class="d-flex justify-content-between mb-3">
+                <button onclick="location.reload()" class="btn btn-sm btn-outline-secondary">Thoát</button>
+                <div class="fw-bold text-primary" id="exam-title-lbl"></div>
+            </div>
+            
+            <div class="card bg-light border-0 mb-3 p-2">
+                <input id="hs-name" class="form-control form-control-sm mb-1" placeholder="Họ tên">
+                <input id="hs-id" class="form-control form-control-sm" placeholder="Mã HS">
+            </div>
+
+            <div id="result-box" class="alert alert-success d-none"></div>
+
+            <div id="questions-box" class="flex-grow-1 overflow-auto"></div>
+
+            <div class="mt-3">
+                <input type="file" id="essay-files" class="form-control form-control-sm mb-2" multiple accept="image/*">
+                <button onclick="submitExam()" id="btn-submit" class="btn btn-success w-100 fw-bold">NỘP BÀI</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzZWaaHxROI9_r4LluKvL-cWdLsTmaZ90Euw27tO53AGUkRQ5N-YLegV7u_5zAr5QTYHg/exec"; // THAY LINK
+    const API_URL = "https://script.google.com/macros/s/AKfycbxgSg9cJxJ9JQsjUo-vgt60GwkUX-PCOgL-oAs_rOxC19AJ4H7ISbai7-0pDgXJraFc7g/exec"; // THAY LINK
     
-    let allExams = []; // Chứa toàn bộ đề
-    let currentFilter = {
-        classGrade: '6', // Mặc định lớp 6
-        type: 'tx',      // Mặc định thường xuyên
-        chapter: '1'     // Mặc định chương 1
+    let allExams = [], currentFilter = { class: '6', type: 'tx', chapter: '1' }, currentExam = null, userAnswers = {};
+
+    window.onload = async () => {
+        renderFilters();
+        await loadExams();
     };
 
-    window.onload = async function() {
-        renderClassButtons();
-        renderChapterButtons();
-        await fetchExams();
-    };
+    function renderFilters() {
+        const cDiv = document.getElementById('class-filters');
+        let h = '';
+        [6,7,8,9,10,11,12].forEach(c => h+=`<button class="filter-btn ${c==6?'active':''}" onclick="setClass('${c}',this)">Lớp ${c}</button>`);
+        h+=`<button class="filter-btn" onclick="setClass('TN',this)">TN THPT</button>`;
+        cDiv.innerHTML = h;
 
-    // 1. RENDER NÚT LỚP
-    function renderClassButtons() {
-        const div = document.getElementById('class-filters');
-        let html = '';
-        [6, 7, 8, 9, 10, 11, 12].forEach(c => {
-            html += `<button class="class-filter-btn ${c==6?'active':''}" onclick="selectClass('${c}', this)">Lớp ${c}</button>`;
-        });
-        html += `<button class="class-filter-btn" onclick="selectClass('TN', this)">TN THPT</button>`;
-        div.innerHTML = html;
+        const chDiv = document.getElementById('chapter-filters');
+        let ch = '';
+        for(let i=1;i<=8;i++) ch+=`<button class="filter-btn small ${i==1?'active':''}" onclick="setChapter('${i}',this)">Chương ${i}</button>`;
+        chDiv.innerHTML = ch;
     }
 
-    // 2. RENDER NÚT CHƯƠNG
-    function renderChapterButtons() {
-        const div = document.getElementById('chapter-filters');
-        let html = '';
-        for(let i=1; i<=8; i++) {
-            html += `<span class="chapter-chip ${i==1?'active':''}" onclick="selectChapter('${i}', this)">Chương ${i}</span>`;
-        }
-        div.innerHTML = html;
-    }
-
-    // --- LOGIC LỌC ---
-    function selectClass(cls, btn) {
-        currentFilter.classGrade = cls.toString();
-        // Highlight active
-        document.querySelectorAll('.class-filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        filterExams();
-    }
-
-    function selectType(type) {
-        currentFilter.type = type;
-        // Highlight active tab
-        document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active');
-        
-        // Chỉ hiện chương nếu là 'tx'
-        const chapterDiv = document.getElementById('chapter-filters');
-        if(type === 'tx') {
-            chapterDiv.style.display = 'flex';
-            currentFilter.chapter = '1'; // Reset về chương 1
-            renderChapterButtons(); // Re-render để reset active
-        } else {
-            chapterDiv.style.display = 'none';
-            currentFilter.chapter = ""; // Không lọc chương
-        }
-        filterExams();
-    }
-
-    function selectChapter(ch, btn) {
-        currentFilter.chapter = ch.toString();
-        document.querySelectorAll('.chapter-chip').forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        filterExams();
-    }
-
-    // --- TẢI VÀ LỌC DỮ LIỆU ---
-    async function fetchExams() {
+    async function loadExams() {
+        document.getElementById('loading').classList.remove('d-none');
         try {
             const res = await fetch(API_URL + "?action=getExams&t=" + Date.now());
             const json = await res.json();
             allExams = json.data;
-            document.getElementById('loading').style.display = 'none';
-            filterExams(); // Lọc lần đầu
-        } catch(e) { alert("Lỗi tải đề: "+e); }
+            filterExams();
+        } catch(e) { alert("Lỗi tải: "+e); }
+        document.getElementById('loading').classList.add('d-none');
     }
 
     function filterExams() {
+        const list = allExams.filter(e => e.classGrade == currentFilter.class && e.examType == currentFilter.type && (currentFilter.type!=='tx' || e.chapter == currentFilter.chapter));
         const grid = document.getElementById('exam-grid');
-        grid.innerHTML = '';
-
-        // Logic Lọc Chính
-        const filtered = allExams.filter(ex => {
-            // 1. Lọc Lớp
-            const matchClass = ex.classGrade == currentFilter.classGrade;
-            // 2. Lọc Loại
-            const matchType = ex.examType == currentFilter.type;
-            // 3. Lọc Chương (Chỉ khi là thường xuyên)
-            let matchChapter = true;
-            if(currentFilter.type === 'tx') {
-                matchChapter = ex.chapter == currentFilter.chapter;
-            }
-            
-            return matchClass && matchType && matchChapter;
-        });
-
-        if(filtered.length === 0) {
-            grid.innerHTML = `<div class="col-12 text-center text-muted py-5">
-                Chưa có đề thi nào cho <b>Lớp ${currentFilter.classGrade}</b> - Mục này.
-            </div>`;
-            return;
-        }
-
-        grid.innerHTML = filtered.map(ex => `
+        grid.innerHTML = list.length ? list.map(e => `
             <div class="col-md-6 col-lg-4 col-xl-3">
-                <div class="exam-card h-100 p-3 text-center border">
-                    <h6 class="fw-bold text-truncate">${ex.title}</h6>
-                    <div class="mb-3 text-muted small">
-                        <i class="bi bi-clock"></i> ${ex.duration}' | ${ex.totalQuestions} câu
-                    </div>
-                    <button class="btn btn-sm btn-primary w-100" onclick='startExam(${JSON.stringify(ex).replace(/'/g,"&#39;")})'>Vào Thi</button>
+                <div class="exam-card p-3 h-100 text-center" onclick='startExam(${JSON.stringify(e).replace(/'/g,"&#39;")})'>
+                    <h6 class="fw-bold text-truncate">${e.title}</h6>
+                    <div class="small text-muted mb-3">${e.duration} phút | ${e.totalQuestions} câu</div>
+                    <button class="btn btn-primary btn-sm w-100">Vào Thi</button>
                 </div>
-            </div>
-        `).join('');
+            </div>`).join('') : '<div class="col-12 text-center text-muted">Chưa có đề thi.</div>';
     }
 
-    // --- CÁC HÀM LÀM BÀI (startExam, submitExam...) ---
-    // (Bạn copy nguyên xi các hàm startExam, renderQuestions, submitExam từ file index.html trước đó vào đây nhé)
-    // Code logic làm bài không thay đổi, chỉ thay đổi cách hiển thị danh sách đề bên ngoài.
-    
+    function setClass(c, btn) { currentFilter.class=c; document.querySelectorAll('#class-filters .active').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); filterExams(); }
+    function setType(t) { currentFilter.type=t; document.querySelectorAll('.type-tab').forEach(b=>b.classList.remove('active')); event.target.classList.add('active'); 
+        document.getElementById('chapter-filters').style.display = t==='tx'?'block':'none'; filterExams(); 
+    }
+    function setChapter(c, btn) { currentFilter.chapter=c; document.querySelectorAll('#chapter-filters .active').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); filterExams(); }
+
     function startExam(exam) {
-        // ... (Code cũ) ...
-        alert("Bắt đầu làm: " + exam.title); // Demo
-        // document.getElementById('exam-list-screen').style.display = 'none';
-        // document.getElementById('exam-screen').style.display = 'block';
-        // ...
+        currentExam = exam; userAnswers = {};
+        document.getElementById('list-screen').style.display = 'none';
+        document.getElementById('exam-screen').style.display = 'block';
+        document.getElementById('exam-title-lbl').innerText = exam.title;
+        document.getElementById('pdf-frame').src = exam.pdfLink.replace('/view','/preview');
+        
+        // Render câu hỏi
+        const qBox = document.getElementById('questions-box'); qBox.innerHTML = '';
+        const struct = typeof exam.structure==='string'?JSON.parse(exam.structure):exam.structure;
+        const cfg = struct.config || {};
+
+        if(cfg.mcq>0) {
+            let h = `<div class="fw-bold text-primary mt-2">I. Trắc nghiệm</div><div class="row g-2">`;
+            for(let i=1;i<=cfg.mcq;i++) h+=`<div class="col-6 col-md-4"><div class="border rounded p-1 d-flex justify-content-between align-items-center"><span class="fw-bold ms-2">${i}</span><div>${['A','B','C','D'].map(o=>`<button class="opt-btn" id="p1-c${i}-${o}" onclick="selMCQ('p1_c${i}','${o}')">${o}</button>`).join('')}</div></div></div>`;
+            qBox.innerHTML+=h+'</div>';
+        }
+        if(cfg.tf>0) {
+            let h = `<div class="fw-bold text-primary mt-3">II. Đúng Sai</div>`;
+            for(let i=1;i<=cfg.tf;i++) h+=`<div class="border rounded p-2 mb-2"><div class="fw-bold small">Câu ${i}</div>${['a','b','c','d'].map(s=>`<div class="d-flex justify-content-between align-items-center mt-1 border-bottom pb-1"><span class="small fst-italic">(${s})</span><div><button class="btn btn-sm btn-outline-success tf-btn" id="p2-c${i}_${s}-D" onclick="selTF('p2_c${i}_${s}','D')">Đ</button><button class="btn btn-sm btn-outline-danger tf-btn" id="p2-c${i}_${s}-S" onclick="selTF('p2_c${i}_${s}','S')">S</button></div></div>`).join('')}</div>`;
+            qBox.innerHTML+=h;
+        }
+        if(cfg.short>0) {
+            let h = `<div class="fw-bold text-primary mt-3">III. Ngắn</div><div class="row g-2">`;
+            for(let i=1;i<=cfg.short;i++) h+=`<div class="col-6"><div class="input-group input-group-sm"><span class="input-group-text">${i}</span><input class="form-control" onblur="userAnswers['p3_c${i}']=this.value.trim()"></div></div>`;
+            qBox.innerHTML+=h+'</div>';
+        }
+    }
+
+    function selMCQ(k,v) { userAnswers[k]=v; ['A','B','C','D'].forEach(o=>document.getElementById(k.replace('_','-')+'-'+o).classList.remove('active-opt')); document.getElementById(k.replace('_','-')+'-'+v).classList.add('active-opt'); }
+    
+    function selTF(k,v) { 
+        userAnswers[k]=v; 
+        const base = k.replace(/_/g,'-');
+        const btnD = document.getElementById(base+'-D');
+        const btnS = document.getElementById(base+'-S');
+        
+        btnD.classList.remove('tf-active-d', 'tf-selected');
+        btnS.classList.remove('tf-active-s', 'tf-selected');
+        
+        if(v==='D') { btnD.classList.add('tf-active-d', 'tf-selected'); }
+        else { btnS.classList.add('tf-active-s', 'tf-selected'); }
+    }
+
+    async function submitExam() {
+        const hs = document.getElementById('hs-name').value;
+        if(!hs) return alert("Nhập tên!");
+        if(!confirm("Nộp bài?")) return;
+        document.getElementById('loading').classList.remove('d-none');
+
+        // Tính điểm (Thang 10)
+        let struct = typeof currentExam.structure==='string'?JSON.parse(currentExam.structure):currentExam.structure;
+        let key = struct.answers || {};
+        let score = 0, p1=0, p2=0, p3=0; // Cần tính kỹ hơn ở đây nếu muốn chuẩn cấu trúc 2025, tạm thời tính đơn giản
+        
+        // Logic tính điểm cơ bản (Bạn có thể customize lại đoạn này)
+        // Hiện tại: Đếm số ý đúng / Tổng ý
+        let correct=0, total=0;
+        for(let k in key) { total++; if(userAnswers[k] && userAnswers[k].toUpperCase()===key[k]) correct++; }
+        score = (correct/total*10).toFixed(2);
+
+        // Upload ảnh
+        let imgs = [];
+        const files = document.getElementById('essay-files').files;
+        if(files.length) {
+            const toB64 = f => new Promise((r,j)=>{const fr=new FileReader();fr.readAsDataURL(f);fr.onload=()=>r(fr.result);fr.onerror=j});
+            for(let f of files) imgs.push(await toB64(f));
+        }
+
+        await fetch(API_URL, {method:'POST', body:JSON.stringify({action:'submitExam', maHS:document.getElementById('hs-id').value, tenHS:hs, maDe:currentExam.id, score:score, studentAnswers:userAnswers, detailResult:{}, images:imgs})});
+        
+        // Hiện kết quả
+        let solHtml = '';
+        if(currentExam.solutionLink && parseFloat(score) >= 5.0) {
+            solHtml = `<a href="${currentExam.solutionLink.replace('/view','/preview')}" target="_blank" class="btn btn-success mt-2">Xem Đáp Án Chi Tiết</a>`;
+        } else if (currentExam.solutionLink) {
+            solHtml = `<div class="text-danger small mt-2">Cần >= 5.0 điểm để xem đáp án.</div>`;
+        }
+
+        document.getElementById('result-box').innerHTML = `<h4>Điểm: ${score}</h4>${solHtml}`;
+        document.getElementById('result-box').classList.remove('d-none');
+        document.getElementById('btn-submit').classList.add('d-none');
+        document.getElementById('loading').classList.add('d-none');
     }
 </script>
 </body>
