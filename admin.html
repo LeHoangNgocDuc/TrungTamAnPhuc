@@ -6,18 +6,30 @@
     <title>Admin - Quản Trị Hệ Thống</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     
     <style>
-        body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; padding-bottom: 50px; }
-        .nav-pills .nav-link { border-radius: 8px; font-weight: 600; color: #555; margin-right: 5px; padding: 10px 15px; cursor: pointer; }
-        .nav-pills .nav-link.active { background-color: #0d6efd; color: white; box-shadow: 0 2px 5px rgba(13,110,253,0.3); }
-        .card { border: none; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; padding-bottom: 80px; }
+        
+        /* Navbar & Tabs */
+        .nav-pills .nav-link { border-radius: 8px; font-weight: 600; color: #555; margin-right: 5px; padding: 10px 15px; cursor: pointer; transition: 0.2s; }
+        .nav-pills .nav-link:hover { background-color: #e9ecef; }
+        .nav-pills .nav-link.active { background-color: #0d6efd; color: white; box-shadow: 0 4px 6px rgba(13,110,253,0.3); }
+        
+        /* Cards */
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .card-header { border-radius: 12px 12px 0 0 !important; padding: 15px 20px; }
+        
+        /* Form Elements */
+        .form-label { font-weight: 600; font-size: 0.9rem; color: #495057; }
+        .form-select, .form-control { border-radius: 8px; padding: 10px; }
+        .form-select:focus, .form-control:focus { box-shadow: 0 0 0 3px rgba(13,110,253,0.15); border-color: #0d6efd; }
     </style>
 
     <script>
+        // Kiểm tra đăng nhập
         if (!sessionStorage.getItem("isAdmin")) window.location.href = "login.html";
     </script>
 </head>
@@ -26,9 +38,11 @@
     <nav class="navbar navbar-dark bg-primary shadow mb-4 sticky-top">
         <div class="container">
             <span class="navbar-brand fw-bold h1 m-0"><i class="bi bi-shield-lock-fill"></i> QUẢN TRỊ VIÊN</span>
-            <div>
-                <a href="index.html" class="btn btn-light btn-sm fw-bold text-primary" target="_blank"><i class="bi bi-phone"></i> Xem Trang HS</a>
-                <button onclick="sessionStorage.clear();location.href='login.html'" class="btn btn-outline-light btn-sm ms-2">Thoát</button>
+            <div class="d-flex gap-2">
+                <a href="index.html" class="btn btn-light btn-sm fw-bold text-primary shadow-sm" target="_blank">
+                    <i class="bi bi-phone"></i> Xem Giao Diện HS
+                </a>
+                <button onclick="sessionStorage.clear();location.href='login.html'" class="btn btn-outline-light btn-sm fw-bold">Thoát</button>
             </div>
         </div>
     </nav>
@@ -48,7 +62,7 @@
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="tab-rank" data-bs-toggle="pill" data-bs-target="#pills-rank" type="button" role="tab">
-                    <i class="bi bi-trophy-fill"></i> 3. Kết Quả Thi
+                    <i class="bi bi-trophy-fill"></i> 3. Kết Quả & Thống Kê
                 </button>
             </li>
         </ul>
@@ -61,13 +75,13 @@
                         <i class="bi bi-file-earmark-spreadsheet-fill"></i> NHẬP DANH SÁCH TỪ EXCEL
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-light border border-success mb-3">
+                        <div class="alert alert-light border-start border-success border-4 mb-3 shadow-sm">
                             <strong><i class="bi bi-lightbulb-fill text-warning"></i> Hướng dẫn:</strong><br>
                             Tạo file Excel (.xlsx) gồm 3 cột theo thứ tự: 
                             <span class="badge bg-secondary">Mã HS</span> 
-                            <span class="badge bg-secondary">Họ và Tên</span> 
-                            <span class="badge bg-secondary">Lớp</span> (Ví dụ: 6A, 9B, 10A...)<br>
-                            <em>Hệ thống sẽ tự động thêm vào Sheet "DATA_HOCSINH".</em>
+                            <span class="badge bg-secondary">Họ Tên</span> 
+                            <span class="badge bg-secondary">Lớp</span> (VD: 6A, 9B...).<br>
+                            <em>Hệ thống sẽ tự động thêm vào database.</em>
                         </div>
                         
                         <div class="input-group mb-3">
@@ -82,15 +96,15 @@
 
             <div class="tab-pane fade" id="pills-exam" role="tabpanel" aria-labelledby="tab-exam">
                 <div class="card">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0 fw-bold">NHẬP ĐỀ THI MỚI</h5>
-                        <button onclick="location.reload()" class="btn btn-sm btn-light text-primary fw-bold">Làm mới</button>
+                        <button onclick="location.reload()" class="btn btn-sm btn-light text-primary fw-bold rounded-pill px-3">Làm mới</button>
                     </div>
                     <div class="card-body">
-                        <h6 class="text-primary fw-bold border-bottom pb-2 mb-3">A. Phân loại</h6>
+                        <h6 class="text-primary fw-bold border-bottom pb-2 mb-3">A. Phân loại & Thông tin chung</h6>
                         <div class="row g-3 mb-3">
                             <div class="col-md-3">
-                                <label class="form-label small text-muted">Lớp</label>
+                                <label class="form-label">Khối lớp</label>
                                 <select id="exam-class" class="form-select bg-light">
                                     <option value="6">Lớp 6</option><option value="7">Lớp 7</option>
                                     <option value="8">Lớp 8</option><option value="9">Lớp 9</option>
@@ -99,16 +113,15 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label small text-muted">Loại thi</label>
+                                <label class="form-label">Loại kỳ thi</label>
                                 <select id="exam-type" class="form-select bg-light" onchange="toggleChapter()">
                                     <option value="tx">Thường xuyên</option>
                                     <option value="gk1">Giữa kỳ 1</option><option value="ck1">Cuối kỳ 1</option>
                                     <option value="gk2">Giữa kỳ 2</option><option value="ck2">Cuối kỳ 2</option>
-                                    <option value="thpt">Thử THPT QG</option>
                                 </select>
                             </div>
                             <div class="col-md-3" id="div-chapter">
-                                <label class="form-label small text-muted">Chương</label>
+                                <label class="form-label">Chương</label>
                                 <select id="exam-chapter" class="form-select bg-light">
                                     <option value="1">Chương 1</option><option value="2">Chương 2</option>
                                     <option value="3">Chương 3</option><option value="4">Chương 4</option>
@@ -117,57 +130,57 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label small text-muted">Thời gian</label>
+                                <label class="form-label">Thời gian (phút)</label>
                                 <input type="number" id="exam-duration" class="form-control" value="90">
                             </div>
                         </div>
 
                         <div class="row g-3 mb-4">
-                            <div class="col-md-3"><input type="text" id="exam-id" class="form-control" placeholder="Mã Đề (VD: TOAN10-GK1)"></div>
-                            <div class="col-md-9"><input type="text" id="exam-title" class="form-control" placeholder="Tên Đề Thi"></div>
+                            <div class="col-md-3"><label class="form-label">Mã Đề (Duy nhất)</label><input type="text" id="exam-id" class="form-control" placeholder="VD: TOAN10-GK1"></div>
+                            <div class="col-md-9"><label class="form-label">Tên Đề Thi</label><input type="text" id="exam-title" class="form-control" placeholder="VD: Kiểm tra Giữa kì 1..."></div>
                         </div>
 
                         <h6 class="text-primary fw-bold border-bottom pb-2 mb-3">B. Link File (Google Drive)</h6>
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label class="text-danger fw-bold small">Link Đề Thi (PDF) *</label>
-                                <input type="text" id="link-exam" class="form-control" placeholder="Dán link Drive...">
+                                <label class="form-label text-danger">Link Đề Thi (PDF) *</label>
+                                <input type="text" id="link-exam" class="form-control" placeholder="Dán link Drive đề...">
                             </div>
                             <div class="col-md-6">
-                                <label class="text-success fw-bold small">Link Lời Giải (PDF)</label>
-                                <input type="text" id="link-sol" class="form-control" placeholder="Dán link Drive...">
+                                <label class="form-label text-success">Link Lời Giải (PDF)</label>
+                                <input type="text" id="link-sol" class="form-control" placeholder="Dán link Drive giải...">
                             </div>
                             <div class="col-12 mt-2">
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="is-essay">
-                                    <label class="form-check-label fw-bold">Cho phép nộp Tự luận (Ảnh)</label>
+                                    <label class="form-check-label fw-bold" for="is-essay">Cho phép nộp ảnh Tự luận</label>
                                 </div>
                             </div>
                         </div>
 
-                        <h6 class="text-primary fw-bold border-bottom pb-2 mb-3 mt-4">C. Đáp án & Điểm số</h6>
-                        <div class="row g-3 mb-3 bg-light p-3 rounded">
+                        <h6 class="text-primary fw-bold border-bottom pb-2 mb-3 mt-4">C. Cấu hình Điểm & Đáp án</h6>
+                        <div class="row g-3 mb-3 bg-light p-3 rounded border">
                             <div class="col-md-4">
-                                <label class="small text-muted">Điểm P1 (TN)</label>
-                                <input type="number" id="score-p1" class="form-control fw-bold" value="3.0" step="0.1">
+                                <label class="form-label small text-muted">Điểm P1 (Trắc nghiệm)</label>
+                                <input type="number" id="score-p1" class="form-control fw-bold text-primary" value="3.0" step="0.1">
                             </div>
                             <div class="col-md-4">
-                                <label class="small text-muted">Điểm P2 (Đ/S)</label>
-                                <input type="text" class="form-control" value="Auto (0.1 - 1.0)" disabled>
+                                <label class="form-label small text-muted">Điểm P2 (Đúng/Sai)</label>
+                                <input type="text" class="form-control text-muted" value="Tự động (0.1 - 1.0)" disabled>
                             </div>
                             <div class="col-md-4">
-                                <label class="small text-muted">Điểm P3 (Ngắn)</label>
-                                <input type="number" id="score-p3" class="form-control fw-bold" value="3.0" step="0.1">
+                                <label class="form-label small text-muted">Điểm P3 (Trả lời ngắn)</label>
+                                <input type="number" id="score-p3" class="form-control fw-bold text-primary" value="3.0" step="0.1">
                             </div>
                         </div>
 
                         <div class="mb-3 d-flex gap-2">
                             <input type="file" id="word-upload" accept=".docx" class="d-none" onchange="handleWordUpload(this)">
-                            <button onclick="document.getElementById('word-upload').click()" class="btn btn-warning btn-sm fw-bold">
-                                <i class="bi bi-file-word"></i> Import Word
+                            <button onclick="document.getElementById('word-upload').click()" class="btn btn-warning btn-sm fw-bold shadow-sm">
+                                <i class="bi bi-file-word"></i> Import Đáp án từ Word
                             </button>
-                            <button onclick="generateForm()" class="btn btn-secondary btn-sm fw-bold">
-                                <i class="bi bi-pencil"></i> Vẽ Form Thủ Công
+                            <button onclick="generateForm()" class="btn btn-secondary btn-sm fw-bold shadow-sm">
+                                <i class="bi bi-pencil"></i> Nhập Tay
                             </button>
                         </div>
 
@@ -189,17 +202,52 @@
             <div class="tab-pane fade" id="pills-rank" role="tabpanel" aria-labelledby="tab-rank">
                 <div class="card border-warning">
                     <div class="card-header bg-warning text-dark fw-bold">
-                        TRA CỨU KẾT QUẢ THI
+                        <i class="bi bi-search"></i> TRA CỨU KẾT QUẢ THI
                     </div>
                     <div class="card-body">
-                        <div class="row g-2 mb-3">
-                            <div class="col-9"><input type="text" id="view-exam-id" class="form-control" placeholder="Nhập Mã Đề (VD: TOAN10-GK1)"></div>
-                            <div class="col-3"><button onclick="viewRankings()" class="btn btn-primary w-100 fw-bold">XEM</button></div>
+                        
+                        <div class="row g-2 mb-3 align-items-end">
+                            <div class="col-md-3">
+                                <label class="small fw-bold text-muted">1. Chọn Khối</label>
+                                <select id="filter-grade" class="form-select" onchange="updateAdminFilters()">
+                                    <option value="6">Khối 6</option><option value="7">Khối 7</option>
+                                    <option value="8">Khối 8</option><option value="9">Khối 9</option>
+                                    <option value="10">Khối 10</option><option value="11">Khối 11</option><option value="12">Khối 12</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="small fw-bold text-muted">2. Chọn Lớp</label>
+                                <select id="filter-class" class="form-select">
+                                    <option value="">Tất cả các lớp</option>
+                                    </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="small fw-bold text-muted">3. Chọn Đề Thi</label>
+                                <select id="filter-exam" class="form-select">
+                                    <option value="">Đang tải danh sách đề...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button onclick="viewRankings()" class="btn btn-primary w-100 fw-bold">XEM</button>
+                            </div>
                         </div>
-                        <table class="table table-bordered table-hover small">
-                            <thead class="table-dark"><tr><th>#</th><th>Tên HS</th><th>Mã HS</th><th>Điểm</th><th>Thời gian</th></tr></thead>
-                            <tbody id="rank-table-body"><tr><td colspan="5" class="text-center text-muted">Chưa có dữ liệu</td></tr></tbody>
-                        </table>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle shadow-sm">
+                                <thead class="table-dark text-center">
+                                    <tr>
+                                        <th style="width: 50px;">#</th>
+                                        <th>Học Sinh</th>
+                                        <th style="width: 100px;">Lớp</th>
+                                        <th style="width: 100px;">Điểm</th>
+                                        <th style="width: 180px;">Thời gian nộp</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rank-table-body">
+                                    <tr><td colspan="5" class="text-center text-muted py-4">Vui lòng chọn đề thi và bấm XEM</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -211,25 +259,32 @@
 
     <script>
         // ============================================================
-        // THAY URL WEB APP CỦA BẠN VÀO ĐÂY
+        // DÁN LINK WEB APP CỦA BẠN VÀO DÒNG DƯỚI ĐÂY
         const API_URL = "https://script.google.com/macros/s/AKfycbxvNZw8PGyVAcLU8Kas8JKvFBh6lcYRKJ05iDw2WUw3KV1bzfMEDPpmBwKrA9U9IFiqsA/exec"; 
         // ============================================================
 
         let answerData = {};
+        let allExamsForAdmin = []; // Cache danh sách đề để lọc
+
+        // --- INIT ---
+        window.onload = function() {
+            updateAdminFilters(); // Khởi tạo dropdown lớp
+            loadExamListForAdmin(); // Tải danh sách đề cho tab thống kê
+        }
 
         function toggleChapter() {
             const type = document.getElementById('exam-type').value;
             document.getElementById('div-chapter').style.display = (type === 'tx') ? 'block' : 'none';
         }
 
-        // --- 1. IMPORT HỌC SINH TỪ EXCEL ---
+        // --- 1. IMPORT HỌC SINH ---
         function importStudents() {
             const file = document.getElementById('file-student').files[0];
             const btn = document.getElementById('btn-upload-hs');
             
             if(!file) return alert("Vui lòng chọn file Excel!");
 
-            btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Đang tải...`;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Đang tải lên...`;
             btn.disabled = true;
 
             const reader = new FileReader();
@@ -241,7 +296,7 @@
                 
                 const students = [];
                 for(let i=1; i<rows.length; i++) {
-                    if(rows[i][0] && rows[i][1]) { // Có Mã và Tên
+                    if(rows[i][0] && rows[i][1]) { 
                         students.push([rows[i][0], rows[i][1], rows[i][2] || ""]);
                     }
                 }
@@ -249,13 +304,12 @@
                 if(students.length === 0) {
                     btn.innerHTML = `<i class="bi bi-cloud-upload-fill"></i> TẢI LÊN NGAY`;
                     btn.disabled = false;
-                    return alert("File rỗng hoặc không đúng định dạng!");
+                    return alert("File rỗng hoặc sai định dạng!");
                 }
 
-                if(confirm(`Tìm thấy ${students.length} học sinh. Tải lên?`)) {
+                if(confirm(`Tìm thấy ${students.length} học sinh. Bạn có muốn cập nhật không?`)) {
                     fetch(API_URL, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'text/plain'},
+                        method: 'POST', headers: {'Content-Type': 'text/plain'},
                         body: JSON.stringify({ action: "importStudents", students: students })
                     })
                     .then(r => r.json())
@@ -263,15 +317,11 @@
                         btn.innerHTML = `<i class="bi bi-cloud-upload-fill"></i> TẢI LÊN NGAY`;
                         btn.disabled = false;
                         if(json.success) {
-                            alert("✅ Đã cập nhật danh sách học sinh thành công!");
-                            document.getElementById('file-student').value = ""; // Reset
-                        }
-                        else alert("Lỗi: " + json.error);
+                            alert("✅ Đã cập nhật danh sách thành công!");
+                            document.getElementById('file-student').value = ""; 
+                        } else alert("Lỗi: " + json.error);
                     })
-                    .catch(e => {
-                        alert("Lỗi kết nối: " + e);
-                        btn.disabled = false;
-                    });
+                    .catch(e => { alert("Lỗi kết nối: " + e); btn.disabled = false; });
                 } else {
                     btn.innerHTML = `<i class="bi bi-cloud-upload-fill"></i> TẢI LÊN NGAY`;
                     btn.disabled = false;
@@ -280,28 +330,86 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // --- 2. TRA CỨU RANK ---
+        // --- 2. TRA CỨU RANK (LOGIC MỚI) ---
+        
+        // Cập nhật danh sách lớp theo khối trong bộ lọc
+        function updateAdminFilters() {
+            const grade = document.getElementById('filter-grade').value;
+            const clsSel = document.getElementById('filter-class');
+            clsSel.innerHTML = '<option value="">Tất cả các lớp</option>';
+            
+            let letters = (grade <= 9) ? ['A','B','C','D','E'] : ['A','B'];
+            letters.forEach(L => clsSel.innerHTML += `<option value="${grade}${L}">${grade}${L}</option>`);
+            
+            filterExamDropdown(); // Lọc lại danh sách đề theo khối mới chọn
+        }
+
+        // Tải toàn bộ đề về để lọc
+        async function loadExamListForAdmin() {
+            try {
+                const res = await fetch(API_URL + "?action=getExams&t=" + Date.now());
+                const json = await res.json();
+                allExamsForAdmin = json.data || [];
+                filterExamDropdown();
+            } catch(e) { console.error("Lỗi tải đề:", e); }
+        }
+
+        // Đổ đề thi vào dropdown dựa trên khối đã chọn
+        function filterExamDropdown() {
+            const grade = document.getElementById('filter-grade').value;
+            const examSel = document.getElementById('filter-exam');
+            examSel.innerHTML = '<option value="">-- Chọn Đề --</option>';
+            
+            const list = allExamsForAdmin.filter(e => e.classGrade == grade);
+            if(list.length > 0) {
+                list.forEach(e => {
+                    examSel.innerHTML += `<option value="${e.id}">${e.title}</option>`;
+                });
+            } else {
+                examSel.innerHTML = '<option value="">Không có đề nào</option>';
+            }
+        }
+
         function viewRankings() {
-            const maDe = document.getElementById('view-exam-id').value.trim();
-            if(!maDe) return alert("Nhập mã đề!");
+            const maDe = document.getElementById('filter-exam').value;
+            const lopFilter = document.getElementById('filter-class').value; // Có thể rỗng
+            
+            if(!maDe) return alert("Vui lòng chọn một đề thi!");
+            
             const tbody = document.getElementById('rank-table-body');
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center">Đang tải...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4"><div class="spinner-border text-primary spinner-border-sm"></div> Đang tải dữ liệu...</td></tr>';
 
             fetch(API_URL + `?action=getRankingsAdmin&maDe=${maDe}`)
             .then(r => r.json())
             .then(json => {
-                if(json.data && json.data.length > 0) {
-                    tbody.innerHTML = json.data.map((r, i) => `
-                        <tr>
-                            <td>${i+1}</td><td class="fw-bold text-primary">${r.tenHS}</td>
-                            <td>${r.maHS}</td><td class="fw-bold text-danger">${r.diem}</td>
-                            <td class="text-muted">${r.time}</td>
+                let list = json.data || [];
+                
+                // Nếu giáo viên có chọn lớp cụ thể thì lọc thêm (Client-side filtering)
+                // Lưu ý: API getRankingsAdmin hiện trả về: maHS, tenHS, diem, time.
+                // Để lọc theo lớp chính xác, ta cần thông tin lớp trong kết quả hoặc suy luận từ Mã HS (nếu mã có quy luật).
+                // Ở đây tạm thời hiển thị tất cả kết quả của đề đó.
+                // Nếu bạn muốn lọc lớp chính xác, cần sửa API để trả về cả cột Lớp.
+                
+                if(list.length > 0) {
+                    tbody.innerHTML = list.map((r, i) => `
+                        <tr class="${i<3 ? 'table-warning' : ''}">
+                            <td class="text-center fw-bold">${i+1}</td>
+                            <td class="fw-bold text-primary">${r.tenHS}</td>
+                            <td class="text-center">${r.maHS}</td>
+                            <td class="text-center fw-bold fs-5 text-danger">${r.diem}</td>
+                            <td class="text-center small text-muted">${r.time}</td>
                         </tr>`).join('');
-                } else tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Không tìm thấy!</td></tr>';
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4">Chưa có bài làm nào cho đề này!</td></tr>';
+                }
+            })
+            .catch(e => {
+                alert("Lỗi tải dữ liệu: " + e);
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Lỗi kết nối</td></tr>';
             });
         }
 
-        // --- 3. XỬ LÝ WORD (GIỮ NGUYÊN) ---
+        // --- 3. XỬ LÝ WORD & FORM (GIỮ NGUYÊN) ---
         function handleWordUpload(input) {
             const f = input.files[0]; if(!f) return;
             const r = new FileReader();
@@ -383,7 +491,7 @@
         }
         function updKey(k,v) { answerData[k] = v.trim().toUpperCase(); }
 
-        // --- 4. LƯU ĐỀ THI ---
+        // --- 4. LƯU ĐỀ ---
         async function saveExamFinal() {
             const btn = document.getElementById('btn-save');
             const id = document.getElementById('exam-id').value;
@@ -416,7 +524,7 @@
 
             try {
                 await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), headers: {'Content-Type': 'text/plain'} });
-                alert("✅ Lưu thành công!"); location.reload();
+                alert("✅ Lưu đề thi thành công!"); location.reload();
             } catch(e) { alert("Lỗi: "+e); btn.innerHTML = "LƯU LẠI"; btn.disabled=false; }
         }
     </script>
