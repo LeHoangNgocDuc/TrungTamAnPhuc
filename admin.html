@@ -19,7 +19,7 @@
         .nav-pills .nav-link.active { background-color: #0d6efd; color: white; box-shadow: 0 4px 6px rgba(13,110,253,0.3); }
         
         /* Cards */
-        .card { border: none; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .card-header { border-radius: 12px 12px 0 0 !important; padding: 15px 20px; }
         
         /* Form Elements */
@@ -29,7 +29,7 @@
     </style>
 
     <script>
-        // Kiểm tra đăng nhập
+        // Kiểm tra đăng nhập đơn giản
         if (!sessionStorage.getItem("isAdmin")) window.location.href = "login.html";
     </script>
 </head>
@@ -81,7 +81,7 @@
                             <span class="badge bg-secondary">Mã HS</span> 
                             <span class="badge bg-secondary">Họ Tên</span> 
                             <span class="badge bg-secondary">Lớp</span> (VD: 6A, 9B...).<br>
-                            <em>Hệ thống sẽ tự động thêm vào database.</em>
+                            <em>Hệ thống sẽ tự động thêm vào database (Sheet DATA_HOCSINH).</em>
                         </div>
                         
                         <div class="input-group mb-3">
@@ -115,9 +115,10 @@
                             <div class="col-md-3">
                                 <label class="form-label">Loại kỳ thi</label>
                                 <select id="exam-type" class="form-select bg-light" onchange="toggleChapter()">
-                                    <option value="tx">Thường xuyên</option>
+                                    <option value="tx">Kiểm tra thường xuyên</option>
                                     <option value="gk1">Giữa kỳ 1</option><option value="ck1">Cuối kỳ 1</option>
                                     <option value="gk2">Giữa kỳ 2</option><option value="ck2">Cuối kỳ 2</option>
+                                    <option value="thpt">Thử THPT QG</option>
                                 </select>
                             </div>
                             <div class="col-md-3" id="div-chapter">
@@ -202,49 +203,62 @@
             <div class="tab-pane fade" id="pills-rank" role="tabpanel" aria-labelledby="tab-rank">
                 <div class="card border-warning">
                     <div class="card-header bg-warning text-dark fw-bold">
-                        <i class="bi bi-search"></i> TRA CỨU KẾT QUẢ THI
+                        <i class="bi bi-bar-chart-fill"></i> THỐNG KÊ KẾT QUẢ THI
                     </div>
                     <div class="card-body">
                         
                         <div class="row g-2 mb-3 align-items-end">
                             <div class="col-md-3">
-                                <label class="small fw-bold text-muted">1. Chọn Khối</label>
-                                <select id="filter-grade" class="form-select" onchange="updateAdminFilters()">
+                                <label class="small fw-bold text-muted">1. Khối</label>
+                                <select id="stat-grade" class="form-select" onchange="updateExamListStat()">
                                     <option value="6">Khối 6</option><option value="7">Khối 7</option>
                                     <option value="8">Khối 8</option><option value="9">Khối 9</option>
                                     <option value="10">Khối 10</option><option value="11">Khối 11</option><option value="12">Khối 12</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <label class="small fw-bold text-muted">2. Chọn Lớp</label>
-                                <select id="filter-class" class="form-select">
-                                    <option value="">Tất cả các lớp</option>
-                                    </select>
+                                <label class="small fw-bold text-muted">2. Loại Kỳ Thi</label>
+                                <select id="stat-type" class="form-select" onchange="toggleStatChapter()">
+                                    <option value="tx">Kiểm tra thường xuyên</option>
+                                    <option value="gk1">Giữa kỳ 1</option><option value="ck1">Cuối kỳ 1</option>
+                                    <option value="gk2">Giữa kỳ 2</option><option value="ck2">Cuối kỳ 2</option>
+                                    <option value="thpt">Thử THPT QG</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2" id="div-stat-chapter">
+                                <label class="small fw-bold text-muted">Chương</label>
+                                <select id="stat-chapter" class="form-select" onchange="updateExamListStat()">
+                                    <option value="1">Chương 1</option><option value="2">Chương 2</option>
+                                    <option value="3">Chương 3</option><option value="4">Chương 4</option>
+                                    <option value="5">Chương 5</option><option value="6">Chương 6</option>
+                                    <option value="7">Chương 7</option><option value="8">Chương 8</option>
+                                </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="small fw-bold text-muted">3. Chọn Đề Thi</label>
-                                <select id="filter-exam" class="form-select">
+                                <select id="stat-exam" class="form-select">
                                     <option value="">Đang tải danh sách đề...</option>
                                 </select>
                             </div>
-                            <div class="col-md-2">
-                                <button onclick="viewRankings()" class="btn btn-primary w-100 fw-bold">XEM</button>
-                            </div>
                         </div>
                         
+                        <button onclick="viewRankings()" class="btn btn-warning w-100 fw-bold text-dark mb-3">
+                            <i class="bi bi-search"></i> XEM KẾT QUẢ
+                        </button>
+
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover align-middle shadow-sm">
+                            <table class="table table-bordered table-striped table-hover small align-middle">
                                 <thead class="table-dark text-center">
                                     <tr>
-                                        <th style="width: 50px;">#</th>
+                                        <th style="width: 50px">#</th>
                                         <th>Học Sinh</th>
-                                        <th style="width: 100px;">Lớp</th>
-                                        <th style="width: 100px;">Điểm</th>
-                                        <th style="width: 180px;">Thời gian nộp</th>
+                                        <th style="width: 120px">Mã HS</th>
+                                        <th style="width: 100px">Điểm</th>
+                                        <th style="width: 180px">Thời gian nộp</th>
                                     </tr>
                                 </thead>
                                 <tbody id="rank-table-body">
-                                    <tr><td colspan="5" class="text-center text-muted py-4">Vui lòng chọn đề thi và bấm XEM</td></tr>
+                                    <tr><td colspan="5" class="text-center text-muted py-4">Vui lòng chọn đề thi và bấm XEM KẾT QUẢ</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -259,25 +273,37 @@
 
     <script>
         // ============================================================
-        // DÁN LINK WEB APP CỦA BẠN VÀO DÒNG DƯỚI ĐÂY
-        const API_URL = "https://script.google.com/macros/s/AKfycbxvNZw8PGyVAcLU8Kas8JKvFBh6lcYRKJ05iDw2WUw3KV1bzfMEDPpmBwKrA9U9IFiqsA/exec"; 
+        // DÁN LINK WEB APP CỦA BẠN VÀO DƯỚI ĐÂY
+        const API_URL = "https://script.google.com/macros/s/AKfycbyN21ds2kPQ9rasEi3QF2z3RIqLSGRfUnafshC_HwHw1CGh1pH8fj2eceyHdGJGk_H8YA/exec"; 
         // ============================================================
 
         let answerData = {};
-        let allExamsForAdmin = []; // Cache danh sách đề để lọc
+        let allExamsForStat = []; // Biến lưu danh sách đề để lọc thống kê
 
-        // --- INIT ---
-        window.onload = function() {
-            updateAdminFilters(); // Khởi tạo dropdown lớp
-            loadExamListForAdmin(); // Tải danh sách đề cho tab thống kê
+        // --- KHỞI TẠO ---
+        window.onload = async function() {
+            // Tải danh sách đề thi về trước để dùng cho Tab Thống kê
+            try {
+                const res = await fetch(API_URL + "?action=getExams&t=" + Date.now());
+                const json = await res.json();
+                allExamsForStat = json.data || [];
+                updateExamListStat(); // Cập nhật dropdown đề
+            } catch(e) { console.error("Lỗi tải đề:", e); }
         }
 
+        // --- CÁC HÀM XỬ LÝ GIAO DIỆN ---
         function toggleChapter() {
             const type = document.getElementById('exam-type').value;
             document.getElementById('div-chapter').style.display = (type === 'tx') ? 'block' : 'none';
         }
 
-        // --- 1. IMPORT HỌC SINH ---
+        function toggleStatChapter() {
+            const type = document.getElementById('stat-type').value;
+            document.getElementById('div-stat-chapter').style.display = (type === 'tx') ? 'block' : 'none';
+            updateExamListStat();
+        }
+
+        // --- 1. IMPORT HỌC SINH TỪ EXCEL ---
         function importStudents() {
             const file = document.getElementById('file-student').files[0];
             const btn = document.getElementById('btn-upload-hs');
@@ -330,86 +356,63 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // --- 2. TRA CỨU RANK (LOGIC MỚI) ---
+        // --- 2. TRA CỨU RANK (LOGIC MỚI - DROPDOWN) ---
         
-        // Cập nhật danh sách lớp theo khối trong bộ lọc
-        function updateAdminFilters() {
-            const grade = document.getElementById('filter-grade').value;
-            const clsSel = document.getElementById('filter-class');
-            clsSel.innerHTML = '<option value="">Tất cả các lớp</option>';
+        function updateExamListStat() {
+            const grade = document.getElementById('stat-grade').value;
+            const type = document.getElementById('stat-type').value;
+            const chap = document.getElementById('stat-chapter').value;
+            const examSel = document.getElementById('stat-exam');
             
-            let letters = (grade <= 9) ? ['A','B','C','D','E'] : ['A','B'];
-            letters.forEach(L => clsSel.innerHTML += `<option value="${grade}${L}">${grade}${L}</option>`);
-            
-            filterExamDropdown(); // Lọc lại danh sách đề theo khối mới chọn
-        }
+            examSel.innerHTML = '<option value="">-- Chọn đề thi --</option>';
 
-        // Tải toàn bộ đề về để lọc
-        async function loadExamListForAdmin() {
-            try {
-                const res = await fetch(API_URL + "?action=getExams&t=" + Date.now());
-                const json = await res.json();
-                allExamsForAdmin = json.data || [];
-                filterExamDropdown();
-            } catch(e) { console.error("Lỗi tải đề:", e); }
-        }
+            // Lọc danh sách đề dựa trên các tiêu chí đã chọn
+            const filtered = allExamsForStat.filter(e => 
+                e.classGrade == grade && 
+                e.examType == type && 
+                (type !== 'tx' || e.chapter == chap)
+            );
 
-        // Đổ đề thi vào dropdown dựa trên khối đã chọn
-        function filterExamDropdown() {
-            const grade = document.getElementById('filter-grade').value;
-            const examSel = document.getElementById('filter-exam');
-            examSel.innerHTML = '<option value="">-- Chọn Đề --</option>';
-            
-            const list = allExamsForAdmin.filter(e => e.classGrade == grade);
-            if(list.length > 0) {
-                list.forEach(e => {
+            if (filtered.length > 0) {
+                filtered.forEach(e => {
                     examSel.innerHTML += `<option value="${e.id}">${e.title}</option>`;
                 });
             } else {
-                examSel.innerHTML = '<option value="">Không có đề nào</option>';
+                examSel.innerHTML = '<option value="">Không tìm thấy đề thi nào</option>';
             }
         }
 
         function viewRankings() {
-            const maDe = document.getElementById('filter-exam').value;
-            const lopFilter = document.getElementById('filter-class').value; // Có thể rỗng
-            
-            if(!maDe) return alert("Vui lòng chọn một đề thi!");
-            
+            const maDe = document.getElementById('stat-exam').value;
+            if (!maDe) return alert("Vui lòng chọn đề thi!");
+
             const tbody = document.getElementById('rank-table-body');
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4"><div class="spinner-border text-primary spinner-border-sm"></div> Đang tải dữ liệu...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4"><div class="spinner-border text-primary spinner-border-sm"></div> Đang tải kết quả...</td></tr>';
 
             fetch(API_URL + `?action=getRankingsAdmin&maDe=${maDe}`)
             .then(r => r.json())
             .then(json => {
-                let list = json.data || [];
-                
-                // Nếu giáo viên có chọn lớp cụ thể thì lọc thêm (Client-side filtering)
-                // Lưu ý: API getRankingsAdmin hiện trả về: maHS, tenHS, diem, time.
-                // Để lọc theo lớp chính xác, ta cần thông tin lớp trong kết quả hoặc suy luận từ Mã HS (nếu mã có quy luật).
-                // Ở đây tạm thời hiển thị tất cả kết quả của đề đó.
-                // Nếu bạn muốn lọc lớp chính xác, cần sửa API để trả về cả cột Lớp.
-                
-                if(list.length > 0) {
-                    tbody.innerHTML = list.map((r, i) => `
-                        <tr class="${i<3 ? 'table-warning' : ''}">
+                if (json.data && json.data.length > 0) {
+                    tbody.innerHTML = json.data.map((r, i) => `
+                        <tr>
                             <td class="text-center fw-bold">${i+1}</td>
                             <td class="fw-bold text-primary">${r.tenHS}</td>
                             <td class="text-center">${r.maHS}</td>
-                            <td class="text-center fw-bold fs-5 text-danger">${r.diem}</td>
-                            <td class="text-center small text-muted">${r.time}</td>
-                        </tr>`).join('');
+                            <td class="text-center fw-bold text-danger fs-6">${r.diem}</td>
+                            <td class="text-center text-muted small">${r.time}</td>
+                        </tr>
+                    `).join('');
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4">Chưa có bài làm nào cho đề này!</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4">Chưa có học sinh nào nộp bài cho đề này!</td></tr>';
                 }
             })
             .catch(e => {
-                alert("Lỗi tải dữ liệu: " + e);
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Lỗi kết nối</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Lỗi tải dữ liệu.</td></tr>';
+                console.error(e);
             });
         }
 
-        // --- 3. XỬ LÝ WORD & FORM (GIỮ NGUYÊN) ---
+        // --- 3. XỬ LÝ WORD (GIỮ NGUYÊN) ---
         function handleWordUpload(input) {
             const f = input.files[0]; if(!f) return;
             const r = new FileReader();
