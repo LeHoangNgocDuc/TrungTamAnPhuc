@@ -9,284 +9,291 @@
     <style>
         body { background: #f8f9fa; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
         
-        /* HOME LAYOUT */
+        /* HOME & EXAM UI */
         #home-screen { height: 100vh; display: flex; flex-direction: column; }
-        .header-section { background: white; padding: 15px; border-bottom: 1px solid #e0e0e0; flex-shrink: 0; }
-        .exam-list-container { flex: 1; overflow-y: auto; padding: 15px; }
-
-        /* TABS STYLE */
-        .nav-pills .nav-link { 
-            color: #555; font-weight: 500; border-radius: 20px; 
-            padding: 6px 15px; font-size: 0.9rem; margin-right: 5px; white-space: nowrap; 
-            border: 1px solid #eee;
-        }
+        .nav-pills .nav-link { color: #555; border-radius: 20px; border: 1px solid #eee; margin-right: 5px; white-space: nowrap; }
         .nav-pills .nav-link.active { background-color: #0d6efd; color: white; border-color: #0d6efd; font-weight: bold; }
-        .scroll-tabs { overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
-        .scroll-tabs::-webkit-scrollbar { display: none; }
-
-        /* EXAM CARD */
-        .exam-card { 
-            background: white; border-radius: 12px; padding: 15px; margin-bottom: 12px; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04); border: 1px solid #f0f0f0; transition: 0.2s; cursor: pointer;
-        }
-        .exam-card:active { transform: scale(0.98); background: #f0f8ff; }
-        .exam-tag { font-size: 0.75rem; padding: 3px 8px; border-radius: 6px; background: #eef2ff; color: #4f46e5; font-weight: bold; }
+        .exam-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid #eee; cursor: pointer; }
         
-        /* EXAM SCREEN & OTHERS (Giữ nguyên từ code cũ cho đẹp) */
-        #exam-screen { height: 100vh; display: flex; flex-direction: column; background: white; z-index: 1000; position: fixed; top: 0; left: 0; width: 100%; }
-        .pdf-container { height: 60vh; flex-shrink: 0; border-bottom: 4px solid #aaa; background: #525659; }
+        #exam-screen { height: 100vh; display: flex; flex-direction: column; background: white; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; }
+        .pdf-container { height: 60vh; flex-shrink: 0; background: #525659; border-bottom: 4px solid #aaa; }
         iframe { width: 100%; height: 100%; border: none; }
-        .qa-container { flex: 1; overflow-y: auto; background: #fff; padding: 10px; padding-bottom: 60px; }
+        .qa-container { flex: 1; overflow-y: auto; padding: 10px; padding-bottom: 60px; }
         
-        /* STYLES CÂU HỎI */
+        /* CÂU HỎI */
         .q-label { font-weight: bold; color: #0d6efd; margin-bottom: 8px; }
         .mcq-row { display: flex; gap: 5px; }
-        .opt-btn { flex: 1; height: 45px; border: 1px solid #ced4da; border-radius: 8px; background: white; font-weight: bold; color: #555; display: flex; align-items: center; justify-content: center; }
+        .opt-btn { flex: 1; height: 45px; border: 1px solid #ced4da; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555; }
         .active-opt { background: #0d6efd; color: white; border-color: #0d6efd; }
-        .nav-bottom { position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 30; }
-        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        
+        /* NAVIGATION */
+        .nav-bottom { position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; }
+
+        /* MODAL REVIEW */
+        #review-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; justify-content: center; align-items: flex-end; }
+        .review-content { background: white; width: 100%; max-width: 600px; height: 80vh; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; animation: slideUp 0.3s; }
+        @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+        .review-body { flex: 1; overflow-y: auto; padding: 15px; }
+        .review-section-title { font-weight: bold; color: #dc3545; border-bottom: 2px solid #eee; margin-top: 15px; padding-bottom: 5px; }
+        .rv-item { font-size: 0.95rem; margin-bottom: 5px; }
+        .missing { color: #dc3545; text-decoration: underline; font-weight: bold; }
+        .done { color: #198754; font-weight: bold; }
+
+        /* FAB BUTTON */
+        .fab-review { position: fixed; bottom: 70px; right: 20px; width: 50px; height: 50px; background: #ffc107; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1500; font-size: 1.5rem; cursor: pointer; border: 2px solid white; }
     </style>
 </head>
 <body>
 
-<div id="loading"><div class="spinner-border text-primary"></div></div>
+<div id="loading" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.9);z-index:9999;display:flex;justify-content:center;align-items:center;">
+    <div class="spinner-border text-primary"></div>
+</div>
 
 <div id="home-screen">
-    <div class="header-section shadow-sm">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="fw-bold text-primary m-0"><i class="bi bi-mortarboard-fill"></i> AN PHÚC EDU</h5>
-            <a href="admin.html" class="text-muted small text-decoration-none">GV Đăng nhập</a>
+    <div class="p-3 bg-white border-bottom">
+        <div class="d-flex justify-content-between mb-3">
+            <h5 class="fw-bold text-primary m-0">AN PHÚC EDU</h5>
+            <a href="admin.html" class="text-decoration-none small text-muted">Admin</a>
         </div>
-
-        <div class="row g-2 mb-3">
-            <div class="col-4">
-                <select id="sel-grade" class="form-select form-select-sm fw-bold border-primary" onchange="changeGrade()">
-                    <option value="6">Khối 6</option><option value="7">Khối 7</option>
-                    <option value="8">Khối 8</option><option value="9">Khối 9</option>
-                    <option value="10">Khối 10</option><option value="11">Khối 11</option><option value="12">Khối 12</option>
-                </select>
-            </div>
-            <div class="col-4">
-                <select id="sel-class" class="form-select form-select-sm" onchange="loadStudents()">
-                    <option value="">Lớp học</option>
-                </select>
-            </div>
-            <div class="col-4">
-                <select id="sel-student" class="form-select form-select-sm" disabled>
-                    <option value="">Học sinh</option>
-                </select>
-            </div>
+        <div class="row g-2 mb-2">
+            <div class="col-4"><select id="sel-grade" class="form-select form-select-sm fw-bold" onchange="changeGrade()"><option value="6">K6</option><option value="7">K7</option><option value="8">K8</option><option value="9">K9</option><option value="10">K10</option><option value="11">K11</option><option value="12">K12</option></select></div>
+            <div class="col-4"><select id="sel-class" class="form-select form-select-sm" onchange="loadStudents()"><option value="">Lớp</option></select></div>
+            <div class="col-4"><select id="sel-student" class="form-select form-select-sm" disabled><option value="">Tên HS</option></select></div>
         </div>
-
-        <div class="scroll-tabs">
-            <ul class="nav nav-pills flex-nowrap" id="type-tabs">
-                <li class="nav-item"><a class="nav-link active" onclick="setType('tx', this)">Thường xuyên</a></li>
-                <li class="nav-item"><a class="nav-link" onclick="setType('gk1', this)">Giữa Kỳ 1</a></li>
-                <li class="nav-item"><a class="nav-link" onclick="setType('ck1', this)">Cuối Kỳ 1</a></li>
-                <li class="nav-item"><a class="nav-link" onclick="setType('gk2', this)">Giữa Kỳ 2</a></li>
-                <li class="nav-item"><a class="nav-link" onclick="setType('ck2', this)">Cuối Kỳ 2</a></li>
-            </ul>
-        </div>
-        
-        <div id="chapter-bar" class="mt-2 pt-2 border-top" style="display:block;">
-            <div class="d-flex overflow-auto gap-1">
-                <button class="btn btn-sm btn-outline-dark rounded-pill py-0" onclick="filterChapter('1')">Ch1</button>
-                <button class="btn btn-sm btn-outline-dark rounded-pill py-0" onclick="filterChapter('2')">Ch2</button>
-                <button class="btn btn-sm btn-outline-dark rounded-pill py-0" onclick="filterChapter('3')">Ch3</button>
-                <button class="btn btn-sm btn-outline-dark rounded-pill py-0" onclick="filterChapter('4')">Ch4</button>
-                <button class="btn btn-sm btn-secondary rounded-pill py-0" onclick="filterChapter('all')">Tất cả</button>
-            </div>
+        <div class="d-flex overflow-auto pb-1">
+            <button class="btn btn-sm btn-outline-primary rounded-pill me-1 active" onclick="setType('tx',this)">Thường xuyên</button>
+            <button class="btn btn-sm btn-outline-secondary rounded-pill me-1" onclick="setType('gk1',this)">Giữa Kỳ 1</button>
+            <button class="btn btn-sm btn-outline-secondary rounded-pill me-1" onclick="setType('ck1',this)">Cuối Kỳ 1</button>
         </div>
     </div>
-
-    <div class="exam-list-container bg-light" id="exam-grid">
-        </div>
+    <div id="exam-grid" class="flex-grow-1 overflow-auto p-3 bg-light"></div>
 </div>
 
 <div id="exam-screen" class="d-none">
-    <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom bg-white">
-        <button onclick="if(confirm('Thoát?')) location.reload()" class="btn btn-light text-danger btn-sm fw-bold">X</button>
-        <div class="fs-5 fw-bold text-danger font-monospace" id="exam-timer">00:00</div>
-        <button onclick="submitExam()" class="btn btn-success btn-sm fw-bold px-3">NỘP BÀI</button>
+    <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+        <button onclick="if(confirm('Thoát?')) location.reload()" class="btn btn-light text-danger fw-bold btn-sm">X</button>
+        <div class="fw-bold text-danger fs-5 font-monospace" id="timer">00:00</div>
+        <button onclick="submitExam()" class="btn btn-success fw-bold btn-sm px-3">NỘP</button>
     </div>
     <div class="pdf-container"><iframe id="pdf-frame"></iframe></div>
     <div class="qa-container">
         <div id="question-content"></div>
         <div id="result-box" class="d-none text-center pt-5">
             <h1 class="display-1 fw-bold text-success" id="score-display">--</h1>
-            <p>Điểm số của bạn</p>
-            <div id="sol-link-area"></div>
-            <button onclick="location.reload()" class="btn btn-outline-secondary mt-3">Quay lại</button>
+            <div id="sol-link"></div>
+            <button onclick="location.reload()" class="btn btn-outline-secondary mt-3">Thoát</button>
         </div>
     </div>
-    <div class="nav-bottom" id="nav-bar-fixed">
-        <button class="btn btn-light border rounded-circle" style="width:40px;height:40px" onclick="prevQ()"><i class="bi bi-chevron-left"></i></button>
-        <span class="fw-bold text-muted small" id="q-counter">Câu 1</span>
-        <button class="btn btn-light border rounded-circle" style="width:40px;height:40px" onclick="nextQ()"><i class="bi bi-chevron-right"></i></button>
+    
+    <div class="fab-review" onclick="showReview()"><i class="bi bi-list-check"></i></div>
+
+    <div class="nav-bottom" id="nav-bar">
+        <button class="btn btn-light border rounded-circle" onclick="prevQ()"><i class="bi bi-chevron-left"></i></button>
+        <span class="fw-bold text-muted small" id="q-idx">Câu 1</span>
+        <button class="btn btn-light border rounded-circle" onclick="nextQ()"><i class="bi bi-chevron-right"></i></button>
+    </div>
+</div>
+
+<div id="review-modal">
+    <div class="review-content">
+        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+            <h5 class="fw-bold m-0">XEM BÀI LÀM</h5>
+            <button onclick="closeReview()" class="btn btn-sm btn-light border">Đóng</button>
+        </div>
+        <div class="review-body" id="review-list"></div>
+        <div class="p-3 border-top"><button onclick="closeReview()" class="btn btn-primary w-100 fw-bold">TIẾP TỤC LÀM BÀI</button></div>
     </div>
 </div>
 
 <script>
-    // ================= DÁN LINK WEB APP CỦA BẠN VÀO ĐÂY =================
-    const API_URL = "https://script.google.com/macros/s/AKfycbxq2NwBrd6NhoI2X82LXAC9xDYBpkVJKFvVEcinH6KTafo6OddLqDgptce3Xus-QO3jYw/exec";
-    // ====================================================================
+    // ===============================================================
+    // DÁN LINK WEB APP CỦA BẠN VÀO ĐÂY
+    const API_URL = "https://script.google.com/macros/s/AKfycby7FKjCdaorqBhmTAJcvvuAzgA-Oughz46uciokQ8AGugTl9DnAvkkhy2e8K1ELm4BjBg/exec"; 
+    // ===============================================================
 
-    let allExams = [], currentFilter = { grade: '6', type: 'tx', chapter: 'all' };
-    let currentExam=null, userAnswers={}, qIdx=0, questionMap=[], studentInfo={}, timerInterval;
+    let allExams=[], currentFilter={grade:'6',type:'tx'}, currentExam=null, userAnswers={}, questionMap=[], qIdx=0, studentInfo={}, timerInt;
 
     window.onload = async () => {
-        changeGrade(); // Init lớp 6
-        await fetchExams();
+        changeGrade();
+        try {
+            const r = await fetch(API_URL + "?action=getExams&t="+Date.now());
+            const j = await r.json(); allExams = j.data||[]; renderExams();
+        } catch(e){}
+        document.getElementById('loading').style.display='none';
     };
 
-    // --- LOGIC LỌC VÀ HIỂN THỊ ---
-    function changeGrade() {
-        const g = document.getElementById('sel-grade').value;
-        currentFilter.grade = g;
-        
-        // Update list lớp (A,B,C...)
-        const clsSel = document.getElementById('sel-class');
-        clsSel.innerHTML = '<option value="">--Lớp--</option>';
-        ['A','B','C','D','E'].forEach(L => clsSel.innerHTML += `<option value="${g}${L}">${g}${L}</option>`);
-        
+    function changeGrade(){
+        const g=document.getElementById('sel-grade').value; currentFilter.grade=g;
+        const c=document.getElementById('sel-class'); c.innerHTML='<option value="">Lớp</option>';
+        ['A','B','C','D'].forEach(L=>c.innerHTML+=`<option value="${g}${L}">${g}${L}</option>`);
         renderExams();
     }
-
-    function setType(type, btn) {
-        currentFilter.type = type;
-        // Active Style
-        document.querySelectorAll('#type-tabs .nav-link').forEach(el => el.classList.remove('active'));
-        btn.classList.add('active');
-        // Show/Hide Chapter Bar
-        document.getElementById('chapter-bar').style.display = (type === 'tx') ? 'block' : 'none';
-        renderExams();
-    }
-
-    function filterChapter(chap) {
-        currentFilter.chapter = chap;
-        renderExams();
-    }
-
-    async function fetchExams() {
+    async function loadStudents(){
+        const c=document.getElementById('sel-class').value;
+        const s=document.getElementById('sel-student'); s.innerHTML='<option>Đang tải...</option>';
         try {
-            const r = await fetch(API_URL + "?action=getExams&t=" + Date.now());
-            const j = await r.json(); allExams = j.data || [];
-            renderExams();
-            document.getElementById('loading').style.display='none';
-        } catch(e) { alert("Lỗi tải dữ liệu"); }
-    }
-
-    function renderExams() {
-        const grid = document.getElementById('exam-grid');
-        const list = allExams.filter(e => {
-            const matchGrade = e.classGrade == currentFilter.grade;
-            const matchType = e.examType == currentFilter.type;
-            const matchChap = (currentFilter.type !== 'tx') || (currentFilter.chapter === 'all') || (e.chapter == currentFilter.chapter);
-            return matchGrade && matchType && matchChap;
-        });
-
-        if(list.length === 0) {
-            grid.innerHTML = `<div class="text-center text-muted mt-5"><i class="bi bi-inbox fs-1"></i><br>Chưa có đề thi nào</div>`;
-            return;
-        }
-
-        grid.innerHTML = list.map(e => `
-            <div class="exam-card" onclick='preStart(${JSON.stringify(e).replace(/'/g,"&#39;")})'>
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <span class="exam-tag">${e.examType.toUpperCase()}</span>
-                    <small class="text-muted fw-bold"><i class="bi bi-clock"></i> ${e.duration}p</small>
-                </div>
-                <h6 class="fw-bold text-dark mb-1">${e.title}</h6>
-                <div class="small text-muted">Số câu: ${e.totalQuestions} câu</div>
-            </div>
-        `).join('');
-    }
-
-    // --- LOGIC HỌC SINH ---
-    async function loadStudents() {
-        const c = document.getElementById('sel-class').value;
-        const s = document.getElementById('sel-student');
-        if(!c) { s.disabled=true; return; }
-        s.innerHTML = '<option>Đang tải...</option>';
-        try {
-            const r = await fetch(API_URL+`?action=getStudentsByClass&className=${c}`);
-            const j = await r.json();
-            s.innerHTML = '<option value="">--Chọn tên--</option>' + (j.data||[]).map(x=>`<option value="${x.id}|${x.name}">${x.name}</option>`).join('');
-            s.disabled = false;
+            const r=await fetch(API_URL+`?action=getStudentsByClass&className=${c}`);
+            const j=await r.json();
+            s.innerHTML='<option value="">--Chọn tên--</option>'+(j.data||[]).map(x=>`<option value="${x.id}|${x.name}">${x.name}</option>`).join('');
+            s.disabled=false;
         } catch(e){}
     }
-
-    function preStart(exam) {
-        const val = document.getElementById('sel-student').value;
-        if(!val || val.includes("Chọn")) return alert("Vui lòng chọn Tên của bạn trước!");
-        const [id, name] = val.split('|'); studentInfo = {id, name};
-        startExam(exam);
+    function setType(t,b){ 
+        currentFilter.type=t; 
+        document.querySelectorAll('.nav-link, .rounded-pill').forEach(e=>e.classList.remove('active','btn-outline-primary','btn-outline-secondary'));
+        b.classList.add('active','btn-outline-primary'); renderExams();
     }
 
-    // --- LOGIC THI (GIỮ NGUYÊN TỪ CODE CŨ NHƯNG FIX GIAO DIỆN) ---
-    function startExam(exam) {
-        currentExam = exam; userAnswers = {}; qIdx = 0; questionMap = [];
-        let st = (typeof exam.structure==='string')?JSON.parse(exam.structure):exam.structure;
-        let c = st.config || {mcq:10, tf:0, short:0}; // fallback
+    function renderExams(){
+        const list = allExams.filter(e=>e.classGrade==currentFilter.grade && e.examType==currentFilter.type);
+        document.getElementById('exam-grid').innerHTML = list.map(e=>`
+            <div class="exam-card shadow-sm" onclick='preStart(${JSON.stringify(e).replace(/'/g,"&#39;")})'>
+                <div class="fw-bold text-dark">${e.title}</div>
+                <div class="small text-muted"><i class="bi bi-clock"></i> ${e.duration} phút | ${e.totalQuestions} câu</div>
+            </div>`).join('') || '<div class="text-center text-muted mt-5">Chưa có đề</div>';
+    }
+
+    // --- CHECK SỐ LẦN THI ---
+    async function preStart(exam){
+        const v = document.getElementById('sel-student').value;
+        if(!v || v.includes("Chọn")) return alert("Chọn tên học sinh!");
+        const [id,name] = v.split('|'); studentInfo={id,name};
         
-        for(let i=1; i<=c.mcq; i++) questionMap.push({type:'mcq', id:i, lbl:`Câu ${i}`});
+        document.getElementById('loading').style.display='flex';
+        try {
+            const r = await fetch(API_URL+`?action=checkStudentStatus&maHS=${id}&maDe=${exam.id}`);
+            const j = await r.json();
+            document.getElementById('loading').style.display='none';
+            if(j.count > 0) {
+                if(confirm(`Bạn đã làm đề này ${j.count} lần.\nĐiểm lần cuối: ${j.lastScore}\n\nNhấn OK để LÀM LẠI. Nhấn Hủy để thôi.`)) startExam(exam);
+            } else {
+                startExam(exam);
+            }
+        } catch(e) {
+            document.getElementById('loading').style.display='none';
+            startExam(exam); // Lỗi mạng vẫn cho thi
+        }
+    }
+
+    function startExam(e){
+        currentExam=e; userAnswers={}; qIdx=0; questionMap=[];
+        const st = (typeof e.structure==='string')?JSON.parse(e.structure):e.structure;
+        const c = st.config || {mcq:0,tf:0,short:0};
         
+        // Map câu hỏi
+        for(let i=1;i<=c.mcq;i++) questionMap.push({type:'mcq',id:i,lbl:`Câu ${i}`});
+        for(let i=1;i<=c.tf;i++) questionMap.push({type:'tf',id:i,lbl:`Câu ${i}`});
+        for(let i=1;i<=c.short;i++) questionMap.push({type:'short',id:i,lbl:`Câu ${i}`});
+
         document.getElementById('home-screen').classList.add('d-none');
         document.getElementById('exam-screen').classList.remove('d-none');
-        document.getElementById('pdf-frame').src = exam.pdfLink.replace('/view','/preview');
+        document.getElementById('pdf-frame').src = e.pdfLink.replace('/view','/preview');
         
-        // Timer
-        let t = exam.duration * 60;
-        const d = document.getElementById('exam-timer');
-        clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            let m=Math.floor(t/60), s=t%60; d.innerText = `${m}:${s<10?'0':''}${s}`;
-            if(t-- <= 0) { clearInterval(timerInterval); submitExam(true); }
-        }, 1000);
-        
+        let t = e.duration*60;
+        const d = document.getElementById('timer');
+        clearInterval(timerInt);
+        timerInt = setInterval(()=>{
+            let m=Math.floor(t/60), s=t%60; d.innerText=`${m}:${s<10?'0':''}${s}`;
+            if(t--<=0) { clearInterval(timerInt); submitExam(true); }
+        },1000);
         renderQ(0);
     }
 
-    function renderQ(idx) {
-        if(idx<0 || idx>=questionMap.length) return;
-        qIdx = idx;
-        document.getElementById('q-counter').innerText = `Câu ${idx+1}/${questionMap.length}`;
-        const q = questionMap[idx];
-        let h = `<div class="q-label">${q.lbl} (Trắc nghiệm)</div><div class="mcq-row">`;
-        ['A','B','C','D'].forEach(o => {
-            let act = userAnswers[`p1_c${q.id}`]===o ? 'active-opt' : '';
-            h += `<div class="opt-btn ${act}" onclick="ans('p1_c${q.id}','${o}')">${o}</div>`;
-        });
-        h += `</div>`;
-        document.getElementById('question-content').innerHTML = h;
-    }
-
-    function ans(k, v) { userAnswers[k] = v; renderQ(qIdx); }
-    function nextQ() { renderQ(qIdx+1); }
-    function prevQ() { renderQ(qIdx-1); }
-
-    async function submitExam(auto=false) {
-        if(!auto && !confirm("Nộp bài?")) return;
-        clearInterval(timerInterval);
-        document.getElementById('loading').style.display='flex';
+    function renderQ(i){
+        if(i<0||i>=questionMap.length) return;
+        qIdx=i; 
+        const q=questionMap[i];
+        document.getElementById('q-idx').innerText = `Câu ${i+1}/${questionMap.length}`;
+        let h = `<div class="q-label">${q.lbl}</div>`;
         
-        // Tính điểm đơn giản (Giả lập)
-        // ... (Logic tính điểm giữ nguyên từ code cũ) ...
-        let score = (Math.random()*10).toFixed(1); // Demo
+        if(q.type=='mcq') {
+            h+=`<div class="mcq-row">`;
+            ['A','B','C','D'].forEach(o=>{
+                let act = userAnswers[`p1_c${q.id}`]==o?'active-opt':'';
+                h+=`<div class="opt-btn ${act}" onclick="ans('p1_c${q.id}','${o}')">${o}</div>`;
+            });
+            h+=`</div>`;
+        } else if(q.type=='tf') {
+            ['a','b','c','d'].forEach(s=>{
+                let v = userAnswers[`p2_c${q.id}_${s}`];
+                let cd = v=='D'?'bg-success text-white border-success':'';
+                let cs = v=='S'?'bg-danger text-white border-danger':'';
+                h+=`<div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-1">
+                    <span>Ý ${s})</span>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-success fw-bold ${cd}" onclick="ans('p2_c${q.id}_${s}','D')">Đ</button>
+                        <button class="btn btn-sm btn-outline-danger fw-bold ${cs}" onclick="ans('p2_c${q.id}_${s}','S')">S</button>
+                    </div>
+                </div>`;
+            });
+        } else {
+            let v = userAnswers[`p3_c${q.id}`]||'';
+            h+=`<input class="form-control text-center fw-bold fs-4 text-primary" placeholder="Nhập đáp án..." value="${v}" onchange="userAnswers['p3_c${q.id}']=this.value">`;
+        }
+        document.getElementById('question-content').innerHTML=h;
+    }
+    
+    function ans(k,v){ userAnswers[k]=v; renderQ(qIdx); }
+    function nextQ(){ renderQ(qIdx+1); }
+    function prevQ(){ renderQ(qIdx-1); }
 
+    // --- LOGIC XEM BÀI LÀM (REVIEW) ---
+    function showReview(){
+        const list = document.getElementById('review-list'); list.innerHTML='';
+        const st = (typeof currentExam.structure==='string')?JSON.parse(currentExam.structure):currentExam.structure;
+        const c = st.config || {mcq:0,tf:0,short:0};
+
+        // Phần 1
+        if(c.mcq>0){
+            list.innerHTML+=`<div class="review-section-title">PHẦN 1: TRẮC NGHIỆM</div><div class="row g-2">`;
+            let h='';
+            for(let i=1;i<=c.mcq;i++){
+                let v = userAnswers[`p1_c${i}`];
+                let cls = v?'done':'missing';
+                h+=`<div class="col-3 border p-1 text-center small rounded bg-light">C${i}: <span class="${cls}">${v||'__'}</span></div>`;
+            }
+            list.innerHTML += h + `</div>`;
+        }
+        // Phần 2
+        if(c.tf>0){
+            list.innerHTML+=`<div class="review-section-title">PHẦN 2: ĐÚNG SAI</div>`;
+            for(let i=1;i<=c.tf;i++){
+                let line = ``;
+                ['a','b','c','d'].forEach(s=>{
+                    let v = userAnswers[`p2_c${i}_${s}`];
+                    let disp = v?(v=='D'?'Đ':'S'):'_';
+                    let cls = v?'text-primary fw-bold':'missing';
+                    line+=`<span class="me-2">${s})<span class="${cls}">${disp}</span></span>`;
+                });
+                list.innerHTML+=`<div class="rv-item border-bottom pb-1"><strong>Câu ${i}:</strong> ${line}</div>`;
+            }
+        }
+        // Phần 3
+        if(c.short>0){
+            list.innerHTML+=`<div class="review-section-title">PHẦN 3: TRẢ LỜI NGẮN</div>`;
+            for(let i=1;i<=c.short;i++){
+                let v = userAnswers[`p3_c${i}`];
+                let cls = v?'done':'missing';
+                list.innerHTML+=`<div class="rv-item border-bottom pb-1">Câu ${i}: <span class="${cls}">${v||'Chưa nhập'}</span></div>`;
+            }
+        }
+        document.getElementById('review-modal').style.display='flex';
+    }
+    function closeReview(){ document.getElementById('review-modal').style.display='none'; }
+
+    // --- NỘP BÀI ---
+    async function submitExam(auto=false){
+        if(!auto && !confirm("Nộp bài?")) return;
+        clearInterval(timerInt);
+        document.getElementById('loading').style.display='flex';
+        // Tính điểm sơ bộ (Giữ nguyên logic cũ hoặc cải tiến)
+        let total = 0; // Demo
+        // Gửi lên server
         await fetch(API_URL, {method:'POST', body:JSON.stringify({
             action:'submitExam', maHS:studentInfo.id, tenHS:studentInfo.name, 
-            maDe:currentExam.id, score:score, studentAnswers:userAnswers
+            maDe:currentExam.id, score:total, studentAnswers:userAnswers
         })});
-
-        document.getElementById('loading').style.display='none';
-        document.getElementById('nav-bar-fixed').classList.add('d-none');
-        document.getElementById('question-content').innerHTML='';
-        document.getElementById('result-box').classList.remove('d-none');
-        document.getElementById('score-display').innerText = score;
-        if(currentExam.solutionLink) {
-             document.getElementById('sol-link-area').innerHTML = `<a href="${currentExam.solutionLink}" target="_blank" class="btn btn-primary w-100">Xem Lời Giải</a>`;
-        }
+        location.reload(); 
     }
 </script>
 </body>
