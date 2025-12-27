@@ -16,7 +16,7 @@
         }
         body { background: #f4f6f9; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
         
-        /* HEADER (GIỮ NGUYÊN) */
+        /* HEADER */
         .main-header { background: linear-gradient(90deg, #0056b3 0%, #0d6efd 100%); color: white; padding: 10px 0; flex-shrink: 0; }
         .logo-img { width: 65px; height: 65px; object-fit: contain; background: white; border-radius: 50%; padding: 2px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
         .header-title { font-weight: 800; text-transform: uppercase; font-size: 1.1rem; line-height: 1.1; }
@@ -36,14 +36,22 @@
 
         /* === MÀN HÌNH LÀM BÀI === */
         #exam-screen { display: none; height: 100vh; flex-direction: column; background: white; position: fixed; top: 0; left: 0; width: 100%; z-index: 2000; }
-        .exam-header-bar { height: 45px; flex-shrink: 0; background: white; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; }
+        .exam-header-bar { height: 50px; flex-shrink: 0; background: white; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; }
         
+        /* ĐỒNG HỒ NHẤN MẠNH */
+        .timer-box {
+            background: #dc3545; color: white; font-weight: 900; font-family: 'Courier New', monospace;
+            padding: 5px 15px; border-radius: 8px; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(220, 53, 69, 0.4);
+            animation: pulse-red 2s infinite;
+        }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); } }
+
         /* PDF CHIẾM 60% */
-        .pdf-container { height: 60vh; flex-shrink: 0; background: #525659; border-bottom: 4px solid #666; position: relative; }
+        .pdf-container { height: 60vh; flex-shrink: 0; background: #525659; border-bottom: 5px solid #666; position: relative; }
         iframe { width: 100%; height: 100%; border: none; }
 
         /* CÂU HỎI (PHẦN CÒN LẠI) */
-        .qa-container { flex: 1; overflow-y: auto; background: #fff; padding: 15px; padding-bottom: 60px; position: relative; }
+        .qa-container { flex: 1; overflow-y: auto; background: #fff; padding: 15px; padding-bottom: 70px; position: relative; }
 
         /* UI Trắc nghiệm */
         .mcq-row { display: flex; gap: 8px; margin-top: 10px; }
@@ -58,28 +66,48 @@
         .tf-active-s { background: var(--danger); color: white; border-color: var(--danger); }
 
         /* Nav Bottom */
-        .nav-bottom { position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 30; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
-        .nav-circle { width: 40px; height: 40px; border-radius: 50%; background: #f1f3f5; border: none; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; color: #333; }
+        .nav-bottom { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 30; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        .nav-circle { width: 45px; height: 45px; border-radius: 50%; background: #f1f3f5; border: none; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; color: #333; }
 
         /* === BẢNG TỔNG HỢP (OVERVIEW) MỚI === */
-        #overview-screen { position: absolute; top: 45px; left: 0; width: 100%; height: calc(100% - 45px); background: #f8f9fa; z-index: 3000; display: none; padding: 15px; overflow-y: auto; flex-direction: column; }
+        #overview-screen { position: absolute; top: 50px; left: 0; width: 100%; height: calc(100% - 50px); background: #f8f9fa; z-index: 3000; display: none; padding: 15px; overflow-y: auto; flex-direction: column; }
         
-        .part-header { background: #e9ecef; padding: 8px 10px; font-weight: bold; font-size: 0.9rem; border-radius: 5px; margin: 15px 0 10px 0; color: #333; border-left: 4px solid var(--header-blue); }
-        
-        .q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; }
-        
-        .q-cell { 
-            height: 50px; border-radius: 8px; border: 1px solid #ddd; background: white; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            cursor: pointer; color: #555; position: relative;
+        .part-header { 
+            background: #e9ecef; padding: 10px; font-weight: 800; font-size: 0.95rem; 
+            border-radius: 6px; margin: 20px 0 10px 0; color: var(--header-blue); 
+            border-left: 5px solid var(--header-blue); 
         }
-        .q-cell-num { font-weight: bold; font-size: 0.9rem; }
-        .q-cell-ans { font-size: 0.8rem; color: var(--header-blue); font-weight: bold; }
         
-        .q-done { border-color: var(--success); background: #e8f5e9; }
-        .q-done .q-cell-num { color: var(--success); }
+        /* Grid cho Trắc nghiệm (Nhỏ) */
+        .grid-mcq { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 8px; }
         
-        .q-partial { border-color: #ffc107; background: #fff9db; } /* Cho đúng sai chưa làm hết */
+        /* Grid cho Đúng Sai (Rộng hơn để hiện a,b,c,d) */
+        .grid-tf { display: grid; grid-template-columns: 1fr; gap: 8px; } /* 1 cột danh sách */
+        
+        /* Grid cho Trả lời ngắn (Vừa) */
+        .grid-short { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+
+        .q-cell { 
+            border-radius: 8px; border: 1px solid #ddd; background: white; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            cursor: pointer; color: #555; position: relative; padding: 5px;
+        }
+        
+        /* Style riêng cho ô Đúng Sai trong Overview */
+        .tf-summary-row {
+            display: flex; align-items: center; justify-content: space-between;
+            background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer;
+        }
+        .tf-summary-id { font-weight: bold; width: 40px; }
+        .tf-badges { display: flex; gap: 5px; }
+        .tf-badge { 
+            font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; border: 1px solid #ccc; background: #eee; color: #aaa; font-weight: bold;
+        }
+        .tf-badge.done { background: var(--success); color: white; border-color: var(--success); }
+        .tf-badge.false { background: var(--danger); color: white; border-color: var(--danger); }
+
+        .q-done { border-color: var(--success); background: #e8f5e9; color: var(--success); font-weight: bold; }
+        .q-cell-ans { font-size: 0.85rem; color: var(--header-blue); font-weight: bold; margin-top: 2px; }
 
         #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
     </style>
@@ -132,13 +160,13 @@
 
 <div id="exam-screen">
     <div class="exam-header-bar">
-        <button onclick="toggleOverview()" class="btn btn-sm btn-outline-primary fw-bold"><i class="bi bi-grid-3x3-gap-fill"></i> Danh sách câu</button>
-        <div class="fw-bold text-danger font-monospace fs-5" id="exam-timer">90:00</div>
-        <button onclick="submitExam()" class="btn btn-sm btn-success fw-bold px-3">NỘP</button>
+        <button onclick="toggleOverview()" class="btn btn-sm btn-outline-primary fw-bold"><i class="bi bi-list-task"></i> Danh sách câu</button>
+        <div class="timer-box" id="exam-timer">00:00</div>
+        <button onclick="submitExam()" class="btn btn-sm btn-success fw-bold px-3 shadow">NỘP</button>
     </div>
 
     <div id="overview-screen">
-        <h5 class="fw-bold text-center text-primary mb-3">TỔNG HỢP BÀI LÀM</h5>
+        <h5 class="fw-bold text-center text-primary mb-3 text-uppercase">Tổng hợp bài làm</h5>
         <div id="overview-content"></div> <button onclick="toggleOverview()" class="btn btn-secondary w-100 py-3 fw-bold rounded-pill mt-auto shadow">QUAY LẠI LÀM TIẾP</button>
     </div>
 
@@ -173,7 +201,7 @@
 
 <script>
     // ===============================================================
-    // QUAN TRỌNG: DÁN LINK WEB APP CỦA BẠN VÀO DƯỚI ĐÂY
+    // DÁN LINK WEB APP CỦA BẠN VÀO DƯỚI ĐÂY
     const API_URL = "https://script.google.com/macros/s/AKfycbxHcCRtVq6DfWbnWzX6zxsG51sDpcW-Tm_ovb8UGE4OUdwvSk1xFm310bpEsPTlzsmQcw/exec"; 
     // ===============================================================
 
@@ -247,7 +275,7 @@
         document.getElementById('chapter-filters').style.display=t==='tx'?'flex':'none'; 
         filterExams(); 
     }
-    function renderChapters() { let h=''; for(let i=1;i<=8;i++) h+=`<span class="grade-pill ${i==1?'active':''}" onclick="currentFilter.chapter='${i}';document.querySelectorAll('.grade-pill').forEach(c=>c.classList.remove('active'));this.classList.add('active');filterExams()">Ch${i}</span>`; document.getElementById('chapter-filters').innerHTML=h; }
+    function renderChapters() { let h=''; for(let i=1;i<=8;i++) h+=`<span class="grade-pill ${i==1?'active':''}" onclick="currentFilter.chapter='${i}';document.querySelectorAll('.grade-pill').forEach(c=>c.classList.remove('active'));this.classList.add('active');filterExams()">Chương ${i}</span>`; document.getElementById('chapter-filters').innerHTML=h; }
 
     // --- VÀO THI ---
     function preStart(exam) {
@@ -262,9 +290,8 @@
         
         let struct = (typeof exam.structure==='string')?JSON.parse(exam.structure):exam.structure;
         let c = struct.config || {};
-        let globalId = 1; // Số thứ tự liên tục
+        let globalId = 1; // Đánh số liên tục
 
-        // Tạo map câu hỏi với ID hiển thị liên tục
         for(let i=1; i<=c.mcq; i++) questionMap.push({type:'mcq', id:i, displayId: globalId++, lbl:`Câu ${globalId-1}`});
         for(let i=1; i<=c.tf; i++) questionMap.push({type:'tf', id:i, displayId: globalId++, lbl:`Câu ${globalId-1}`});
         for(let i=1; i<=c.short; i++) questionMap.push({type:'sh', id:i, displayId: globalId++, lbl:`Câu ${globalId-1}`});
@@ -298,7 +325,7 @@
         }, 1000);
     }
 
-    // --- OVERVIEW (CẬP NHẬT: Hiện đáp án + Chia phần) ---
+    // --- OVERVIEW (HIỂN THỊ CHI TIẾT ĐÁP ÁN) ---
     function toggleOverview() {
         const screen = document.getElementById('overview-screen');
         if (screen.style.display === 'flex') screen.style.display = 'none';
@@ -309,53 +336,58 @@
         const container = document.getElementById('overview-content');
         container.innerHTML = '';
 
-        // Helper render grid
-        const renderSection = (title, qs) => {
-            if(qs.length === 0) return '';
-            let html = `<div class="part-header">${title}</div><div class="q-grid">`;
-            qs.forEach((q, idxInMap) => {
-                let ansDisplay = '';
-                let isDone = false;
-                let isPartial = false;
-
-                if (q.type === 'mcq') {
-                    let ans = userAnswers[`p1_c${q.id}`];
-                    if (ans) { isDone = true; ansDisplay = ans; }
-                } 
-                else if (q.type === 'tf') {
-                    // Check xem làm mấy ý
-                    let count = 0;
-                    ['a','b','c','d'].forEach(s => { if(userAnswers[`p2_c${q.id}_${s}`]) count++; });
-                    if(count === 4) isDone = true;
-                    else if(count > 0) isPartial = true;
-                    if(count > 0) ansDisplay = `${count}/4`; // Hiện số ý đã làm
-                } 
-                else if (q.type === 'sh') {
-                    let ans = userAnswers[`p3_c${q.id}`];
-                    if (ans) { isDone = true; ansDisplay = ans.length > 4 ? '...' : ans; }
-                }
-
-                let cls = isDone ? 'q-done' : (isPartial ? 'q-partial' : '');
+        // Hàm render cho MC & Short
+        const renderStandardGrid = (title, qs, clsName) => {
+            if(qs.length===0) return '';
+            let h = `<div class="part-header">${title}</div><div class="${clsName}">`;
+            qs.forEach((q, i) => {
+                let ans = '', isDone = false;
+                if(q.type==='mcq') ans = userAnswers[`p1_c${q.id}`] || '';
+                if(q.type==='sh') ans = userAnswers[`p3_c${q.id}`] || '';
                 
-                // Tìm index thực tế trong questionMap
-                let realIdx = questionMap.findIndex(x => x.displayId === q.displayId);
+                if(ans) isDone = true;
+                if(q.type==='sh' && ans.length>4) ans='...';
 
-                html += `<div class="q-cell ${cls}" onclick="jumpTo(${realIdx})">
-                            <span class="q-cell-num">${q.displayId}</span>
-                            <span class="q-cell-ans">${ansDisplay}</span>
-                         </div>`;
+                // Tìm index thật
+                let realIdx = questionMap.findIndex(x=>x.displayId===q.displayId);
+                let css = isDone ? 'q-done' : '';
+                h += `<div class="q-cell ${css}" onclick="jumpTo(${realIdx})">
+                        <span style="font-size:0.8rem">${q.displayId}</span>
+                        <span class="q-cell-ans">${ans}</span>
+                      </div>`;
             });
-            return html + '</div>';
+            return h + '</div>';
         };
 
-        // Filter câu hỏi theo loại để gom nhóm
+        // Hàm render riêng cho Đúng Sai (Hiện a)Đ b)S...)
+        const renderTFList = (title, qs) => {
+            if(qs.length===0) return '';
+            let h = `<div class="part-header">${title}</div><div class="grid-tf">`;
+            qs.forEach((q, i) => {
+                let realIdx = questionMap.findIndex(x=>x.displayId===q.displayId);
+                let badges = '';
+                ['a','b','c','d'].forEach(sub => {
+                    let u = userAnswers[`p2_c${q.id}_${sub}`];
+                    let txt = u === 'D' ? 'Đ' : (u === 'S' ? 'S' : '-');
+                    let css = u === 'D' ? 'done' : (u === 'S' ? 'false' : '');
+                    badges += `<span class="tf-badge ${css}">${sub})${txt}</span>`;
+                });
+                
+                h += `<div class="tf-summary-row" onclick="jumpTo(${realIdx})">
+                        <span class="tf-summary-id">Câu ${q.displayId}</span>
+                        <div class="tf-badges">${badges}</div>
+                      </div>`;
+            });
+            return h + '</div>';
+        };
+
         const mcqs = questionMap.filter(q => q.type === 'mcq');
         const tfs = questionMap.filter(q => q.type === 'tf');
         const shorts = questionMap.filter(q => q.type === 'sh');
 
-        container.innerHTML += renderSection("PHẦN I. TRẮC NGHIỆM", mcqs);
-        container.innerHTML += renderSection("PHẦN II. ĐÚNG SAI", tfs);
-        container.innerHTML += renderSection("PHẦN III. TRẢ LỜI NGẮN", shorts);
+        container.innerHTML += renderStandardGrid("PHẦN I. TRẮC NGHIỆM KHÁCH QUAN", mcqs, 'grid-mcq');
+        container.innerHTML += renderTFList("PHẦN II. TRẮC NGHIỆM ĐÚNG SAI", tfs);
+        container.innerHTML += renderStandardGrid("PHẦN III. TRẢ LỜI NGẮN", shorts, 'grid-short');
     }
 
     function jumpTo(idx) { renderQ(idx); document.getElementById('overview-screen').style.display = 'none'; }
@@ -408,7 +440,6 @@
         clearInterval(timerInterval);
         document.getElementById('loading').style.display='flex';
 
-        // Calculation (Reuse logic)
         let st=(typeof currentExam.structure==='string')?JSON.parse(currentExam.structure):currentExam.structure;
         let k=st.answers||{}, cf=st.config||{};
         let s1=0, s2=0, s3=0;
