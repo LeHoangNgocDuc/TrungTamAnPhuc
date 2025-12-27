@@ -3,86 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thi Online Mobile</title>
+    <title>Trung Tâm Toán An Phúc Education</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
     <style>
-        :root { --primary: #0d6efd; --success: #198754; --danger: #dc3545; }
-        body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; overflow: hidden; /* Chống cuộn toàn trang */ }
+        :root { 
+            --header-blue: #0d6efd; /* Màu xanh chủ đạo header */
+            --nav-bg: #212529; /* Màu nền menu đen */
+            --highlight-red: #dc3545; /* Màu đỏ nút Thi trực tuyến */
+            --primary: #0d6efd; 
+            --success: #198754; 
+            --danger: #dc3545; 
+            --purple-btn: #6f42c1;
+        }
+        body { background: #f4f6f9; font-family: 'Segoe UI', sans-serif; padding-bottom: 0; overflow-x: hidden; }
         
-        /* === MÀN HÌNH CHỌN (HOME) === */
-        #home-screen { height: 100vh; overflow-y: auto; padding: 15px; padding-bottom: 50px; background: #fff; }
+        /* === 1. HEADER & MENU (GIỐNG HÌNH 1) === */
+        .main-header {
+            background: linear-gradient(90deg, #0056b3 0%, #0d6efd 100%);
+            color: white;
+            padding: 15px 0;
+        }
+        .logo-img {
+            width: 80px; height: 80px; object-fit: contain;
+            background: white; border-radius: 50%; padding: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .header-title { font-weight: 700; text-transform: uppercase; font-size: 1.4rem; line-height: 1.2; }
+        .header-slogan { font-size: 0.9rem; font-style: italic; opacity: 0.9; }
+        .header-contact { font-size: 0.8rem; margin-top: 5px; opacity: 0.9; }
 
-        /* === MÀN HÌNH LÀM BÀI (LAYOUT 65% - 35%) === */
-        #exam-screen { height: 100vh; display: flex; flex-direction: column; background: white; }
+        /* Navigation Bar */
+        .main-nav { background: var(--nav-bg); padding: 0; }
+        .nav-item-custom {
+            color: white; padding: 12px 20px; text-decoration: none; font-weight: 600; font-size: 0.95rem;
+            display: inline-block; transition: 0.3s;
+        }
+        .nav-item-custom:hover { background: #343a40; color: #fff; }
+        .nav-active-red { background: var(--highlight-red); color: white !important; }
+        .nav-active-red:hover { background: #bb2d3b; }
+
+        /* === 2. TRANG CHỦ (BỘ LỌC) === */
+        #home-screen { padding: 20px; height: calc(100vh - 140px); overflow-y: auto; }
         
-        /* 1. Header nhỏ (Cố định) */
-        .exam-header { 
-            height: 45px; flex-shrink: 0; background: #f8f9fa; border-bottom: 1px solid #ddd; 
-            display: flex; align-items: center; justify-content: space-between; padding: 0 10px; z-index: 20; 
+        /* Bộ lọc Lớp (Pills) */
+        .grade-pill {
+            border: 1px solid #ddd; background: white; color: #555; 
+            padding: 5px 15px; border-radius: 20px; font-weight: 600; margin: 0 3px; cursor: pointer;
+        }
+        .grade-pill.active { background: var(--header-blue); color: white; border-color: var(--header-blue); }
+
+        /* Bộ lọc Loại thi (Tabs gạch chân) */
+        .exam-type-tabs { display: flex; border-bottom: 2px solid #eee; margin-bottom: 15px; overflow-x: auto; }
+        .type-tab {
+            padding: 10px 15px; cursor: pointer; color: #666; font-weight: 600; white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+        .type-tab.active { color: var(--header-blue); border-bottom-color: var(--header-blue); }
+
+        /* Bộ lọc Chương (Màu tím) */
+        .chapter-chip {
+            display: inline-block; padding: 5px 12px; border-radius: 8px; font-size: 0.85rem;
+            border: 1px solid #ddd; color: #555; background: white; margin: 3px; cursor: pointer;
+        }
+        .chapter-chip.active { background: var(--purple-btn); color: white; border-color: var(--purple-btn); }
+
+        /* Card Đề thi */
+        .exam-card {
+            background: white; border-radius: 10px; border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 10px;
+            cursor: pointer; transition: 0.2s; padding: 15px; border-left: 4px solid var(--header-blue);
+        }
+        .exam-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+        /* === 3. MÀN HÌNH LÀM BÀI === */
+        #exam-screen { display: none; height: 100vh; flex-direction: column; background: white; position: fixed; top: 0; left: 0; width: 100%; z-index: 2000; }
+        
+        .exam-header-bar {
+            height: 50px; flex-shrink: 0; background: white; border-bottom: 1px solid #ddd;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
         }
         
-        /* 2. PDF Viewer (65%) */
-        .pdf-container { height: 60vh; flex-shrink: 0; border-bottom: 4px solid #aaa; background: #525659; }
+        .pdf-container { flex: 6; background: #525659; position: relative; } /* 60% */
         iframe { width: 100%; height: 100%; border: none; }
+        
+        .qa-container { flex: 4; overflow-y: auto; background: #fff; padding: 15px; padding-bottom: 60px; position: relative; } /* 40% */
 
-        /* 3. Khu vực Trả lời (35% còn lại) */
-        .qa-container { 
-            flex: 1; overflow-y: auto; background: #fff; padding: 10px; 
-            position: relative; padding-bottom: 60px; /* Chừa chỗ cho nav bottom */
-        }
+        /* Nút câu hỏi */
+        .opt-btn { width: 100%; padding: 12px; margin-bottom: 8px; border-radius: 8px; border: 1px solid #dee2e6; background: white; font-weight: 600; text-align: left; display: flex; align-items: center; }
+        .active-opt { background: #e7f1ff; border-color: var(--header-blue); color: var(--header-blue); }
+        .opt-char { width: 30px; height: 30px; border-radius: 50%; background: #f8f9fa; border: 1px solid #ddd; display: flex; justify-content: center; align-items: center; margin-right: 10px; font-weight: bold; }
+        .active-opt .opt-char { background: var(--header-blue); color: white; border-color: var(--header-blue); }
 
-        /* --- STYLES CÂU HỎI --- */
-        .q-card { margin-bottom: 10px; }
-        .q-label { font-weight: bold; color: var(--primary); margin-bottom: 8px; font-size: 1rem; }
-
-        /* Trắc nghiệm (1 dòng 4 nút) */
-        .mcq-row { display: flex; gap: 5px; }
-        .opt-btn { 
-            flex: 1; height: 45px; border: 1px solid #ced4da; border-radius: 8px; background: white;
-            font-weight: 700; color: #555; font-size: 1.1rem;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .active-opt { background: var(--primary); color: white; border-color: var(--primary); }
-
-        /* Đúng Sai (2 dòng) */
-        .tf-container { margin-bottom: 8px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
-        .tf-grid { display: flex; gap: 5px; margin-top: 4px; }
-        .tf-btn { 
-            flex: 1; padding: 6px 0; border: 1px solid #ced4da; border-radius: 6px; background: white;
-            font-weight: 700; font-size: 0.85rem; text-align: center; color: #666;
-        }
+        /* Đúng sai */
+        .tf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
+        .tf-btn { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; background: white; font-weight: bold; color: #555; }
         .tf-active-d { background: var(--success); color: white; border-color: var(--success); }
         .tf-active-s { background: var(--danger); color: white; border-color: var(--danger); }
 
-        /* Nav Bottom (Cố định) */
-        .nav-bottom { 
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 50px;
-            background: white; border-top: 1px solid #eee; display: flex; 
-            align-items: center; justify-content: space-between; padding: 0 15px; 
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 30;
+        /* Bottom Nav */
+        .nav-bottom { position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 10; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+
+        /* === 4. BẢNG TỔNG HỢP (OVERVIEW) === */
+        #overview-screen {
+            position: absolute; top: 50px; left: 0; width: 100%; height: calc(100% - 50px);
+            background: rgba(255,255,255,0.98); z-index: 3000; display: none;
+            padding: 20px; overflow-y: auto; flex-direction: column;
         }
-        .nav-btn { width: 35px; height: 35px; border-radius: 50%; border: 1px solid #ddd; background: #f8f9fa; display: flex; align-items: center; justify-content: center; }
+        .q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .q-cell {
+            height: 50px; border-radius: 8px; border: 1px solid #ddd; background: white;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: bold; cursor: pointer; color: #555;
+        }
+        .q-done { background: var(--header-blue); color: white; border-color: var(--header-blue); }
+        .q-current { border: 2px solid var(--header-blue); color: var(--header-blue); }
 
         /* Loading */
-        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
     </style>
 </head>
 <body>
 
 <div id="loading">
     <div class="spinner-border text-primary"></div>
-    <div class="mt-2 small fw-bold">Đang tải dữ liệu...</div>
+    <p class="mt-2 fw-bold text-secondary">Đang tải dữ liệu...</p>
 </div>
 
-<div id="home-screen">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="fw-bold text-primary m-0">THI TRỰC TUYẾN</h5>
-        <a href="admin.html" class="btn btn-sm btn-outline-secondary">Giáo Viên</a>
+<header>
+    <div class="main-header">
+        <div class="container d-flex align-items-center">
+            <img src="https://drive.google.com/uc?export=view&id=1FNKbFgs2_2WOkb7hItnGW-uldrRQEFxM" alt="Logo" class="logo-img me-3">
+            <div>
+                <div class="header-title">TRUNG TÂM TOÁN AN PHÚC EDUCATION</div>
+                <div class="header-slogan">"Vững kiến thức - Chắc tương lai"</div>
+                <div class="header-contact"><i class="bi bi-geo-alt-fill"></i> Lô 19 ô DC 16 Vĩnh Trường, Nha Trang &nbsp;|&nbsp; <i class="bi bi-telephone-fill"></i> 0972.466.347</div>
+            </div>
+            <div class="ms-auto d-none d-md-block">
+                <i class="bi bi-gear-fill fs-4 cursor-pointer"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-nav">
+        <div class="container d-flex overflow-auto" style="white-space: nowrap;">
+            <a href="#" class="nav-item-custom"><i class="bi bi-house-door-fill"></i> Trang chủ</a>
+            <a href="#" class="nav-item-custom">Toán 6-9</a>
+            <a href="#" class="nav-item-custom">Toán 10-12</a>
+            <a href="#" class="nav-item-custom"><i class="bi bi-play-btn-fill"></i> E-LEARNING</a>
+            <a href="#" class="nav-item-custom nav-active-red">THI TRỰC TUYẾN</a>
+        </div>
+    </div>
+</header>
+
+<div id="home-screen" class="container">
+    
+    <div class="d-flex align-items-center mb-3 border-start border-4 border-primary ps-3">
+        <h4 class="fw-bold m-0 text-dark">Phòng Thi Online</h4>
     </div>
 
-    <div class="card p-3 mb-3 border shadow-sm">
+    <div class="card p-3 mb-3 border bg-light">
         <div class="row g-2 mb-2">
             <div class="col-4">
                 <select id="sel-grade" class="form-select form-select-sm" onchange="updateClassAndFilter()">
@@ -102,57 +183,79 @@
                 </select>
             </div>
         </div>
+        <div class="text-end"><a href="admin.html" class="text-decoration-none small">Giáo viên đăng nhập</a></div>
     </div>
 
-    <div class="d-flex overflow-auto mb-2 pb-1 gap-1">
-        <button class="btn btn-sm btn-primary rounded-pill" onclick="setType('tx')">Thường xuyên</button>
-        <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setType('gk1')">Giữa kỳ 1</button>
-        <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setType('ck1')">Cuối kỳ 1</button>
-        <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setType('gk2')">Giữa kỳ 2</button>
-        <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setType('ck2')">Cuối kỳ 2</button>
+    <div class="exam-type-tabs">
+        <div class="type-tab active" onclick="setType('tx', this)">Kiểm tra thường xuyên</div>
+        <div class="type-tab" onclick="setType('gk1', this)">Giữa kỳ 1</div>
+        <div class="type-tab" onclick="setType('ck1', this)">Cuối kỳ 1</div>
+        <div class="type-tab" onclick="setType('gk2', this)">Giữa kỳ 2</div>
+        <div class="type-tab" onclick="setType('ck2', this)">Cuối kỳ 2</div>
     </div>
-    <div id="chapter-filters" class="mb-3"></div>
-    
+
+    <div id="chapter-filters" class="mb-3">
+        </div>
+
     <div id="exam-grid"></div>
 </div>
 
-<div id="exam-screen" class="d-none">
-    
-    <div class="exam-header">
-        <button onclick="if(confirm('Thoát?')) location.reload()" class="btn btn-sm btn-light text-danger fw-bold"><i class="bi bi-x-lg"></i></button>
+<div id="exam-screen">
+    <div class="exam-header-bar">
+        <button onclick="toggleOverview()" class="btn btn-sm btn-outline-primary fw-bold">
+            <i class="bi bi-grid-3x3-gap-fill"></i> Xem danh sách câu
+        </button>
         <div class="fw-bold text-danger font-monospace fs-5" id="exam-timer">90:00</div>
-        <button onclick="submitExam()" class="btn btn-sm btn-success fw-bold">NỘP</button>
+        <button onclick="submitExam()" class="btn btn-sm btn-success fw-bold px-3">NỘP BÀI</button>
+    </div>
+
+    <div id="overview-screen">
+        <h5 class="fw-bold text-center mb-3">TỔNG HỢP BÀI LÀM</h5>
+        <div class="q-grid" id="overview-grid"></div>
+        <div class="mt-auto">
+            <div class="d-flex justify-content-center gap-3 small mb-3">
+                <div><span class="badge bg-primary">&nbsp;</span> Đã làm</div>
+                <div><span class="badge bg-white border text-dark">&nbsp;</span> Chưa làm</div>
+            </div>
+            <button onclick="toggleOverview()" class="btn btn-secondary w-100 py-3 fw-bold rounded-pill">
+                <i class="bi bi-arrow-return-left"></i> QUAY LẠI LÀM TIẾP
+            </button>
+        </div>
     </div>
 
     <div class="pdf-container">
         <iframe id="pdf-frame"></iframe>
     </div>
 
-    <div class="qa-container">
-        <div id="result-box" class="d-none text-center p-3">
-            <h1 class="text-success fw-bold display-4" id="score-display">--</h1>
-            <div class="small fw-bold">ĐIỂM SỐ</div>
-            <div id="sol-link-area" class="mt-2"></div>
-            <button onclick="location.reload()" class="btn btn-outline-secondary w-100 mt-3">Thoát</button>
+    <div class="qa-container" id="qa-container">
+        <div id="result-box" class="d-none text-center mb-4 pt-3">
+            <h1 class="display-3 fw-bold text-success mb-0" id="score-display">--</h1>
+            <small class="text-uppercase fw-bold text-muted">Điểm số</small>
+            <div id="sol-link-area" class="mt-3"></div>
+            <button onclick="location.reload()" class="btn btn-outline-secondary w-100 mt-3 rounded-pill">Về trang chủ</button>
         </div>
 
         <div id="question-content"></div>
+        
+        <div id="essay-area" class="card p-3 mt-4 border-warning bg-light d-none">
+            <label class="small fw-bold mb-2"><i class="bi bi-camera-fill"></i> Ảnh tự luận:</label>
+            <input type="file" id="essay-files" class="form-control" multiple accept="image/*">
+        </div>
     </div>
 
     <div class="nav-bottom" id="nav-bar-fixed">
-        <button class="nav-btn" onclick="prevQ()"><i class="bi bi-chevron-left"></i></button>
+        <button class="btn btn-light border rounded-circle" style="width:40px;height:40px" onclick="prevQ()"><i class="bi bi-chevron-left"></i></button>
         <div class="d-flex align-items-center gap-2">
             <span class="small fw-bold text-muted">Câu</span>
-            <input type="number" id="jump-input" value="1" min="1" class="form-control text-center fw-bold p-0" style="width: 40px; border:none; background:transparent" onchange="jumpQ()">
-            <span class="small text-muted" id="total-q">/--</span>
+            <input type="number" id="jump-input" value="1" min="1" class="form-control text-center fw-bold p-0 border-0" style="width: 40px;" onchange="jumpQ()">
+            <span class="small text-muted" id="total-q">/ --</span>
         </div>
-        <button class="nav-btn" onclick="nextQ()"><i class="bi bi-chevron-right"></i></button>
+        <button class="btn btn-light border rounded-circle" style="width:40px;height:40px" onclick="nextQ()"><i class="bi bi-chevron-right"></i></button>
     </div>
 </div>
 
 <script>
     // ===============================================================
-    // QUAN TRỌNG: DÁN LINK WEB APP CỦA BẠN VÀO DƯỚI ĐÂY
     const API_URL = "https://script.google.com/macros/s/AKfycbxHcCRtVq6DfWbnWzX6zxsG51sDpcW-Tm_ovb8UGE4OUdwvSk1xFm310bpEsPTlzsmQcw/exec"; 
     // ===============================================================
 
@@ -160,22 +263,24 @@
     let currentExam=null, userAnswers={}, questionMap=[], qIdx=0;
     let studentInfo={id:'', name:''}, timerInterval;
 
-    // --- INIT ---
     window.onload = async () => {
-        // Tự động tắt loading sau 5s nếu lỗi mạng để không bị treo
-        setTimeout(() => document.getElementById('loading').style.display='none', 5000);
+        setTimeout(() => document.getElementById('loading').style.display='none', 8000);
         updateClassAndFilter();
         renderChapters();
         await fetchExams();
     };
 
-    // --- 1. LOGIC CHỌN LỚP ---
+    // --- LOGIC LỌC ---
     function updateClassAndFilter() {
         const grade = document.getElementById('sel-grade').value;
         const clsSel = document.getElementById('sel-class');
         clsSel.innerHTML = '<option value="">Lớp</option>';
-        let letters = (grade <= 9) ? ['A','B','C','D','E'] : ['A','B'];
+        let letters = (grade <= 9) ? ['A','B','C','D','E'] : ['A','B','C'];
         letters.forEach(L => clsSel.innerHTML += `<option value="${grade}${L}">${grade}${L}</option>`);
+        
+        // Update Filter Pills UI
+        document.querySelectorAll('.grade-pill').forEach(p => p.classList.remove('active'));
+        
         currentFilter.class = grade;
         filterExams();
     }
@@ -184,7 +289,6 @@
         const cls = document.getElementById('sel-class').value;
         const stuSel = document.getElementById('sel-student');
         if(!cls) { stuSel.disabled=true; return; }
-        
         stuSel.innerHTML = '<option>Đang tải...</option>';
         try {
             const res = await fetch(API_URL + `?action=getStudentsByClass&className=${cls}`);
@@ -194,10 +298,9 @@
                 json.data.forEach(s => stuSel.innerHTML += `<option value="${s.id}|${s.name}">${s.name}</option>`);
                 stuSel.disabled = false;
             }
-        } catch(e) { stuSel.innerHTML='<option>Lỗi kết nối</option>'; }
+        } catch(e) { stuSel.innerHTML='<option>Lỗi tải</option>'; }
     }
 
-    // --- 2. TẢI ĐỀ ---
     async function fetchExams() {
         try {
             const res = await fetch(API_URL + "?action=getExams&t=" + Date.now());
@@ -212,21 +315,35 @@
         const grid = document.getElementById('exam-grid');
         const list = allExams.filter(e => e.classGrade == currentFilter.class && e.examType == currentFilter.type && (currentFilter.type!=='tx' || e.chapter == currentFilter.chapter));
         
-        if(list.length===0) { grid.innerHTML='<div class="text-center text-muted py-5 small">Chưa có đề thi.</div>'; return; }
+        if(list.length===0) { grid.innerHTML='<div class="text-center text-muted py-5 small">Chưa có đề thi nào trong mục này.</div>'; return; }
         
         grid.innerHTML = list.map(e => `
-            <div class="card p-3 mb-2 shadow-sm border-0" onclick='preStart(${JSON.stringify(e).replace(/'/g,"&#39;")})'>
-                <div class="d-flex justify-content-between">
-                    <div class="fw-bold text-primary text-truncate" style="max-width: 250px;">${e.title}</div>
-                    <div class="small text-muted">${e.duration}'</div>
+            <div class="exam-card" onclick='preStart(${JSON.stringify(e).replace(/'/g,"&#39;")})'>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-bold text-dark text-truncate" style="max-width: 250px;">${e.title}</div>
+                        <div class="small text-muted mt-1"><i class="bi bi-clock"></i> ${e.duration} phút &bull; ${e.totalQuestions} câu</div>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary rounded-pill fw-bold">Vào thi</button>
                 </div>
             </div>`).join('');
     }
 
-    function setType(t) { currentFilter.type=t; document.getElementById('chapter-filters').style.display=t==='tx'?'block':'none'; filterExams(); }
-    function renderChapters() { let h=''; for(let i=1;i<=8;i++) h+=`<button class="btn btn-sm btn-outline-dark me-1 mb-1" onclick="currentFilter.chapter='${i}';filterExams()">Ch${i}</button>`; document.getElementById('chapter-filters').innerHTML=h; }
+    function setType(t, btn) { 
+        currentFilter.type=t; 
+        document.querySelectorAll('.type-tab').forEach(b=>b.classList.remove('active')); 
+        btn.classList.add('active');
+        document.getElementById('chapter-filters').style.display=t==='tx'?'block':'none'; 
+        filterExams(); 
+    }
+    
+    function renderChapters() { 
+        let h=''; 
+        for(let i=1;i<=8;i++) h+=`<span class="chapter-chip ${i==1?'active':''}" onclick="currentFilter.chapter='${i}';document.querySelectorAll('.chapter-chip').forEach(c=>c.classList.remove('active'));this.classList.add('active');filterExams()">Chương ${i}</span>`; 
+        document.getElementById('chapter-filters').innerHTML=h; 
+    }
 
-    // --- 3. VÀO THI ---
+    // --- VÀO THI ---
     function preStart(exam) {
         const val = document.getElementById('sel-student').value;
         if(!val || val.includes("Chọn")) return alert("Vui lòng chọn Tên Học Sinh!");
@@ -245,10 +362,17 @@
         for(let i=1; i<=c.short; i++) questionMap.push({type:'sh', id:i, lbl:`Câu ${i}`});
 
         document.getElementById('home-screen').classList.add('d-none');
-        document.getElementById('exam-screen').classList.remove('d-none');
-        document.getElementById('pdf-frame').src = exam.pdfLink.replace('/view','/preview');
+        document.querySelector('header').classList.add('d-none'); // Ẩn header chính
+        document.getElementById('exam-screen').style.display = 'flex';
+        
+        let pdf = exam.pdfLink;
+        if(pdf.includes('/view')) pdf = pdf.replace('/view', '/preview');
+        else if(pdf.includes('/edit')) pdf = pdf.replace('/edit', '/preview');
+        document.getElementById('pdf-frame').src = pdf;
+
         document.getElementById('total-q').innerText = "/ " + questionMap.length;
         document.getElementById('jump-input').max = questionMap.length;
+        if(exam.isEssay) document.getElementById('essay-area').classList.remove('d-none');
 
         startTimer(exam.duration);
         renderQ(0);
@@ -266,47 +390,76 @@
         }, 1000);
     }
 
-    // --- 4. RENDER CÂU HỎI (QUAN TRỌNG: FIX UI) ---
+    // --- OVERVIEW (BẢNG TỔNG HỢP) ---
+    function toggleOverview() {
+        const screen = document.getElementById('overview-screen');
+        if (screen.style.display === 'flex') {
+            screen.style.display = 'none';
+        } else {
+            renderOverview();
+            screen.style.display = 'flex';
+        }
+    }
+
+    function renderOverview() {
+        const grid = document.getElementById('overview-grid');
+        grid.innerHTML = questionMap.map((q, idx) => {
+            // Check status
+            let isDone = false;
+            if (q.type === 'mcq') isDone = !!userAnswers[`p1_c${q.id}`];
+            if (q.type === 'tf') {
+                // Đ/S coi là xong nếu làm ít nhất 1 ý (hoặc bắt buộc làm hết tùy bạn, đây làm đơn giản)
+                isDone = ['a','b','c','d'].some(s => !!userAnswers[`p2_c${q.id}_${s}`]);
+            }
+            if (q.type === 'sh') isDone = !!userAnswers[`p3_c${q.id}`];
+
+            const cls = isDone ? 'q-done' : '';
+            const current = idx === qIdx ? 'q-current' : '';
+            
+            return `<div class="q-cell ${cls} ${current}" onclick="jumpTo(${idx})">${q.id}</div>`;
+        }).join('');
+    }
+
+    function jumpTo(idx) {
+        renderQ(idx);
+        document.getElementById('overview-screen').style.display = 'none';
+    }
+
+    // --- RENDER QUESTION ---
     function renderQ(idx) {
         if(idx<0 || idx>=questionMap.length) return;
         qIdx = idx; document.getElementById('jump-input').value = idx + 1;
         const q = questionMap[idx];
         const box = document.getElementById('question-content');
         
-        let h = `<div class="q-label">${q.lbl}</div>`;
+        let h = `<div class="mb-3"><span class="badge bg-primary mb-2">${q.type.toUpperCase()}</span><h5 class="fw-bold text-dark">${q.lbl}</h5></div>`;
 
-        // TRẮC NGHIỆM: 1 DÒNG
         if(q.type === 'mcq') {
-            h += `<div class="mcq-row">`;
             ['A','B','C','D'].forEach(o => {
                 let act = userAnswers[`p1_c${q.id}`]===o ? 'active-opt' : '';
-                h += `<div class="opt-btn ${act}" onclick="ans('p1_c${q.id}', '${o}')">${o}</div>`;
+                h += `<div class="opt-btn ${act}" onclick="ans('p1_c${q.id}', '${o}')">
+                    <div class="opt-char">${o}</div> <span>Phương án ${o}</span>
+                </div>`;
             });
-            h += `</div>`;
         } 
-        // ĐÚNG SAI: 2 CỘT
         else if (q.type === 'tf') {
+            h += `<div class="tf-grid">`;
             ['a','b','c','d'].forEach(s => {
                 let u = userAnswers[`p2_c${q.id}_${s}`];
-                h += `
-                <div class="tf-container">
-                    <div class="small fw-bold">Ý (${s})</div>
-                    <div class="tf-grid">
-                        <div class="tf-btn ${u==='D'?'tf-active-d':''}" onclick="ans('p2_c${q.id}_${s}','D')">ĐÚNG</div>
-                        <div class="tf-btn ${u==='S'?'tf-active-s':''}" onclick="ans('p2_c${q.id}_${s}','S')">SAI</div>
+                h += `<div class="p-2 border rounded bg-light">
+                    <div class="fw-bold small mb-2">Ý (${s})</div>
+                    <div class="d-flex gap-1">
+                        <button class="tf-btn ${u==='D'?'tf-active-d':''}" onclick="ans('p2_c${q.id}_${s}','D')">Đ</button>
+                        <button class="tf-btn ${u==='S'?'tf-active-s':''}" onclick="ans('p2_c${q.id}_${s}','S')">S</button>
                     </div>
                 </div>`;
             });
+            h += `</div>`;
         }
-        // NHẬP SỐ: KHÔNG RELOAD (GIỮ BÀN PHÍM)
         else {
             let v = userAnswers[`p3_c${q.id}`] || '';
-            // oninput chỉ cập nhật biến, KHÔNG gọi renderQ lại
-            h += `<input type="text" class="form-control form-control-lg text-center fw-bold mt-2" 
-                   placeholder="Nhập kết quả..." value="${v}" 
-                   oninput="userAnswers['p3_c${q.id}'] = this.value.trim()">`;
+            h += `<input type="text" class="form-control form-control-lg text-center fw-bold mt-2" placeholder="Nhập đáp án..." value="${v}" oninput="userAnswers['p3_c${q.id}'] = this.value.trim()">`;
         }
-        
         box.innerHTML = h;
     }
 
@@ -315,48 +468,55 @@
     function nextQ() { renderQ(qIdx+1); }
     function jumpQ() { renderQ(parseInt(document.getElementById('jump-input').value)-1); }
 
-    // --- 5. NỘP BÀI ---
+    // --- SUBMIT ---
     async function submitExam(auto=false) {
-        if(!auto && !confirm("Nộp bài?")) return;
+        if(!auto && !confirm("Bạn có chắc chắn NỘP BÀI?")) return;
         clearInterval(timerInterval);
         document.getElementById('loading').style.display='flex';
 
-        // Tính điểm sơ bộ
+        // Calculation (Simplified)
         let st=(typeof currentExam.structure==='string')?JSON.parse(currentExam.structure):currentExam.structure;
         let k=st.answers||{}, cf=st.config||{};
         let s1=0, s2=0, s3=0;
 
+        // P1
         let c1=0; for(let i=1; i<=cf.mcq; i++) if(userAnswers[`p1_c${i}`]===k[`p1_c${i}`]) c1++;
         if(cf.mcq>0) s1 = (3.0/cf.mcq)*c1;
-
+        // P3
         let c3=0; for(let i=1; i<=cf.short; i++) {
             let u=(userAnswers[`p3_c${i}`]||"").toUpperCase().trim(); let ky=(k[`p3_c${i}`]||"").toUpperCase().trim();
             if(u===ky && ky!=="") c3++;
         }
         if(cf.short>0) s3 = (3.0/cf.short)*c3;
-
+        // P2
         for(let i=1; i<=cf.tf; i++) {
             let c=0; ['a','b','c','d'].forEach(s=>{ if(userAnswers[`p2_c${i}_${s}`]===k[`p2_c${i}_${s}`]) c++; });
             if(c==1)s2+=0.1; else if(c==2)s2+=0.25; else if(c==3)s2+=0.5; else if(c==4)s2+=1.0;
         }
         let total = (s1+s2+s3).toFixed(2); if(total>10) total=10;
 
+        let imgs=[]; const files=document.getElementById('essay-files').files;
+        if(files.length){
+            const toB64=f=>new Promise(r=>{const fr=new FileReader();fr.readAsDataURL(f);fr.onload=()=>r(fr.result)});
+            for(let f of files) imgs.push(await toB64(f));
+        }
+
         try {
             await fetch(API_URL, {method:'POST', body:JSON.stringify({
                 action:'submitExam', maHS:studentInfo.id, tenHS:studentInfo.name, maDe:currentExam.id,
-                score:total, studentAnswers:userAnswers, detailResult:{}
+                score:total, studentAnswers:userAnswers, detailResult:{}, images:imgs
             })});
         } catch(e) {}
 
-        // Show
         document.getElementById('question-content').innerHTML='';
         document.getElementById('nav-bar-fixed').style.display='none';
+        document.querySelector('.exam-header-bar').style.display='none'; // Ẩn header bài thi
         document.getElementById('result-box').classList.remove('d-none');
         document.getElementById('score-display').innerText = total;
         
         if(currentExam.solutionLink) {
             let l = currentExam.solutionLink.replace('/view','/preview');
-            document.getElementById('sol-link-area').innerHTML = `<a href="${l}" target="_blank" class="btn btn-primary w-100 py-2 fw-bold">XEM LỜI GIẢI</a>`;
+            document.getElementById('sol-link-area').innerHTML = `<a href="${l}" target="_blank" class="btn btn-primary w-100 py-3 fw-bold shadow">XEM LỜI GIẢI CHI TIẾT</a>`;
         }
         document.getElementById('loading').style.display='none';
     }
