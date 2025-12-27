@@ -3,161 +3,330 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Quản Trị</title>
+    <title>Admin - Quản Trị Hệ Thống</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-    <style>body{background:#f0f2f5;padding-bottom:50px}.nav-pills .nav-link.active{background:#0d6efd}</style>
-    <script>if(!sessionStorage.getItem("isAdmin")) window.location.href="login.html";</script>
+    
+    <style>
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; padding-bottom: 80px; }
+        .nav-pills .nav-link { border-radius: 8px; font-weight: 600; color: #555; margin-right: 5px; padding: 10px 15px; }
+        .nav-pills .nav-link.active { background-color: #0d6efd; color: white; box-shadow: 0 4px 6px rgba(13,110,253,0.3); }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .card-header { border-radius: 12px 12px 0 0 !important; padding: 15px 20px; }
+        .form-label { font-weight: 600; font-size: 0.9rem; color: #495057; }
+        .form-select, .form-control { border-radius: 8px; padding: 10px; }
+    </style>
+
+    <script>
+        if (!sessionStorage.getItem("isAdmin")) window.location.href = "login.html";
+    </script>
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-primary mb-4"><div class="container"><span class="navbar-brand fw-bold">ADMIN PANEL</span><a href="index.html" class="btn btn-light btn-sm fw-bold">Xem HS</a></div></nav>
+    
+    <nav class="navbar navbar-dark bg-primary shadow mb-4 sticky-top">
+        <div class="container">
+            <span class="navbar-brand fw-bold h1 m-0"><i class="bi bi-shield-lock-fill"></i> QUẢN TRỊ VIÊN</span>
+            <div class="d-flex gap-2">
+                <a href="index.html" class="btn btn-light btn-sm fw-bold text-primary shadow-sm" target="_blank">Xem Giao Diện HS</a>
+                <button onclick="sessionStorage.clear();location.href='login.html'" class="btn btn-outline-light btn-sm fw-bold">Thoát</button>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
         <ul class="nav nav-pills mb-4 bg-white p-2 rounded shadow-sm" id="pills-tab" role="tablist">
-            <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-student">1. Quản Lý HS</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-exam">2. Nhập Đề</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-rank">3. Kết Quả</button></li>
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-student">1. Quản Lý Học Sinh</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-exam">2. Nhập Đề Thi</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-rank">3. Kết Quả & Thống Kê</button></li>
         </ul>
+
         <div class="tab-content">
+            
             <div class="tab-pane fade show active" id="pills-student">
-                <div class="card p-3 border-success"><h6 class="fw-bold text-success">NHẬP DANH SÁCH HS (Excel: Mã, Tên, Lớp)</h6>
-                <input type="file" id="file-student" class="form-control mb-2">
-                <button onclick="importStudents()" class="btn btn-success">Upload</button></div>
-            </div>
-            <div class="tab-pane fade" id="pills-exam">
-                <div class="card p-3">
-                    <h6 class="fw-bold text-primary">NHẬP ĐỀ MỚI</h6>
-                    <div class="row g-2 mb-2">
-                        <div class="col-3"><select id="exam-class" class="form-select"><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></div>
-                        <div class="col-3"><select id="exam-type" class="form-select"><option value="tx">TX</option><option value="gk1">GK1</option><option value="ck1">CK1</option><option value="gk2">GK2</option><option value="ck2">CK2</option></select></div>
-                        <div class="col-3"><select id="exam-chapter" class="form-select"><option value="1">Chương 1</option><option value="2">Chương 2</option><option value="3">Chương 3</option><option value="4">Chương 4</option></select></div>
-                        <div class="col-3"><input type="number" id="exam-duration" class="form-control" value="90"></div>
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white fw-bold">NHẬP DANH SÁCH TỪ EXCEL</div>
+                    <div class="card-body">
+                        <div class="alert alert-light border-start border-success border-4 mb-3">
+                            <strong>Hướng dẫn:</strong> File Excel (.xlsx) gồm 3 cột: 
+                            <span class="badge bg-secondary">Mã HS</span> <span class="badge bg-secondary">Họ Tên</span> <span class="badge bg-secondary">Lớp</span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="file" id="file-student" class="form-control" accept=".xlsx, .xls">
+                            <button onclick="importStudents()" id="btn-upload-hs" class="btn btn-success fw-bold px-4">TẢI LÊN NGAY</button>
+                        </div>
                     </div>
-                    <div class="row g-2 mb-2">
-                        <div class="col-3"><input type="text" id="exam-id" class="form-control" placeholder="Mã Đề"></div>
-                        <div class="col-9"><input type="text" id="exam-title" class="form-control" placeholder="Tên Đề"></div>
-                    </div>
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><input type="text" id="link-exam" class="form-control" placeholder="Link Đề PDF"></div>
-                        <div class="col-6"><input type="text" id="link-sol" class="form-control" placeholder="Link Giải PDF"></div>
-                    </div>
-                    <div class="row g-2 mb-2 p-2 bg-light border rounded">
-                        <div class="col-4"><label>Điểm P1</label><input type="number" id="score-p1" class="form-control" value="3.0"></div>
-                        <div class="col-4"><label>Điểm P3</label><input type="number" id="score-p3" class="form-control" value="3.0"></div>
-                    </div>
-                    <div class="mb-2"><input type="file" id="word-upload" onchange="handleWordUpload(this)" class="d-none">
-                    <button onclick="document.getElementById('word-upload').click()" class="btn btn-warning btn-sm fw-bold">Import Word</button></div>
-                    <div class="row g-2 mb-2">
-                        <div class="col-4"><input id="num-mcq" class="form-control" placeholder="TN"></div>
-                        <div class="col-4"><input id="num-tf" class="form-control" placeholder="Đ/S"></div>
-                        <div class="col-4"><input id="num-short" class="form-control" placeholder="Ngắn"></div>
-                    </div>
-                    <div id="answer-area" class="d-none bg-white p-2 border mb-2"></div>
-                    <button onclick="saveExamFinal()" id="btn-save" class="btn btn-primary w-100">LƯU ĐỀ</button>
                 </div>
             </div>
-            <div class="tab-pane fade" id="pills-rank">
-                <div class="card p-3 border-warning">
-                    <h6 class="fw-bold text-dark">XEM KẾT QUẢ THI</h6>
-                    <div class="row g-2 mb-3 align-items-end">
-                        <div class="col-3"><label class="small">Khối</label><select id="stat-grade" class="form-select form-select-sm" onchange="updateStatExamList()"><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></div>
-                        <div class="col-3"><label class="small">Loại</label><select id="stat-type" class="form-select form-select-sm" onchange="updateStatExamList()"><option value="tx">TX</option><option value="gk1">GK1</option><option value="ck1">CK1</option><option value="gk2">GK2</option><option value="ck2">CK2</option></select></div>
-                        <div class="col-4"><label class="small">Đề Thi</label><select id="stat-exam" class="form-select form-select-sm"><option value="">Đang tải...</option></select></div>
-                        <div class="col-2"><button onclick="viewRankings()" class="btn btn-warning w-100 btn-sm fw-bold">XEM</button></div>
+
+            <div class="tab-pane fade" id="pills-exam">
+                <div class="card">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">NHẬP ĐỀ THI MỚI</h5>
+                        <button onclick="location.reload()" class="btn btn-sm btn-light text-primary fw-bold rounded-pill">Làm mới</button>
                     </div>
-                    <table class="table table-bordered small"><thead class="table-dark"><tr><th>#</th><th>Tên</th><th>Mã</th><th>Điểm</th><th>TG</th></tr></thead><tbody id="rank-table-body"></tbody></table>
+                    <div class="card-body">
+                        <h6 class="text-primary fw-bold border-bottom pb-2 mb-3">A. Thông tin chung</h6>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Khối lớp</label>
+                                <select id="exam-class" class="form-select bg-light">
+                                    <option value="6">Lớp 6</option><option value="7">Lớp 7</option><option value="8">Lớp 8</option><option value="9">Lớp 9</option>
+                                    <option value="10">Lớp 10</option><option value="11">Lớp 11</option><option value="12">Lớp 12</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Loại kỳ thi</label>
+                                <select id="exam-type" class="form-select bg-light" onchange="toggleChapter()">
+                                    <option value="tx">Kiểm tra thường xuyên</option>
+                                    <option value="gk1">Giữa kỳ 1</option><option value="ck1">Cuối kỳ 1</option>
+                                    <option value="gk2">Giữa kỳ 2</option><option value="ck2">Cuối kỳ 2</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3" id="div-chapter">
+                                <label class="form-label">Chương</label>
+                                <select id="exam-chapter" class="form-select bg-light">
+                                    <option value="1">Chương 1</option><option value="2">Chương 2</option><option value="3">Chương 3</option><option value="4">Chương 4</option>
+                                    <option value="5">Chương 5</option><option value="6">Chương 6</option><option value="7">Chương 7</option><option value="8">Chương 8</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Thời gian (phút)</label>
+                                <input type="number" id="exam-duration" class="form-control" value="90">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3"><label class="form-label">Mã Đề</label><input type="text" id="exam-id" class="form-control" placeholder="VD: TOAN10-GK1"></div>
+                            <div class="col-md-9"><label class="form-label">Tên Đề Thi</label><input type="text" id="exam-title" class="form-control" placeholder="Tên đề thi..."></div>
+                        </div>
+
+                        <h6 class="text-primary fw-bold border-bottom pb-2 mb-3">B. Link File & Cấu hình</h6>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6"><label class="form-label text-danger">Link Đề (PDF)</label><input type="text" id="link-exam" class="form-control"></div>
+                            <div class="col-md-6"><label class="form-label text-success">Link Giải (PDF)</label><input type="text" id="link-sol" class="form-control"></div>
+                            <div class="col-12"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="is-essay"><label class="form-check-label fw-bold">Cho phép nộp Tự luận</label></div></div>
+                        </div>
+
+                        <div class="row g-3 mb-3 bg-light p-3 rounded border">
+                            <div class="col-md-4"><label class="small">Điểm P1 (TN)</label><input type="number" id="score-p1" class="form-control fw-bold" value="3.0" step="0.1"></div>
+                            <div class="col-md-4"><label class="small">Điểm P2 (Đ/S)</label><input type="text" class="form-control" value="Auto (0.1 - 1.0)" disabled></div>
+                            <div class="col-md-4"><label class="small">Điểm P3 (Ngắn)</label><input type="number" id="score-p3" class="form-control fw-bold" value="3.0" step="0.1"></div>
+                        </div>
+
+                        <div class="mb-3 d-flex gap-2 align-items-center bg-white p-2 border rounded">
+                            <input type="file" id="word-upload" accept=".docx" class="d-none" onchange="handleWordUpload(this)">
+                            <button onclick="document.getElementById('word-upload').click()" class="btn btn-warning fw-bold shadow-sm">
+                                <i class="bi bi-file-word-fill"></i> Tải file Word Đáp Án
+                            </button>
+                            <span class="small text-muted fst-italic ms-2">Hệ thống sẽ tự động tách câu TN, Đ/S, Tự luận</span>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-4"><div class="input-group"><span class="input-group-text">TN</span><input type="number" id="num-mcq" class="form-control" value="0"></div></div>
+                            <div class="col-4"><div class="input-group"><span class="input-group-text">Đ/S</span><input type="number" id="num-tf" class="form-control" value="0"></div></div>
+                            <div class="col-4"><div class="input-group"><span class="input-group-text">Ngắn</span><input type="number" id="num-short" class="form-control" value="0"></div></div>
+                        </div>
+
+                        <div id="answer-area" class="d-none bg-white p-3 border rounded mb-3" style="max-height: 400px; overflow-y: auto;"></div>
+
+                        <button onclick="saveExamFinal()" id="btn-save" class="btn btn-success w-100 py-3 fw-bold fs-5 shadow">LƯU ĐỀ THI</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="pills-rank">
+                <div class="card border-warning">
+                    <div class="card-header bg-warning text-dark fw-bold">THỐNG KÊ KẾT QUẢ</div>
+                    <div class="card-body">
+                        <div class="row g-2 mb-3 align-items-end">
+                            <div class="col-md-3"><label class="small fw-bold">1. Khối</label><select id="stat-grade" class="form-select" onchange="updateExamListStat()"><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></div>
+                            <div class="col-md-3"><label class="small fw-bold">2. Loại</label><select id="stat-type" class="form-select" onchange="toggleStatChapter()"><option value="tx">TX</option><option value="gk1">GK1</option><option value="ck1">CK1</option><option value="gk2">GK2</option><option value="ck2">CK2</option></select></div>
+                            <div class="col-md-2" id="div-stat-chapter"><label class="small fw-bold">Chương</label><select id="stat-chapter" class="form-select" onchange="updateExamListStat()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+                            <div class="col-md-4"><label class="small fw-bold">3. Đề Thi</label><select id="stat-exam" class="form-select"><option value="">Đang tải...</option></select></div>
+                        </div>
+                        <button onclick="viewRankings()" class="btn btn-primary w-100 fw-bold mb-3">XEM KẾT QUẢ</button>
+                        <div class="table-responsive"><table class="table table-bordered table-hover small"><thead class="table-dark text-center"><tr><th>#</th><th>Học Sinh</th><th>Mã HS</th><th>Điểm</th><th>Thời gian</th></tr></thead><tbody id="rank-table-body"><tr><td colspan="5" class="text-center text-muted">Chưa có dữ liệu</td></tr></tbody></table></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // ===============================================================
-    // QUAN TRỌNG: DÁN LINK WEB APP CỦA BẠN VÀO DƯỚI ĐÂY
-    const API_URL = "https://script.google.com/macros/s/AKfycbxHcCRtVq6DfWbnWzX6zxsG51sDpcW-Tm_ovb8UGE4OUdwvSk1xFm310bpEsPTlzsmQcw/exec"; 
-    // ===============================================================
 
-    let answerData={}, allExams=[];
-    
-    // Init
-    window.onload = async () => {
-        try {
-            const res = await fetch(API_URL + "?action=getExams&t="+Date.now());
-            const json = await res.json(); allExams = json.data||[]; updateStatExamList();
-        } catch(e){}
-    };
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ============================================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbxHcCRtVq6DfWbnWzX6zxsG51sDpcW-Tm_ovb8UGE4OUdwvSk1xFm310bpEsPTlzsmQcw/exec"; // THAY LINK WEB APP CỦA BẠN
+        // ============================================================
 
-    // --- TAB 1 ---
-    function importStudents() {
-        const f=document.getElementById('file-student').files[0]; if(!f) return alert("Chọn file!");
-        const r=new FileReader();
-        r.onload=e=>{
-            const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
-            const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1});
-            const stus=[]; for(let i=1;i<rows.length;i++) if(rows[i][0]) stus.push([rows[i][0],rows[i][1],rows[i][2]||""]);
-            if(confirm(`Tải lên ${stus.length} HS?`)) {
-                fetch(API_URL,{method:'POST',body:JSON.stringify({action:"importStudents",students:stus})})
-                .then(r=>r.json()).then(j=>{alert("OK");location.reload()});
+        let answerData = {}, allExamsForStat = [];
+
+        window.onload = async function() {
+            try {
+                const res = await fetch(API_URL + "?action=getExams&t=" + Date.now());
+                const json = await res.json();
+                allExamsForStat = json.data || [];
+                updateExamListStat();
+            } catch(e) {}
+        }
+
+        function toggleChapter() { document.getElementById('div-chapter').style.display = (document.getElementById('exam-type').value === 'tx') ? 'block' : 'none'; }
+        function toggleStatChapter() { document.getElementById('div-stat-chapter').style.display = (document.getElementById('stat-type').value === 'tx') ? 'block' : 'none'; updateExamListStat(); }
+
+        // --- 1. UPLOAD WORD (LOGIC ĐẦY ĐỦ ĐÃ KHÔI PHỤC) ---
+        function handleWordUpload(input) {
+            const f = input.files[0]; if(!f) return;
+            const r = new FileReader();
+            r.onload = e => mammoth.convertToHtml({arrayBuffer:e.target.result}).then(r=>parseDoc(r.value));
+            r.readAsArrayBuffer(f);
+        }
+
+        function parseDoc(html) {
+            const p = new DOMParser(); const doc = p.parseFromString(html,'text/html');
+            const txt = doc.body.innerText; 
+            let data = {}, mcq=0, tf=0, sh=0;
+
+            // 1. Quét Trắc nghiệm (Câu 1. A, Câu 2: B...)
+            const reMCQ = /(\d+)[\.\s:]*([A-D])/gi; 
+            let m;
+            while((m = reMCQ.exec(txt)) !== null) {
+                const q = parseInt(m[1]);
+                if(q < 100) { // Giới hạn số câu để tránh nhiễu
+                    data[`p1_c${q}`] = m[2].toUpperCase();
+                    if(q > mcq) mcq = q;
+                }
             }
-        }; r.readAsArrayBuffer(f);
-    }
 
-    // --- TAB 3 (Thống kê) ---
-    function updateStatExamList() {
-        const g=document.getElementById('stat-grade').value;
-        const t=document.getElementById('stat-type').value;
-        const sel=document.getElementById('stat-exam'); sel.innerHTML='<option value="">--Chọn--</option>';
-        const list=allExams.filter(e=>e.classGrade==g && e.examType==t);
-        list.forEach(e=>sel.innerHTML+=`<option value="${e.id}">${e.title}</option>`);
-    }
-    function viewRankings() {
-        const id=document.getElementById('stat-exam').value; if(!id) return alert("Chọn đề!");
-        const tb=document.getElementById('rank-table-body'); tb.innerHTML='<tr><td colspan="5">Đang tải...</td></tr>';
-        fetch(API_URL+`?action=getRankingsAdmin&maDe=${id}`).then(r=>r.json()).then(j=>{
-            tb.innerHTML = (j.data||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${r.tenHS}</td><td>${r.maHS}</td><td class="fw-bold text-danger">${r.diem}</td><td>${r.time}</td></tr>`).join('') || '<tr><td colspan="5">Không có dữ liệu</td></tr>';
-        });
-    }
+            // 2. Quét Bảng Đúng Sai (Tìm table)
+            doc.querySelectorAll('table').forEach(t => {
+                const rows = t.querySelectorAll('tr');
+                // Nếu bảng có chứa chữ "Đúng" hoặc "Sai"
+                if(t.innerText.includes("Đúng") || t.innerText.includes("Sai")) {
+                    // Map cột (Tìm cột nào là câu hỏi)
+                    let questionMap = {};
+                    rows[0].querySelectorAll('td').forEach((td, idx) => {
+                        const txt = td.innerText.trim();
+                        const match = txt.match(/Câu\s*(\d+)/i);
+                        if(match) questionMap[idx] = parseInt(match[1]);
+                    });
 
-    // --- TAB 2 (Word & Save) ---
-    function handleWordUpload(inp){
-        const f=inp.files[0]; if(!f)return;
-        const r=new FileReader(); r.onload=e=>mammoth.convertToHtml({arrayBuffer:e.target.result}).then(r=>parseDoc(r.value)); r.readAsArrayBuffer(f);
-    }
-    function parseDoc(h){
-        const p=new DOMParser(), doc=p.parseFromString(h,'text/html'), txt=doc.body.innerText;
-        let d={}, mcq=0, tf=0, sh=0;
-        let m; while((m=/(\d+)[\.\s]*([A-D])/g.exec(txt))!==null) { d[`p1_c${m[1]}`]=m[2]; if(m[1]>mcq)mcq=m[1]; }
-        doc.querySelectorAll('table').forEach(t=>{
-            if(t.innerText.includes("Đúng")){
-                t.querySelectorAll('tr').forEach((r,i)=>{ if(i>0) r.querySelectorAll('td').forEach(td=>{
-                    const s=td.innerText.match(/^([a-d])/i), v=td.innerText.match(/(Đúng|Sai)/i);
-                    if(s&&v) { /* Logic extract Đ/S simplified for brevity */ } 
-                })})
-                // Lưu ý: Logic parse Word giữ nguyên từ code cũ của bạn vì nó dài
-                // Ở đây tôi giả lập để code ngắn gọn. Bạn paste lại logic parse cũ vào đây nhé.
+                    // Duyệt các dòng dữ liệu
+                    for(let i=1; i<rows.length; i++) {
+                        const cells = rows[i].querySelectorAll('td');
+                        cells.forEach((td, idx) => {
+                            if(questionMap[idx]) {
+                                // Tìm ý a,b,c,d và Đ/S
+                                const qId = questionMap[idx];
+                                const content = td.innerText.trim();
+                                const subMatch = content.match(/^([a-d])[\)\.]/i);
+                                const valMatch = content.match(/(Đúng|Sai|Đ|S)/i);
+                                
+                                if(subMatch && valMatch) {
+                                    let val = valMatch[1].toUpperCase().startsWith('Đ') ? 'D' : 'S';
+                                    data[`p2_c${qId}_${subMatch[1].toLowerCase()}`] = val;
+                                    if(qId > tf) tf = qId;
+                                }
+                            }
+                        });
+                    }
+                }
+                
+                // 3. Quét bảng Trả lời ngắn (Câu | Đáp án)
+                if(t.innerText.includes("Đáp án") || t.innerText.includes("Kết quả")) {
+                    let qIdx = -1, aIdx = -1;
+                    rows[0].querySelectorAll('td').forEach((td, i) => {
+                        if(td.innerText.includes("Câu")) qIdx = i;
+                        if(td.innerText.includes("Đáp") || td.innerText.includes("Kết")) aIdx = i;
+                    });
+
+                    if(qIdx !== -1 && aIdx !== -1) {
+                        for(let i=1; i<rows.length; i++) {
+                            const cells = rows[i].querySelectorAll('td');
+                            if(cells[qIdx] && cells[aIdx]) {
+                                const qNum = parseInt(cells[qIdx].innerText.replace(/\D/g,''));
+                                const ans = cells[aIdx].innerText.trim();
+                                if(!isNaN(qNum) && ans) {
+                                    data[`p3_c${qNum}`] = ans;
+                                    if(qNum > sh) sh = qNum;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Cập nhật giao diện
+            document.getElementById('num-mcq').value = mcq;
+            document.getElementById('num-tf').value = tf;
+            document.getElementById('num-short').value = sh;
+            answerData = data; 
+            generateForm(); 
+            fillFormData(data); 
+            alert(`✅ Đã nhận diện: ${mcq} câu TN, ${tf} câu Đ/S, ${sh} câu Ngắn.`);
+        }
+
+        function generateForm() {
+            const mcq = parseInt(document.getElementById('num-mcq').value)||0;
+            const tf = parseInt(document.getElementById('num-tf').value)||0;
+            const short = parseInt(document.getElementById('num-short').value)||0;
+            const div = document.getElementById('answer-area');
+            div.innerHTML = ''; div.classList.remove('d-none');
+
+            if(mcq>0) {
+                let h = `<h6 class="text-primary small fw-bold">I. TRẮC NGHIỆM</h6><div class="row g-1 mb-3">`;
+                for(let i=1; i<=mcq; i++) h += `<div class="col-3 col-md-2"><div class="input-group input-group-sm"><span class="input-group-text">${i}</span><select class="form-select" id="in-p1-${i}" onchange="updKey('p1_c${i}',this.value)"><option>-</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div></div>`;
+                div.innerHTML += h + '</div>';
             }
-        });
-        // Để đảm bảo chạy được ngay, tôi dùng logic đơn giản:
-        document.getElementById('num-mcq').value = mcq;
-        // ... (Bạn paste lại hàm parseDoc cũ đầy đủ vào đây) ...
-        alert("Đã đọc file word (Demo)");
-    }
-    
-    // (Copy lại hàm saveExamFinal từ bài trước vào đây)
-    async function saveExamFinal() {
-        /* Paste code saveExamFinal cũ */
-        const btn = document.getElementById('btn-save'); btn.innerText="Lưu...";
-        const py={
-            action:"addExam", id:document.getElementById('exam-id').value, title:document.getElementById('exam-title').value,
-            pdfLink:document.getElementById('link-exam').value, solLink:document.getElementById('link-sol').value,
-            duration:document.getElementById('exam-duration').value, isEssay:false,
-            classGrade:document.getElementById('exam-class').value, examType:document.getElementById('exam-type').value,
-            chapter:document.getElementById('exam-chapter').value,
-            totalQuestions:10, structure:{config:{mcq:10,tf:0,short:0}, answers:{}}
-        };
-        fetch(API_URL,{method:'POST',body:JSON.stringify(py)}).then(r=>r.json()).then(j=>{alert("OK");location.reload()});
-    }
-</script>
+            if(tf>0) {
+                let h = `<h6 class="text-primary small fw-bold">II. ĐÚNG SAI</h6><div class="row g-2 mb-3">`;
+                for(let i=1; i<=tf; i++) {
+                    h += `<div class="col-md-6 border rounded p-1 bg-light"><span class="fw-bold small me-1">C${i}:</span>` + ['a','b','c','d'].map(s=>`<select class="d-inline-block form-select-sm border py-0 px-1 me-1" style="width:40px" id="in-p2-${i}-${s}" onchange="updKey('p2_c${i}_${s}',this.value)"><option>-</option><option>D</option><option>S</option></select>`).join('') + `</div>`;
+                }
+                div.innerHTML += h + '</div>';
+            }
+            if(short>0) {
+                let h = `<h6 class="text-primary small fw-bold">III. TRẢ LỜI NGẮN</h6><div class="row g-2">`;
+                for(let i=1; i<=short; i++) h+= `<div class="col-6 col-md-3"><div class="input-group input-group-sm"><span class="input-group-text">${i}</span><input type="text" class="form-control" id="in-p3-${i}" onblur="updKey('p3_c${i}',this.value)"></div></div>`;
+                div.innerHTML += h + '</div>';
+            }
+        }
+
+        function fillFormData(data) {
+            for(let k in data) {
+                let id = "";
+                if(k.startsWith("p1")) id = "in-p1-" + k.replace("p1_c", "");
+                else if(k.startsWith("p2")) id = "in-p2-" + k.replace("p2_c", "").replace("_", "-");
+                else if(k.startsWith("p3")) id = "in-p3-" + k.replace("p3_c", "");
+                const el = document.getElementById(id); if(el) el.value = data[k];
+            }
+        }
+        function updKey(k,v) { answerData[k] = v.trim().toUpperCase(); }
+
+        // --- CÁC HÀM KHÁC (IMPORT HS, SAVE, STATS) GIỮ NGUYÊN ---
+        function importStudents() { /* Code import HS như cũ */ const f=document.getElementById('file-student').files[0];if(!f)return alert("Chọn file!");const r=new FileReader();r.onload=e=>{const w=XLSX.read(new Uint8Array(e.target.result),{type:'array'});const d=XLSX.utils.sheet_to_json(w.Sheets[w.SheetNames[0]],{header:1});const s=[];for(let i=1;i<d.length;i++)if(d[i][0])s.push([d[i][0],d[i][1],d[i][2]||""]);if(confirm(`Tải ${s.length} HS?`))fetch(API_URL,{method:'POST',body:JSON.stringify({action:"importStudents",students:s})}).then(r=>r.json()).then(j=>{alert("OK");location.reload()})};r.readAsArrayBuffer(f); }
+        function updateExamListStat() { /* Code cập nhật list đề thống kê như cũ */ const g=document.getElementById('stat-grade').value, t=document.getElementById('stat-type').value, c=document.getElementById('stat-chapter').value, s=document.getElementById('stat-exam'); s.innerHTML='<option value="">--Chọn--</option>'; allExamsForStat.filter(e=>e.classGrade==g&&e.examType==t&&(t!='tx'||e.chapter==c)).forEach(e=>s.innerHTML+=`<option value="${e.id}">${e.title}</option>`); }
+        function viewRankings() { /* Code xem rank như cũ */ const m=document.getElementById('stat-exam').value; if(!m)return alert("Chọn đề!"); const b=document.getElementById('rank-table-body'); b.innerHTML='<tr><td colspan="5">Đang tải...</td></tr>'; fetch(API_URL+`?action=getRankingsAdmin&maDe=${m}`).then(r=>r.json()).then(j=>{b.innerHTML=(j.data||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${r.tenHS}</td><td>${r.maHS}</td><td class="fw-bold text-danger">${r.diem}</td><td>${r.time}</td></tr>`).join('')||'<tr><td colspan="5">Không có dữ liệu</td></tr>'}); }
+        
+        async function saveExamFinal() {
+            const btn = document.getElementById('btn-save'); btn.innerHTML = "Đang lưu..."; btn.disabled=true;
+            const payload = {
+                action: "addExam",
+                id: document.getElementById('exam-id').value,
+                title: document.getElementById('exam-title').value,
+                pdfLink: document.getElementById('link-exam').value,
+                solLink: document.getElementById('link-sol').value,
+                duration: document.getElementById('exam-duration').value,
+                isEssay: document.getElementById('is-essay').checked,
+                classGrade: document.getElementById('exam-class').value,
+                examType: document.getElementById('exam-type').value,
+                chapter: document.getElementById('exam-type').value === 'tx' ? document.getElementById('exam-chapter').value : "",
+                totalQuestions: parseInt(document.getElementById('num-mcq').value)+parseInt(document.getElementById('num-tf').value)+parseInt(document.getElementById('num-short').value),
+                structure: { config: { mcq: parseInt(document.getElementById('num-mcq').value)||0, tf: parseInt(document.getElementById('num-tf').value)||0, short: parseInt(document.getElementById('num-short').value)||0, scoreP1: parseFloat(document.getElementById('score-p1').value)||3.0, scoreP3: parseFloat(document.getElementById('score-p3').value)||3.0 }, answers: answerData }
+            };
+            try { await fetch(API_URL, {method:'POST', body:JSON.stringify(payload)}); alert("Lưu thành công!"); location.reload(); } catch(e) { alert("Lỗi"); btn.disabled=false; }
+        }
+    </script>
 </body>
 </html>
