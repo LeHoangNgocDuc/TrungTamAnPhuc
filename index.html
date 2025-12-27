@@ -18,7 +18,14 @@
         
         /* HEADER */
         .main-header { background: linear-gradient(90deg, #0056b3 0%, #0d6efd 100%); color: white; padding: 10px 0; flex-shrink: 0; }
-        .logo-img { width: 65px; height: 65px; object-fit: contain; background: white; border-radius: 50%; padding: 2px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        
+        /* LOGO STYLE */
+        .logo-img { 
+            width: 65px; height: 65px; object-fit: contain; 
+            background: white; border-radius: 50%; padding: 2px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+        }
+        
         .header-title { font-weight: 800; text-transform: uppercase; font-size: 1.1rem; line-height: 1.1; }
         .header-slogan { font-size: 0.8rem; font-style: italic; opacity: 0.9; }
         .main-nav { background: var(--nav-bg); padding: 0; flex-shrink: 0; }
@@ -38,7 +45,7 @@
         #exam-screen { display: none; height: 100vh; flex-direction: column; background: white; position: fixed; top: 0; left: 0; width: 100%; z-index: 2000; }
         .exam-header-bar { height: 50px; flex-shrink: 0; background: white; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; }
         
-        /* ĐỒNG HỒ NHẤN MẠNH */
+        /* ĐỒNG HỒ */
         .timer-box {
             background: #dc3545; color: white; font-weight: 900; font-family: 'Courier New', monospace;
             padding: 5px 15px; border-radius: 8px; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(220, 53, 69, 0.4);
@@ -46,7 +53,7 @@
         }
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); } }
 
-        /* PDF CHIẾM 60% */
+        /* PDF 60% */
         .pdf-container { height: 60vh; flex-shrink: 0; background: #525659; border-bottom: 5px solid #666; position: relative; }
         iframe { width: 100%; height: 100%; border: none; }
 
@@ -69,43 +76,21 @@
         .nav-bottom { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 30; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
         .nav-circle { width: 45px; height: 45px; border-radius: 50%; background: #f1f3f5; border: none; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; color: #333; }
 
-        /* === BẢNG TỔNG HỢP (OVERVIEW) MỚI === */
+        /* OVERVIEW */
         #overview-screen { position: absolute; top: 50px; left: 0; width: 100%; height: calc(100% - 50px); background: #f8f9fa; z-index: 3000; display: none; padding: 15px; overflow-y: auto; flex-direction: column; }
-        
-        .part-header { 
-            background: #e9ecef; padding: 10px; font-weight: 800; font-size: 0.95rem; 
-            border-radius: 6px; margin: 20px 0 10px 0; color: var(--header-blue); 
-            border-left: 5px solid var(--header-blue); 
-        }
-        
-        /* Grid cho Trắc nghiệm (Nhỏ) */
+        .part-header { background: #e9ecef; padding: 10px; font-weight: 800; font-size: 0.95rem; border-radius: 6px; margin: 20px 0 10px 0; color: var(--header-blue); border-left: 5px solid var(--header-blue); }
         .grid-mcq { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 8px; }
-        
-        /* Grid cho Đúng Sai (Rộng hơn để hiện a,b,c,d) */
-        .grid-tf { display: grid; grid-template-columns: 1fr; gap: 8px; } /* 1 cột danh sách */
-        
-        /* Grid cho Trả lời ngắn (Vừa) */
+        .grid-tf { display: grid; grid-template-columns: 1fr; gap: 8px; }
         .grid-short { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
-
-        .q-cell { 
-            border-radius: 8px; border: 1px solid #ddd; background: white; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            cursor: pointer; color: #555; position: relative; padding: 5px;
-        }
         
-        /* Style riêng cho ô Đúng Sai trong Overview */
-        .tf-summary-row {
-            display: flex; align-items: center; justify-content: space-between;
-            background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer;
-        }
+        .q-cell { border-radius: 8px; border: 1px solid #ddd; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; color: #555; position: relative; padding: 5px; }
+        .tf-summary-row { display: flex; align-items: center; justify-content: space-between; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; }
         .tf-summary-id { font-weight: bold; width: 40px; }
         .tf-badges { display: flex; gap: 5px; }
-        .tf-badge { 
-            font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; border: 1px solid #ccc; background: #eee; color: #aaa; font-weight: bold;
-        }
+        .tf-badge { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; border: 1px solid #ccc; background: #eee; color: #aaa; font-weight: bold; }
         .tf-badge.done { background: var(--success); color: white; border-color: var(--success); }
         .tf-badge.false { background: var(--danger); color: white; border-color: var(--danger); }
-
+        
         .q-done { border-color: var(--success); background: #e8f5e9; color: var(--success); font-weight: bold; }
         .q-cell-ans { font-size: 0.85rem; color: var(--header-blue); font-weight: bold; margin-top: 2px; }
 
@@ -119,7 +104,7 @@
 <header>
     <div class="main-header">
         <div class="container d-flex align-items-center ps-3 pe-3">
-            <img src="https://drive.google.com/uc?export=view&id=1FNKbFgs2_2WOkb7hItnGW-uldrRQEFxM" alt="Logo" class="logo-img me-3">
+            <img src="./logo.png" alt="Logo" class="logo-img me-3">
             <div>
                 <div class="header-title">TOÁN AN PHÚC EDUCATION</div>
                 <div class="header-slogan">"Vững kiến thức - Chắc tương lai"</div>
@@ -167,7 +152,8 @@
 
     <div id="overview-screen">
         <h5 class="fw-bold text-center text-primary mb-3 text-uppercase">Tổng hợp bài làm</h5>
-        <div id="overview-content"></div> <button onclick="toggleOverview()" class="btn btn-secondary w-100 py-3 fw-bold rounded-pill mt-auto shadow">QUAY LẠI LÀM TIẾP</button>
+        <div id="overview-content"></div> 
+        <button onclick="toggleOverview()" class="btn btn-secondary w-100 py-3 fw-bold rounded-pill mt-auto shadow">QUAY LẠI LÀM TIẾP</button>
     </div>
 
     <div class="pdf-container">
@@ -201,7 +187,7 @@
 
 <script>
     // ===============================================================
-    // DÁN LINK WEB APP CỦA BẠN VÀO DƯỚI ĐÂY
+    // DÁN LINK WEB APP CỦA BẠN VÀO ĐÂY
     const API_URL = "https://script.google.com/macros/s/AKfycbxHcCRtVq6DfWbnWzX6zxsG51sDpcW-Tm_ovb8UGE4OUdwvSk1xFm310bpEsPTlzsmQcw/exec"; 
     // ===============================================================
 
@@ -290,7 +276,7 @@
         
         let struct = (typeof exam.structure==='string')?JSON.parse(exam.structure):exam.structure;
         let c = struct.config || {};
-        let globalId = 1; // Đánh số liên tục
+        let globalId = 1; 
 
         for(let i=1; i<=c.mcq; i++) questionMap.push({type:'mcq', id:i, displayId: globalId++, lbl:`Câu ${globalId-1}`});
         for(let i=1; i<=c.tf; i++) questionMap.push({type:'tf', id:i, displayId: globalId++, lbl:`Câu ${globalId-1}`});
@@ -325,7 +311,7 @@
         }, 1000);
     }
 
-    // --- OVERVIEW (HIỂN THỊ CHI TIẾT ĐÁP ÁN) ---
+    // --- OVERVIEW (HIỆN a)Đ b)S) ---
     function toggleOverview() {
         const screen = document.getElementById('overview-screen');
         if (screen.style.display === 'flex') screen.style.display = 'none';
@@ -336,19 +322,15 @@
         const container = document.getElementById('overview-content');
         container.innerHTML = '';
 
-        // Hàm render cho MC & Short
         const renderStandardGrid = (title, qs, clsName) => {
             if(qs.length===0) return '';
             let h = `<div class="part-header">${title}</div><div class="${clsName}">`;
-            qs.forEach((q, i) => {
+            qs.forEach((q) => {
                 let ans = '', isDone = false;
                 if(q.type==='mcq') ans = userAnswers[`p1_c${q.id}`] || '';
                 if(q.type==='sh') ans = userAnswers[`p3_c${q.id}`] || '';
-                
                 if(ans) isDone = true;
                 if(q.type==='sh' && ans.length>4) ans='...';
-
-                // Tìm index thật
                 let realIdx = questionMap.findIndex(x=>x.displayId===q.displayId);
                 let css = isDone ? 'q-done' : '';
                 h += `<div class="q-cell ${css}" onclick="jumpTo(${realIdx})">
@@ -359,11 +341,10 @@
             return h + '</div>';
         };
 
-        // Hàm render riêng cho Đúng Sai (Hiện a)Đ b)S...)
         const renderTFList = (title, qs) => {
             if(qs.length===0) return '';
             let h = `<div class="part-header">${title}</div><div class="grid-tf">`;
-            qs.forEach((q, i) => {
+            qs.forEach((q) => {
                 let realIdx = questionMap.findIndex(x=>x.displayId===q.displayId);
                 let badges = '';
                 ['a','b','c','d'].forEach(sub => {
@@ -372,7 +353,6 @@
                     let css = u === 'D' ? 'done' : (u === 'S' ? 'false' : '');
                     badges += `<span class="tf-badge ${css}">${sub})${txt}</span>`;
                 });
-                
                 h += `<div class="tf-summary-row" onclick="jumpTo(${realIdx})">
                         <span class="tf-summary-id">Câu ${q.displayId}</span>
                         <div class="tf-badges">${badges}</div>
