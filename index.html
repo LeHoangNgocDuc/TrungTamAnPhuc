@@ -154,19 +154,34 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxAfFzbBaM3WUpkcVu8B7H5fvIQLbQpbvVB5lSaNe_nRPHkTP6U2rkduwcQ98BoJxjs1g/exec"; 
+    // ===============================================================
+    // HÃY DÁN LINK WEB APP CỦA BẠN VÀO DƯỚI ĐÂY
+    const API_URL = "https://script.google.com/macros/s/AKfycbzifNP04Z5dlxHhqaoJ94vhx-t1-NgDJE9Thmhc4dVQWckJIQT-sCcYiCtodoQf3GK-ug/exec"; 
+    // ===============================================================
 
     let db = { exams:[], docs:[], vids:[] };
     let curState = { view:'exam', grade:6, docTerm:'HK1', vidGrade:6, examType:'tx' };
     let currentExam=null, userAnswers={}, questionMap=[], qIdx=0, studentInfo={id:'', name:''}, timerInterval, historyData=null;
 
     window.onload = async () => {
+        // Cảnh báo nếu chưa thay link
+        if(API_URL.includes("xxxx")) alert("LỖI: Bạn chưa thay LINK WEB APP trong code!");
+
         const sel=document.getElementById('sel-grade'); sel.innerHTML='';
         [6,7,8,9,10,11,12].forEach(g=>sel.innerHTML+=`<option value="${g}">Khối ${g}</option>`); sel.innerHTML+=`<option value="TN">TN THPT</option>`;
-        try { const r = await fetch(API_URL+"?action=getAllData&t="+Date.now()); const j = await r.json(); db = { exams: j.exams||[], docs: j.docs||[], vids: j.vids||[] }; } catch(e){}
+
+        try {
+            const r = await fetch(API_URL+"?action=getAllData&t="+Date.now());
+            const j = await r.json();
+            db = { exams: j.exams||[], docs: j.docs||[], vids: j.vids||[] };
+        } catch(e) {
+            alert("Không tải được dữ liệu! Vui lòng kiểm tra lại Link API.");
+        }
+        
         switchTab('exam'); selectGrade(6, document.querySelector('.filter-btn')); document.getElementById('loading').style.display='none';
     };
 
+    // --- NAVIGATION ---
     function switchTab(tab, param) {
         document.querySelectorAll('.nav-link-custom').forEach(l => l.classList.remove('active', 'exam-active'));
         document.getElementById('view-exam').classList.add('d-none'); document.getElementById('view-doc').classList.add('d-none'); document.getElementById('view-elearn').classList.add('d-none');
@@ -177,6 +192,7 @@
         else document.getElementById('btn-exam').click();
     }
 
+    // --- THI ONLINE ---
     function selectGrade(g, btn) {
         curState.grade = g; document.querySelectorAll('#view-exam .filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.getElementById('sel-grade').value = g; updateClassDropdown(g);
         const div = document.getElementById('type-filters'); let h = '';
