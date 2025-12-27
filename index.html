@@ -15,11 +15,10 @@
         .main-nav { background: var(--nav-bg); padding: 0; white-space: nowrap; overflow-x: auto; }
         .nav-link-custom { display: inline-block; padding: 12px 18px; color: #bbb; text-decoration: none; font-weight: 600; font-size: 0.9rem; border-right: 1px solid #333; }
         .nav-link-custom:hover { color: white; background: #333; }
-        .nav-link-custom.active { color: white; background: var(--active-blue); } 
-        .nav-link-custom.exam-active { color: white; background: var(--active-red); }
+        .nav-link-custom.active { color: white; background: var(--active-red); } 
         .main-container { height: calc(100vh - 140px); overflow-y: auto; padding: 15px; background: #fff; }
         .section-title { font-weight: 800; font-size: 1.3rem; margin-bottom: 15px; padding-left: 10px; border-left: 5px solid; }
-        .title-red { border-color: var(--active-red); } .title-blue { border-color: var(--active-blue); } .title-purple { border-color: var(--purple); }
+        .title-red { border-color: var(--active-red); } 
         .scroll-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; }
         .filter-btn { border: 1px solid #ddd; background: white; padding: 6px 15px; border-radius: 20px; font-weight: 600; color: #555; white-space: nowrap; }
         .filter-btn.active { background: var(--active-blue); color: white; border-color: var(--active-blue); }
@@ -27,9 +26,6 @@
         .type-item { padding: 8px 15px; cursor: pointer; color: #666; font-weight: 600; white-space: nowrap; border-bottom: 3px solid transparent; }
         .type-item.active { color: var(--active-blue); border-bottom-color: var(--active-blue); }
         .exam-card { border: 1px solid #eee; padding: 15px; border-radius: 8px; border-left: 4px solid var(--active-red); margin-bottom: 10px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .doc-card { border: 1px solid #eee; padding: 15px; border-radius: 8px; border-left: 4px solid var(--active-blue); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .vid-card { border-radius: 8px; overflow: hidden; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: white; }
-        .vid-frame { width: 100%; aspect-ratio: 16/9; }
         #exam-screen { display: none; height: 100vh; flex-direction: column; background: white; position: fixed; top: 0; left: 0; width: 100%; z-index: 2000; }
         .exam-header-bar { height: 50px; flex-shrink: 0; background: white; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; }
         .pdf-container { height: 60vh; flex-shrink: 0; background: #525659; } iframe { width: 100%; height: 100%; }
@@ -61,16 +57,8 @@
     </div>
     <nav class="main-nav">
         <div class="container">
-            <a href="#" class="nav-link-custom" onclick="switchTab('home')"><i class="bi bi-house-door-fill"></i></a>
-            <a href="#" class="nav-link-custom" onclick="switchTab('doc', 6)">Toán 6</a>
-            <a href="#" class="nav-link-custom" onclick="switchTab('doc', 7)">Toán 7</a>
-            <a href="#" class="nav-link-custom" onclick="switchTab('doc', 8)">Toán 8</a>
-            <a href="#" class="nav-link-custom" onclick="switchTab('doc', 9)">Toán 9</a>
-            <a href="#" class="nav-link-custom" onclick="switchTab('doc', 10)">Toán 10</a>
-            <a href="#" class="nav-link-custom" onclick="switchTab('doc', 11)">Toán 11</a>
-            <a href="#" class="nav-link-custom" onclick="switchTab('doc', 12)">Toán 12</a>
-            <a href="#" class="nav-link-custom" onclick="switchTab('elearn')">E-LEARNING</a>
-            <a href="#" class="nav-link-custom exam-active" onclick="switchTab('exam')" id="btn-exam">THI TRỰC TUYẾN</a>
+            <a href="#" class="nav-link-custom" onclick="location.reload()"><i class="bi bi-house-door-fill"></i></a>
+            <a href="#" class="nav-link-custom active">THI TRỰC TUYẾN</a>
         </div>
     </nav>
 </header>
@@ -97,29 +85,6 @@
         </div>
         <div class="type-tabs" id="type-filters"></div>
         <div id="exam-list"></div>
-    </div>
-
-    <div id="view-doc" class="d-none">
-        <div class="section-title title-blue" id="doc-title">Tài Liệu</div>
-        <div class="type-tabs">
-            <div class="type-item active" onclick="filterDocs('HK1', this)">Học Kỳ I</div>
-            <div class="type-item" onclick="filterDocs('HK2', this)">Học Kỳ II</div>
-        </div>
-        <div id="doc-list"></div>
-    </div>
-
-    <div id="view-elearn" class="d-none">
-        <div class="section-title title-purple">Video Bài Giảng</div>
-        <div class="scroll-row mb-3">
-            <button class="filter-btn active" onclick="filterVids(6, this)">Lớp 6</button>
-            <button class="filter-btn" onclick="filterVids(7, this)">Lớp 7</button>
-            <button class="filter-btn" onclick="filterVids(8, this)">Lớp 8</button>
-            <button class="filter-btn" onclick="filterVids(9, this)">Lớp 9</button>
-            <button class="filter-btn" onclick="filterVids(10, this)">Lớp 10</button>
-            <button class="filter-btn" onclick="filterVids(11, this)">Lớp 11</button>
-            <button class="filter-btn" onclick="filterVids(12, this)">Lớp 12</button>
-        </div>
-        <div id="vid-list"></div>
     </div>
 </div>
 
@@ -154,45 +119,18 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // ===============================================================
-    // HÃY DÁN LINK WEB APP CỦA BẠN VÀO DƯỚI ĐÂY
-    const API_URL = "https://script.google.com/macros/s/AKfycbwbWPdxLLUSSHPQxZ5EohBuFTZYB3s6UsAPYZfNjj8BvPqNwQuQE2FzflZRoWwwGHYwQg/exec"; 
-    // ===============================================================
+    const API_URL = "https://script.google.com/macros/s/AKfycbwkmvHSUj8D80ob5zZUa_64ISLWCgre36_gjS1vyzP5_C4p6MWoCmfSqGtL2ZWQ0QxRzg/exec"; 
 
-    let db = { exams:[], docs:[], vids:[] };
-    let curState = { view:'exam', grade:6, docTerm:'HK1', vidGrade:6, examType:'tx' };
+    let allExams=[], curState = { grade:6, examType:'tx' };
     let currentExam=null, userAnswers={}, questionMap=[], qIdx=0, studentInfo={id:'', name:''}, timerInterval, historyData=null;
 
     window.onload = async () => {
-        // Cảnh báo nếu chưa thay link
-        if(API_URL.includes("xxxx")) alert("LỖI: Bạn chưa thay LINK WEB APP trong code!");
-
         const sel=document.getElementById('sel-grade'); sel.innerHTML='';
         [6,7,8,9,10,11,12].forEach(g=>sel.innerHTML+=`<option value="${g}">Khối ${g}</option>`); sel.innerHTML+=`<option value="TN">TN THPT</option>`;
-
-        try {
-            const r = await fetch(API_URL+"?action=getAllData&t="+Date.now());
-            const j = await r.json();
-            db = { exams: j.exams||[], docs: j.docs||[], vids: j.vids||[] };
-        } catch(e) {
-            alert("Không tải được dữ liệu! Vui lòng kiểm tra lại Link API.");
-        }
-        
-        switchTab('exam'); selectGrade(6, document.querySelector('.filter-btn')); document.getElementById('loading').style.display='none';
+        try { const r = await fetch(API_URL+"?action=getExams&t="+Date.now()); const j = await r.json(); allExams = j.data||[]; } catch(e){}
+        selectGrade(6, document.querySelector('.filter-btn')); document.getElementById('loading').style.display='none';
     };
 
-    // --- NAVIGATION ---
-    function switchTab(tab, param) {
-        document.querySelectorAll('.nav-link-custom').forEach(l => l.classList.remove('active', 'exam-active'));
-        document.getElementById('view-exam').classList.add('d-none'); document.getElementById('view-doc').classList.add('d-none'); document.getElementById('view-elearn').classList.add('d-none');
-        const btn = event.currentTarget;
-        if(tab === 'exam') { btn.classList.add('exam-active'); document.getElementById('view-exam').classList.remove('d-none'); }
-        else if (tab === 'doc') { btn.classList.add('active'); document.getElementById('view-doc').classList.remove('d-none'); curState.grade = param; document.getElementById('doc-title').innerText = `Tài Liệu Toán ${param}`; renderDocs(); }
-        else if (tab === 'elearn') { btn.classList.add('active'); document.getElementById('view-elearn').classList.remove('d-none'); renderVids(); }
-        else document.getElementById('btn-exam').click();
-    }
-
-    // --- THI ONLINE ---
     function selectGrade(g, btn) {
         curState.grade = g; document.querySelectorAll('#view-exam .filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.getElementById('sel-grade').value = g; updateClassDropdown(g);
         const div = document.getElementById('type-filters'); let h = '';
@@ -201,11 +139,7 @@
         div.innerHTML = h; renderExams();
     }
     function setType(t, btn) { curState.examType = t; document.querySelectorAll('.type-item').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderExams(); }
-    function renderExams() { const list = db.exams.filter(e => e.classGrade == curState.grade && e.examType == curState.examType); const div = document.getElementById('exam-list'); div.innerHTML = list.length ? list.map(e => `<div class="exam-card" onclick='preStart(${JSON.stringify(e).replace(/'/g,"&#39;")})'><div class="d-flex justify-content-between align-items-center"><div><b>${e.title}</b><div class="small text-muted">${e.duration}p | ${e.totalQuestions} câu</div></div><button class="btn btn-primary btn-sm rounded-pill fw-bold">Thi</button></div></div>`).join('') : '<p class="text-center text-muted py-4">Chưa có đề thi.</p>'; }
-    function filterDocs(t, btn) { curState.docTerm = t; document.querySelectorAll('#view-doc .type-item').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderDocs(); }
-    function renderDocs() { const list = db.docs.filter(d => d.grade == curState.grade && d.term == curState.docTerm); const div = document.getElementById('doc-list'); div.innerHTML = list.length ? list.map(d => `<div class="doc-card"><div><i class="bi bi-file-pdf-fill text-danger me-2"></i><b>${d.title}</b></div><a href="${d.link}" target="_blank" class="btn btn-outline-primary btn-sm"><i class="bi bi-download"></i> Tải</a></div>`).join('') : '<p class="text-center text-muted">Trống</p>'; }
-    function filterVids(g, btn) { curState.vidGrade = g; document.querySelectorAll('#view-elearn .filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderVids(); }
-    function renderVids() { const list = db.vids.filter(v => v.grade == curState.vidGrade); const div = document.getElementById('vid-list'); div.innerHTML = list.length ? list.map(v => { let id = v.link.split('v=')[1] || v.link.split('/').pop(); return `<div class="vid-card"><iframe class="vid-frame" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe><div class="p-2 fw-bold small">${v.title}</div></div>`; }).join('') : '<p class="text-center text-muted">Trống</p>'; }
+    function renderExams() { const list = allExams.filter(e => e.classGrade == curState.grade && e.examType == curState.examType); const div = document.getElementById('exam-list'); div.innerHTML = list.length ? list.map(e => `<div class="exam-card" onclick='preStart(${JSON.stringify(e).replace(/'/g,"&#39;")})'><div class="d-flex justify-content-between align-items-center"><div><b>${e.title}</b><div class="small text-muted">${e.duration}p | ${e.totalQuestions} câu</div></div><button class="btn btn-primary btn-sm rounded-pill fw-bold">Thi</button></div></div>`).join('') : '<p class="text-center text-muted py-4">Chưa có đề thi.</p>'; }
 
     function updateClassDropdown(g) { const s=document.getElementById('sel-class'); s.innerHTML='<option value="">-Lớp-</option>'; let l=['A','B','C','D','E']; if(g>9)l=['A','B','C','D']; l.forEach(x=>s.innerHTML+=`<option value="${g}${x}">${g}${x}</option>`); }
     function manualGradeChange() { selectGrade(document.getElementById('sel-grade').value, document.querySelector('.scroll-row .filter-btn')); }
@@ -219,7 +153,6 @@
     function prevQ(){renderQ(qIdx-1)} function nextQ(){renderQ(qIdx+1)} function jumpQ(){renderQ(document.getElementById('jump-input').value-1)}
     function startTimer(m){let t=m*60;const d=document.getElementById('exam-timer');clearInterval(timerInterval);timerInterval=setInterval(()=>{let mn=Math.floor(t/60),sc=t%60;d.innerText=`${mn}:${sc<10?'0':''}${sc}`;if(t--<=0){clearInterval(timerInterval);submitExam(true)}},1000)}
     
-    // --- OVERVIEW (HIỆN ĐÁP ÁN) ---
     function toggleOverview() { const s=document.getElementById('overview-screen'); if(s.style.display=='flex')s.style.display='none'; else {renderOverview();s.style.display='flex';} }
     function renderOverview() {
         const c=document.getElementById('overview-content'); c.innerHTML='';
@@ -228,7 +161,7 @@
             let h = `<div class="part-header">${title}</div><div class="${cls}">`;
             qs.forEach(q => {
                 let v = '', done = false;
-                if (q.type == 'mcq') v = userAnswers['p1_c' + q.id] || '';
+                if (q.type == 'mcq') v = userAnswers['p1_c' + q.id] || ''; 
                 else if (q.type == 'sh') v = userAnswers['p3_c' + q.id] || '';
                 else if (q.type == 'tf') { let cnt = 0; ['a', 'b', 'c', 'd'].forEach(s => { if (userAnswers['p2_c' + q.id + '_' + s]) cnt++ }); if (cnt > 0) v = cnt + '/4'; }
                 if (v) done = true;
