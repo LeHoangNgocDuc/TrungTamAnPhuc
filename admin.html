@@ -16,7 +16,7 @@
         <ul class="nav nav-pills mb-4 bg-white p-2 rounded shadow-sm" id="pills-tab" role="tablist">
             <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-student">1. Quản Lý HS</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-exam">2. Nhập Đề Thi</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-rank">3. Kết Quả Thi</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-rank">3. Kết Quả</button></li>
         </ul>
 
         <div class="tab-content">
@@ -66,7 +66,7 @@
                         <h6 class="fw-bold text-dark small mb-2">ĐÁP ÁN (Upload file Word .docx)</h6>
                         <div class="input-group mb-2">
                             <input type="file" id="word-upload" class="form-control" accept=".docx" onchange="handleWordUpload(this)">
-                            <button class="btn btn-warning fw-bold" disabled><i class="bi bi-file-word"></i> QUÉT ĐÁP ÁN</button>
+                            <button class="btn btn-warning fw-bold" disabled><i class="bi bi-file-earmark-word"></i> QUÉT FILE</button>
                         </div>
                         
                         <div class="row g-2 align-items-end mt-2">
@@ -98,21 +98,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // DÁN LINK WEB APP CỦA BẠN VÀO ĐÂY
-        const API_URL = "https://script.google.com/macros/s/AKfycbxroDw6IXFnvOE3aOXCo27DXlGQEDVhxYvknqkhzXoA59XA1JcjfCCicmLYZOA_x-1l3w/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbzesolAY-cQ7tCHGHpZOh_zmYsrVhTduTmtxskwAGcauAiFkfnUmJ8B9B3QpGwmDkI-kA/exec"; 
         
         let answerData = {}, allExamsForStat = [];
-        
         window.onload = async function() { 
             updateExamTypes(); 
             try { const r=await fetch(API_URL+"?action=getExams&t="+Date.now());const j=await r.json(); allExamsForStat=j.data||[]; updateStatExamList(); } catch(e){} 
         };
 
-        // --- CẤU HÌNH LOẠI ĐỀ ---
+        // --- CẬP NHẬT LOẠI ĐỀ ---
         function updateExamTypes() {
             const cls = document.getElementById('exam-class').value;
             const typeSel = document.getElementById('exam-type');
             let html = '';
+            
             if (cls === 'TS10') {
                 html = `<option value="Lan1">Lần 1</option><option value="Lan2">Lần 2</option><option value="Lan3">Lần 3</option><option value="Lan4">Lần 4</option><option value="Lan5">Lần 5</option>`;
             } else if (cls === '12') {
@@ -128,10 +127,9 @@
             document.getElementById('div-chapter').style.display = (t==='tx') ? 'block' : 'none'; 
         }
 
-        // --- XỬ LÝ WORD ---
+        // --- XỬ LÝ WORD CLIENT-SIDE ---
         function handleWordUpload(input) {
-            const file = input.files[0];
-            if (!file) return;
+            const file = input.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(event) {
                 mammoth.convertToHtml({arrayBuffer: event.target.result})
@@ -144,86 +142,66 @@
         function parseDoc(html) {
             const doc = new DOMParser().parseFromString(html,'text/html'); 
             let txt = doc.body.innerText;
-            
-            // --- CỰC KỲ QUAN TRỌNG: Tách dấu phẩy thành xuống dòng ---
-            // Để xử lý trường hợp: "1.C,2.A,3.D..."
+            // FIX LỖI: Thay dấu phẩy thành xuống dòng để tách câu trắc nghiệm dính liền
             txt = txt.replace(/,/g, '\n').replace(/\t/g, '\n');
 
             let mcq=0, tf=0, sh=0;
+            // Dùng dữ liệu cũ làm nền tảng (nếu giáo viên nhập tay trước)
             let newData = {};
 
-            // 1. Quét Trắc nghiệm (Tìm 1.A, 1:A, 1. A...)
+            // 1. Trắc nghiệm (Regex: 1.A, 1. A, 1:A)
             let m; const reMCQ = /(\d+)[\.\s:–-]*([A-D])(?![a-z0-9])/gi; 
             while((m=reMCQ.exec(txt))!==null) { 
-                const q=parseInt(m[1]); 
-                if(q<100){ newData[`p1_c${q}`]=m[2].toUpperCase(); if(q>mcq) mcq=q; } 
+                const q=parseInt(m[1]); if(q<100){ newData[`p1_c${q}`]=m[2].toUpperCase(); if(q>mcq) mcq=q; } 
             }
 
-            // 2. Quét Bảng (Đúng sai & TLN)
+            // 2. Bảng (Đúng sai & TLN)
             doc.querySelectorAll('table').forEach(t => {
                 const trs = t.querySelectorAll('tr'); const tText = t.innerText;
                 
-                // A. Đúng Sai (Bảng có chữ a) Đúng...)
+                // A. Đúng Sai (Bảng có chữ "Đúng" hoặc "Sai")
                 if(tText.includes("Đúng") || tText.includes("Sai")) {
                     let map={}; let headerRow = trs[0];
-                    // Tìm map cột: "Câu 1", "Câu 2"...
                     headerRow.querySelectorAll('td').forEach((td, idx) => { let mt = td.innerText.match(/Câu\s*(\d+)/i); if(mt) map[idx] = parseInt(mt[1]); });
-                    
-                    for(let i=1; i<trs.length; i++) { 
-                        trs[i].querySelectorAll('td').forEach((td, idx) => { 
-                            if(map[idx]) { 
-                                // Tìm a), b)... và Đúng/Sai
-                                let sub = td.innerText.match(/^([a-d])/i); 
-                                let val = td.innerText.match(/(Đúng|Sai|Đ|S)/i); 
-                                if(sub && val) { 
-                                    let v = val[1].toUpperCase().startsWith('Đ') ? 'D' : 'S'; 
-                                    newData[`p2_c${map[idx]}_${sub[1].toLowerCase()}`] = v; 
-                                    if(map[idx] > tf) tf = map[idx]; 
-                                } 
-                            } 
-                        }); 
-                    }
+                    for(let i=1; i<trs.length; i++) { trs[i].querySelectorAll('td').forEach((td, idx) => { if(map[idx]) { let sub = td.innerText.match(/^([a-d])/i); let val = td.innerText.match(/(Đúng|Sai|Đ|S)/i); if(sub && val) { let v = val[1].toUpperCase().startsWith('Đ') ? 'D' : 'S'; newData[`p2_c${map[idx]}_${sub[1].toLowerCase()}`] = v; if(map[idx] > tf) tf = map[idx]; } } }); }
                 }
                 
-                // B. Trả lời ngắn (Bảng có chữ "Câu" và "Chọn/Đáp án")
-                if(tText.includes("Chọn") || tText.includes("Đáp án") || tText.includes("Kết quả")) {
+                // B. Trả lời ngắn (Bảng ngang: Câu | Chọn)
+                if(tText.includes("Chọn") || tText.includes("Đáp án")) {
                     let qRow = -1, aRow = -1;
                     // Tìm dòng chứa "Câu" và dòng chứa "Chọn"
                     for(let i=0; i<trs.length; i++) { 
                         let rTxt = trs[i].innerText.toLowerCase(); 
                         if(rTxt.includes("câu") || rTxt.includes("bài")) qRow = i; 
-                        if(rTxt.includes("chọn") || rTxt.includes("đáp") || rTxt.includes("kết")) aRow = i; 
+                        if(rTxt.includes("chọn") || rTxt.includes("đáp")) aRow = i; 
                     }
-                    
+                    // Quét cột
                     if(qRow !== -1 && aRow !== -1) {
                         let qCells = trs[qRow].querySelectorAll('td'); let aCells = trs[aRow].querySelectorAll('td');
                         let len = Math.min(qCells.length, aCells.length);
                         for(let j=0; j<len; j++) {
-                            let qNumText = qCells[j].innerText.replace(/\D/g,''); // Lấy số câu
+                            let qNumText = qCells[j].innerText.replace(/\D/g,''); 
                             if(qNumText) {
                                 let qNum = parseInt(qNumText);
                                 let ans = aCells[j].innerText.replace(/Chọn|Đáp án|:|"/gi, '').trim();
-                                if(!isNaN(qNum) && ans !== "") { 
-                                    newData[`p3_c${qNum}`] = ans; 
-                                    if(qNum > sh) sh = qNum; 
-                                }
+                                if(!isNaN(qNum) && ans !== "") { newData[`p3_c${qNum}`] = ans; if(qNum > sh) sh = qNum; }
                             }
                         }
                     }
                 }
             });
 
-            // Cập nhật dữ liệu
+            // Gộp dữ liệu mới vào
             answerData = { ...answerData, ...newData };
             
-            // Cập nhật ô input số lượng
-            if(mcq>0) document.getElementById('num-mcq').value = mcq; 
-            if(tf>0) document.getElementById('num-tf').value = tf; 
-            if(sh>0) document.getElementById('num-short').value = sh;
-            
+            // Cập nhật ô nhập số lượng (nếu lớn hơn cũ)
+            if(mcq > parseInt(document.getElementById('num-mcq').value||0)) document.getElementById('num-mcq').value = mcq;
+            if(tf > parseInt(document.getElementById('num-tf').value||0)) document.getElementById('num-tf').value = tf;
+            if(sh > parseInt(document.getElementById('num-short').value||0)) document.getElementById('num-short').value = sh;
+
             generateForm(); 
             fillFormData(); 
-            alert(`✅ Đã nhận diện:\n- Trắc nghiệm: ${mcq} câu\n- Đúng Sai: ${tf} câu\n- Trả lời ngắn: ${sh} câu`);
+            alert(`✅ Đã nhận diện:\n- Trắc nghiệm: ${mcq}\n- Đúng Sai: ${tf}\n- Trả lời ngắn: ${sh}`);
         }
 
         function generateForm() {
@@ -236,7 +214,6 @@
         function fillFormData() { for(let k in answerData) { let id = k.startsWith("p1")?"in-p1-"+k.replace("p1_c","") : (k.startsWith("p2")?"in-p2-"+k.replace("p2_c","").replace("_","-") : "in-p3-"+k.replace("p3_c","")); let el=document.getElementById(id); if(el) el.value=answerData[k]; } }
         function updKey(k,v) { answerData[k]=v.trim().toUpperCase(); }
         
-        // CÁC HÀM KHÁC
         function importStudents() { const f=document.getElementById('file-student').files[0];if(!f)return alert("Chọn file!");const r=new FileReader();r.onload=e=>{const w=XLSX.read(new Uint8Array(e.target.result),{type:'array'});const d=XLSX.utils.sheet_to_json(w.Sheets[w.SheetNames[0]],{header:1});const s=[];for(let i=1;i<d.length;i++)if(d[i][0])s.push([d[i][0],d[i][1],d[i][2]||""]);fetch(API_URL,{method:'POST',body:JSON.stringify({action:"importStudents",students:s})}).then(r=>r.json()).then(j=>{alert("OK")})};r.readAsArrayBuffer(f); }
         function updateStatExamList() { const g=document.getElementById('stat-grade').value, t=document.getElementById('stat-type').value, s=document.getElementById('stat-exam'); s.innerHTML='<option value="">--Chọn--</option>'; allExamsForStat.filter(e=>e.classGrade==g&&e.examType==t).forEach(e=>s.innerHTML+=`<option value="${e.id}">${e.title}</option>`); }
         function viewRankings() { const m=document.getElementById('stat-exam').value; if(!m)return alert("Chọn đề!"); const b=document.getElementById('rank-table-body'); b.innerHTML='<tr><td colspan="5">Đang tải...</td></tr>'; fetch(API_URL+`?action=getRankingsAdmin&maDe=${m}`).then(r=>r.json()).then(j=>{b.innerHTML=(j.data||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${r.tenHS}</td><td>${r.maHS}</td><td class="fw-bold text-danger">${r.diem}</td><td>${r.time}</td></tr>`).join('')||'<tr><td colspan="5">Không có dữ liệu</td></tr>'}); }

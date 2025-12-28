@@ -13,7 +13,6 @@
         
         .main-header { background: linear-gradient(90deg, #0056b3 0%, #0d6efd 100%); color: white; padding: 10px 0; flex-shrink: 0; }
         .logo-img { width: 60px; height: 60px; object-fit: contain; background: white; border-radius: 50%; padding: 2px; }
-        
         .main-nav { background: var(--nav-bg); padding: 0; white-space: nowrap; overflow-x: auto; }
         .nav-link-custom { display: inline-block; padding: 12px 18px; color: #bbb; text-decoration: none; font-weight: 600; font-size: 0.9rem; border-right: 1px solid #333; }
         .nav-link-custom:hover { color: white; background: #333; }
@@ -21,37 +20,27 @@
         
         .main-container { height: calc(100vh - 140px); overflow-y: auto; padding: 15px; background: #fff; }
         .section-title { font-weight: 800; font-size: 1.3rem; margin-bottom: 15px; padding-left: 10px; border-left: 5px solid var(--active-red); }
-        
         .scroll-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; }
         .filter-btn { border: 1px solid #ddd; background: white; padding: 6px 15px; border-radius: 20px; font-weight: 600; color: #555; white-space: nowrap; }
         .filter-btn.active { background: var(--active-blue); color: white; border-color: var(--active-blue); }
-        
         .type-tabs { display: flex; border-bottom: 2px solid #eee; margin-bottom: 15px; overflow-x: auto; }
         .type-item { padding: 8px 15px; cursor: pointer; color: #666; font-weight: 600; white-space: nowrap; border-bottom: 3px solid transparent; }
         .type-item.active { color: var(--active-blue); border-bottom-color: var(--active-blue); }
-        
         .exam-card { border: 1px solid #eee; padding: 15px; border-radius: 8px; border-left: 4px solid var(--active-red); margin-bottom: 10px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         
         #exam-screen { display: none; height: 100vh; flex-direction: column; background: white; position: fixed; top: 0; left: 0; width: 100%; z-index: 2000; }
-        .exam-header-bar { height: 50px; flex-shrink: 0; background: white; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; }
+        .exam-header-bar { height: 60px; flex-shrink: 0; background: white; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; }
         .pdf-container { height: 60vh; flex-shrink: 0; background: #525659; } iframe { width: 100%; height: 100%; }
         .qa-container { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 70px; }
         .nav-bottom { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 30; }
         
-        /* Overview Grid */
-        #overview-screen { position: absolute; top: 50px; left: 0; width: 100%; height: calc(100% - 50px); background: #f8f9fa; z-index: 3000; display: none; padding: 15px; overflow-y: auto; flex-direction: column; }
+        #overview-screen { position: absolute; top: 60px; left: 0; width: 100%; height: calc(100% - 60px); background: #f8f9fa; z-index: 3000; display: none; padding: 15px; overflow-y: auto; flex-direction: column; }
         .part-header { background: #e9ecef; padding: 10px; font-weight: bold; border-left: 4px solid var(--active-blue); margin: 15px 0 10px 0; }
         .q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 8px; }
         .q-cell { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 5px; text-align: center; cursor: pointer; height: 55px; display: flex; flex-direction: column; justify-content: center; }
         .q-done { background: #d1e7dd; border-color: #198754; color: #0f5132; }
         .q-val { font-size: 0.8rem; font-weight: bold; color: var(--active-blue); margin-top: 2px; }
         
-        /* TF List in Overview */
-        .tf-ov-row { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: white; border-bottom: 1px solid #eee; cursor:pointer;}
-        .tf-badge { margin-left: 5px; font-weight: bold; color: #ccc; text-decoration: underline; }
-        .tf-badge.is-d { color: #198754; text-decoration: none; }
-        .tf-badge.is-s { color: #dc3545; text-decoration: none; }
-
         .mcq-row { display: flex; gap: 8px; margin-top: 10px; }
         .opt-btn { flex: 1; height: 50px; border-radius: 8px; border: 2px solid #e9ecef; background: white; font-weight: 700; color: #555; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; }
         .active-opt { background: var(--active-blue); color: white; border-color: var(--active-blue); box-shadow: 0 3px 8px rgba(13,110,253,0.3); transform: translateY(-2px); }
@@ -62,11 +51,9 @@
         .tf-btn.active-d { background: #198754; color: white; border-color: #198754; } 
         .tf-btn.active-s { background: #dc3545; color: white; border-color: #dc3545; }
 
-        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; justify-content: center; align-items: center; }
-        
-        /* Đồng hồ */
         @keyframes pulse-red { 0% { transform: scale(1); } 50% { transform: scale(1.1); color: red; text-shadow: 0 0 5px red; } 100% { transform: scale(1); } }
         .timer-box { font-family: monospace; font-size: 1.5rem; font-weight: bold; color: #dc3545; animation: pulse-red 1s infinite; }
+        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; justify-content: center; align-items: center; }
     </style>
 </head>
 <body>
@@ -82,10 +69,7 @@
     </div>
     <nav class="main-nav">
         <div class="container d-flex justify-content-between">
-            <div>
-                <a href="#" class="nav-link-custom" onclick="location.reload()"><i class="bi bi-house-door-fill"></i></a>
-                <a href="#" class="nav-link-custom active">THI TRỰC TUYẾN</a>
-            </div>
+            <a href="#" class="nav-link-custom active" onclick="location.reload()">THI TRỰC TUYẾN</a>
             <a href="admin.html" class="nav-link-custom"><i class="bi bi-person-fill-lock"></i> Giáo Viên</a>
         </div>
     </nav>
@@ -93,7 +77,7 @@
 
 <div class="main-container">
     <div id="view-exam">
-        <div class="section-title">Phòng Thi Online</div>
+        <div class="section-title">THI TRỰC TUYẾN TRUNG TÂM TOÁN AN PHÚC EDUCATION</div>
         <div class="card p-3 mb-3 border bg-light">
             <div class="row g-2">
                 <div class="col-4"><select id="sel-grade" class="form-select form-select-sm" onchange="manualGradeChange()"></select></div>
@@ -147,7 +131,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxroDw6IXFnvOE3aOXCo27DXlGQEDVhxYvknqkhzXoA59XA1JcjfCCicmLYZOA_x-1l3w/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbzesolAY-cQ7tCHGHpZOh_zmYsrVhTduTmtxskwAGcauAiFkfnUmJ8B9B3QpGwmDkI-kA/exec"; 
     
     let allExams=[], curState = { grade:6, examType:'tx' };
     let currentExam=null, userAnswers={}, questionMap=[], qIdx=0, studentInfo={id:'', name:''}, timerInterval, historyData=null;
@@ -159,11 +143,9 @@
         selectGrade(6, document.querySelector('.filter-btn')); document.getElementById('loading').style.display='none';
     };
 
-    // --- BỘ LỌC CẬP NHẬT ---
     function selectGrade(g, btn) {
         curState.grade = g; document.querySelectorAll('#view-exam .filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.getElementById('sel-grade').value = g; updateClassDropdown(g);
         const div = document.getElementById('type-filters'); let h = '';
-        
         if(g == 'TS10') { 
             ['Lần 1','Lần 2','Lần 3','Lần 4','Lần 5'].forEach((t,i) => { let c=`Lan${i+1}`; let act=(i==0)?'active':''; if(i==0)curState.examType=c; h+=`<div class="type-item ${act}" onclick="setType('${c}',this)">${t}</div>`; }); 
         } else if (g == '12') {
@@ -174,54 +156,43 @@
         div.innerHTML = h; renderExams();
     }
     
-    // ... (Giữ nguyên setType, renderExams, updateClassDropdown, manualGradeChange, loadStudents, preStart, reviewOldExam, startExam) ...
     function setType(t, btn) { curState.examType = t; document.querySelectorAll('.type-item').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderExams(); }
     function renderExams() { const list = allExams.filter(e => e.classGrade == curState.grade && e.examType == curState.examType); const div = document.getElementById('exam-list'); div.innerHTML = list.length ? list.map(e => `<div class="exam-card" onclick='preStart(${JSON.stringify(e).replace(/'/g,"&#39;")})'><div class="d-flex justify-content-between align-items-center"><div><b>${e.title}</b><div class="small text-muted">${e.duration}p | ${e.totalQuestions} câu</div></div><button class="btn btn-primary btn-sm rounded-pill fw-bold">Thi</button></div></div>`).join('') : '<p class="text-center text-muted py-4">Chưa có đề thi.</p>'; }
     function updateClassDropdown(g) { const s=document.getElementById('sel-class'); s.innerHTML='<option value="">-Lớp-</option>'; let l=['A','B','C','D','E']; if(g>9)l=['A','B','C','D']; l.forEach(x=>s.innerHTML+=`<option value="${g}${x}">${g}${x}</option>`); }
     function manualGradeChange() { selectGrade(document.getElementById('sel-grade').value, document.querySelector('.scroll-row .filter-btn')); }
     async function loadStudents() { const c=document.getElementById('sel-class').value; if(!c)return; const r=await fetch(API_URL+`?action=getStudentsByClass&className=${c}`); const j=await r.json(); const s=document.getElementById('sel-student'); s.innerHTML='<option value="">-Tên-</option>'; j.data.forEach(x=>s.innerHTML+=`<option value="${x.id}|${x.name}">${x.name}</option>`); s.disabled=false; }
+    
     async function preStart(e) { const v = document.getElementById('sel-student').value; if(!v || v.includes("Tên")) { alert("Chọn HS trước!"); return; } studentInfo={id:v.split('|')[0],name:v.split('|')[1]}; currentExam=e; const r=await fetch(API_URL, {method:'POST', body:JSON.stringify({action:'checkStudentHistory', maHS:studentInfo.id, maDe:e.id})}); const j=await r.json(); if(j.count>0) { historyData=j; document.getElementById('his-count').innerText=j.count; document.getElementById('his-score').innerText=j.lastScore; new bootstrap.Modal(document.getElementById('historyModal')).show(); } else startExam(true); }
     function reviewOldExam() { bootstrap.Modal.getInstance(document.getElementById('historyModal')).hide(); try { userAnswers=JSON.parse(historyData.lastAnswers) } catch(e){} startExam(false); document.querySelector('.btn-success').style.display='none'; document.getElementById('result-box').classList.remove('d-none'); document.getElementById('score-display').innerText=historyData.lastScore; if(currentExam.solutionLink) document.getElementById('sol-link-area').innerHTML=`<a href="${currentExam.solutionLink.replace('/view','/preview')}" target="_blank" class="btn btn-primary">XEM LỜI GIẢI</a>`; }
     function startExam(isNew) { if(document.getElementById('historyModal').classList.contains('show')) bootstrap.Modal.getInstance(document.getElementById('historyModal')).hide(); if(isNew) { userAnswers={}; document.getElementById('result-box').classList.add('d-none'); document.querySelector('.btn-success').style.display='block'; } qIdx=0; questionMap=[]; let st = (typeof currentExam.structure==='string'?JSON.parse(currentExam.structure):currentExam.structure); let c = st.config || {}; let gId = 1; for(let i=1;i<=c.mcq;i++) questionMap.push({type:'mcq',id:i,displayId:gId++,lbl:`Câu ${gId-1}`}); for(let i=1;i<=c.tf;i++) questionMap.push({type:'tf',id:i,displayId:gId++,lbl:`Câu ${gId-1}`}); for(let i=1;i<=c.short;i++) questionMap.push({type:'sh',id:i,displayId:gId++,lbl:`Câu ${gId-1}`}); document.querySelector('.main-container').classList.add('d-none'); document.querySelector('header').classList.add('d-none'); document.getElementById('exam-screen').style.display = 'flex'; document.getElementById('pdf-frame').src = currentExam.pdfLink.replace(/\/view.*/, '/preview'); if(isNew) startTimer(currentExam.duration); renderQ(0); }
 
-    // --- RENDER CÂU HỎI (CẬP NHẬT) ---
+    // --- FIX QUAN TRỌNG: NHẬP LIỆU KHÔNG BỊ KHÓA ---
     function renderQ(i) { 
         if(i<0||i>=questionMap.length) return; qIdx=i; const q=questionMap[i]; 
         let h = `<div class="mb-3"><h5>${q.lbl}</h5></div>`; 
-        
-        if(q.type=='mcq') { 
-            h+=`<div class="mcq-row">`; 
-            ['A','B','C','D'].forEach(o => { 
-                let act = userAnswers['p1_c'+q.id] == o ? 'active-opt' : ''; 
-                h+=`<div class="opt-btn ${act}" onclick="ans('p1_c${q.id}','${o}')">${o}</div>` 
-            }); 
-            h+='</div>'; 
-        } else if(q.type=='tf') { 
+        if(q.type=='mcq') { h+=`<div class="mcq-row">`; ['A','B','C','D'].forEach(o => { let act = userAnswers['p1_c'+q.id] == o ? 'active-opt' : ''; h+=`<div class="opt-btn ${act}" onclick="ans('p1_c${q.id}','${o}')">${o}</div>` }); h+='</div>'; } 
+        else if(q.type=='tf') { 
             h+=`<div class="tf-grid">`; ['a','b','c','d'].forEach(s => { 
                 let val = userAnswers['p2_c'+q.id+'_'+s];
                 let clsD = val==='D'?'active-d':''; let clsS = val==='S'?'active-s':'';
-                // Hiện đầy đủ a,b,c,d để chọn
-                h+=`<div class="tf-item"><div><b>(${s})</b></div><div class="d-flex gap-1">
-                    <button class="tf-btn ${clsD}" onclick="ans('p2_c${q.id}_${s}','D')">Đúng</button>
-                    <button class="tf-btn ${clsS}" onclick="ans('p2_c${q.id}_${s}','S')">Sai</button>
-                </div></div>`; 
+                h+=`<div class="tf-item"><div><b>(${s})</b></div><div class="d-flex gap-1"><button class="tf-btn ${clsD}" onclick="ans('p2_c${q.id}_${s}','D')">Đúng</button><button class="tf-btn ${clsS}" onclick="ans('p2_c${q.id}_${s}','S')">Sai</button></div></div>`; 
             }); h+='</div>'; 
         } else { 
-            // Fix Input trả lời ngắn
             let v = userAnswers['p3_c'+q.id] || ''; 
-            h+=`<input type="text" class="form-control text-center fw-bold text-primary mt-3 fs-4" value="${v}" oninput="validateInput(this, '${q.id}')" placeholder="Nhập đáp án...">`; 
+            h+=`<input type="text" id="short-input-${q.id}" class="form-control text-center fw-bold text-primary mt-3 fs-4" placeholder="Nhập đáp án...">`; 
         } 
         document.getElementById('question-content').innerHTML = h; 
-    }
-
-    // --- FIX LOGIC NHẬP LIỆU (KHÔNG RE-RENDER) ---
-    function validateInput(el, qId) {
-        let val = el.value;
-        val = val.replace(/\./g, ','); // Đổi chấm thành phẩy
-        val = val.replace(/[^0-9,-]/g, ''); // Chặn chữ
-        el.value = val;
-        // Cập nhật biến, KHÔNG gọi renderQ
-        userAnswers['p3_c' + qId] = val;
+        
+        if(q.type === 'sh') {
+            const el = document.getElementById(`short-input-${q.id}`);
+            el.value = userAnswers['p3_c'+q.id] || '';
+            el.focus();
+            el.oninput = function() {
+                let val = this.value.replace(/\./g, ',').replace(/[^0-9,-]/g, '');
+                this.value = val;
+                userAnswers['p3_c'+q.id] = val;
+            };
+        }
     }
 
     function ans(k,v) { userAnswers[k]=v; renderQ(qIdx); }
@@ -232,40 +203,17 @@
     
     function renderOverview() {
         const c=document.getElementById('overview-content'); c.innerHTML='';
-        
         let html = `<div class="part-header">I. TRẮC NGHIỆM</div><div class="q-grid">`;
-        questionMap.filter(q=>q.type=='mcq').forEach(q => {
-            let v = userAnswers['p1_c'+q.id] || '';
-            let cls = v ? 'q-done' : '';
-            let realIdx = questionMap.findIndex(x => x.displayId == q.displayId);
-            html += `<div class="q-cell ${cls}" onclick="jumpTo(${realIdx})"><span>${q.displayId}</span><span class="q-val">${v}</span></div>`;
-        });
-        html += `</div>`;
-
-        html += `<div class="part-header">II. ĐÚNG SAI</div><div>`;
+        questionMap.filter(q=>q.type=='mcq').forEach(q => { let v=userAnswers['p1_c'+q.id]||''; let cls=v?'q-done':''; let idx=questionMap.findIndex(x=>x.displayId==q.displayId); html+=`<div class="q-cell ${cls}" onclick="jumpTo(${idx})"><span>${q.displayId}</span><span class="q-val">${v}</span></div>`; });
+        html += `</div><div class="part-header">II. ĐÚNG SAI</div><div>`;
         questionMap.filter(q=>q.type=='tf').forEach(q => {
-            let realIdx = questionMap.findIndex(x => x.displayId == q.displayId);
-            let badges = '';
-            ['a','b','c','d'].forEach(s => {
-                let v = userAnswers['p2_c'+q.id+'_'+s];
-                let txt = v==='D'?'Đ':(v==='S'?'S':'-');
-                let cls = v==='D'?'is-d':(v==='S'?'is-s':'');
-                badges += `<span class="tf-badge ${cls}">${s}) ${txt}</span> `;
-            });
-            html += `<div class="tf-ov-row" onclick="jumpTo(${realIdx})"><span class="fw-bold">Câu ${q.displayId}</span><div>${badges}</div></div>`;
+            let idx=questionMap.findIndex(x=>x.displayId==q.displayId);
+            let b=''; ['a','b','c','d'].forEach(s=>{ let v=userAnswers['p2_c'+q.id+'_'+s]; let t=v=='D'?'Đ':(v=='S'?'S':'-'); let c=v=='D'?'is-d':(v=='S'?'is-s':''); b+=`<span class="tf-badge ${c}">${s})${t}</span> `; });
+            html+=`<div class="tf-ov-row" onclick="jumpTo(${idx})"><span class="fw-bold">Câu ${q.displayId}</span><div>${b}</div></div>`;
         });
-        html += `</div>`;
-
-        html += `<div class="part-header">III. TRẢ LỜI NGẮN</div><div class="q-grid">`;
-        questionMap.filter(q=>q.type=='sh').forEach(q => {
-            let v = userAnswers['p3_c'+q.id] || '';
-            let cls = v ? 'q-done' : '';
-            let realIdx = questionMap.findIndex(x => x.displayId == q.displayId);
-            html += `<div class="q-cell ${cls}" onclick="jumpTo(${realIdx})"><span>${q.displayId}</span><span class="q-val">${v}</span></div>`;
-        });
-        html += `</div>`;
-
-        c.innerHTML = html;
+        html += `</div><div class="part-header">III. TRẢ LỜI NGẮN</div><div class="q-grid">`;
+        questionMap.filter(q=>q.type=='sh').forEach(q => { let v=userAnswers['p3_c'+q.id]||''; let cls=v?'q-done':''; let idx=questionMap.findIndex(x=>x.displayId==q.displayId); html+=`<div class="q-cell ${cls}" onclick="jumpTo(${idx})"><span>${q.displayId}</span><span class="q-val">${v}</span></div>`; });
+        html += `</div>`; c.innerHTML = html;
     }
     function jumpTo(i){ renderQ(i); document.getElementById('overview-screen').style.display='none'; }
 
@@ -278,13 +226,9 @@
         let total=(s1+s2+s3).toFixed(2); if(total>10) total=10;
         try { await fetch(API_URL, {method:'POST', body:JSON.stringify({action:'submitExam', maHS:studentInfo.id, tenHS:studentInfo.name, maDe:currentExam.id, score:total, studentAnswers:userAnswers, detailResult:{}, images:[]})}); } catch(e){}
         document.getElementById('nav-bar-fixed').style.display='none'; document.getElementById('result-box').classList.remove('d-none'); document.getElementById('score-display').innerText=total; document.getElementById('question-content').innerHTML='';
-        
         if(currentExam.solutionLink) {
             let viewLink = currentExam.solutionLink.replace('/view','/preview');
-            document.getElementById('sol-link-area').innerHTML = `
-                <a href="${viewLink}" target="_blank" class="btn btn-primary fw-bold px-4">XEM LỜI GIẢI</a>
-                <a href="${currentExam.solutionLink}" target="_blank" class="btn btn-outline-success fw-bold px-4"><i class="bi bi-download"></i> TẢI VỀ</a>
-            `;
+            document.getElementById('sol-link-area').innerHTML = `<a href="${viewLink}" target="_blank" class="btn btn-primary fw-bold px-4">XEM LỜI GIẢI</a>`;
         }
         document.getElementById('loading').style.display='none';
     }
