@@ -3,244 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Quản Trị</title>
+    <title>Admin - Quản Trị Hệ Thống</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-    <style>body{background:#f0f2f5;padding-bottom:50px}.nav-pills .nav-link.active{background:#0d6efd}</style>
+    <style>body{background:#f0f2f5;padding-bottom:100px}</style>
     <script>if(!sessionStorage.getItem("isAdmin")) window.location.href="login.html";</script>
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-primary mb-4 shadow">
-        <div class="container">
-            <span class="navbar-brand fw-bold">QUẢN TRỊ VIÊN</span>
-            <a href="index.html" class="btn btn-light btn-sm fw-bold">Về trang thi</a>
-        </div>
-    </nav>
-
+    <nav class="navbar navbar-dark bg-primary shadow mb-4"><div class="container"><span class="navbar-brand fw-bold">QUẢN TRỊ VIÊN</span><a href="index.html" target="_blank" class="btn btn-light btn-sm fw-bold">Xem Trang Thi</a></div></nav>
     <div class="container">
-        <ul class="nav nav-pills mb-4 bg-white p-2 rounded shadow-sm justify-content-center" id="pills-tab">
+        <ul class="nav nav-pills mb-4 bg-white p-2 rounded shadow-sm" id="pills-tab" role="tablist">
             <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-student">1. Quản Lý HS</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-exam">2. Nhập Đề Thi</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-rank">3. Xem Điểm</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-rank">3. Kết Quả Thi</button></li>
         </ul>
 
         <div class="tab-content">
             <div class="tab-pane fade show active" id="pills-student">
-                <div class="card p-3 border-success shadow-sm">
-                    <h6 class="fw-bold text-success">UPLOAD DANH SÁCH HS (Excel)</h6>
-                    <input type="file" id="file-student" class="form-control mb-2">
-                    <button onclick="importStudents()" class="btn btn-success">Tải lên</button>
-                </div>
+                <div class="card p-3 border-success"><h6 class="fw-bold text-success">NHẬP DANH SÁCH TỪ EXCEL</h6><input type="file" id="file-student" class="form-control mb-2"><button onclick="importStudents()" class="btn btn-success">Upload</button></div>
             </div>
 
             <div class="tab-pane fade" id="pills-exam">
-                <div class="card p-3 shadow-sm">
-                    <h6 class="fw-bold text-primary mb-3">NHẬP ĐỀ MỚI & ĐÁP ÁN (TỪ WORD)</h6>
-                    
+                <div class="card p-4 shadow-sm">
+                    <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">NHẬP ĐỀ THI MỚI</h5>
                     <div class="row g-2 mb-3">
-                        <div class="col-md-3 col-6">
-                            <label class="small fw-bold">Khối</label>
-                            <select id="exam-class" class="form-select fw-bold text-primary">
-                                <option value="6">6</option><option value="7">7</option><option value="8">8</option>
-                                <option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <label class="small fw-bold">Loại</label>
-                            <select id="exam-type" class="form-select fw-bold text-danger" onchange="toggleChapter()">
-                                <option value="tx">Thường xuyên</option>
-                                <option value="gk1">Giữa Kỳ 1</option><option value="ck1">Cuối Kỳ 1</option>
-                                <option value="gk2">Giữa Kỳ 2</option><option value="ck2">Cuối Kỳ 2</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <label class="small fw-bold">Chương</label>
-                            <select id="exam-chapter" class="form-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <label class="small fw-bold">Phút</label>
-                            <input type="number" id="exam-duration" class="form-control" value="90">
-                        </div>
+                        <div class="col-3"><label class="small fw-bold">Khối</label><select id="exam-class" class="form-select"><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></div>
+                        <div class="col-3"><label class="small fw-bold">Loại</label><select id="exam-type" class="form-select" onchange="toggleChapter()"><option value="tx">Thường xuyên</option><option value="gk1">Giữa kỳ 1</option><option value="ck1">Cuối kỳ 1</option><option value="gk2">Giữa kỳ 2</option><option value="ck2">Cuối kỳ 2</option><option value="tn">TN THPT</option></select></div>
+                        <div class="col-3" id="div-chapter"><label class="small fw-bold">Chương</label><select id="exam-chapter" class="form-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+                        <div class="col-3"><label class="small fw-bold">Phút</label><input type="number" id="exam-duration" class="form-control" value="90"></div>
                     </div>
-
-                    <div class="row g-2 mb-2">
-                        <div class="col-3"><input type="text" id="exam-id" class="form-control" placeholder="Mã Đề"></div>
-                        <div class="col-9"><input type="text" id="exam-title" class="form-control" placeholder="Tên Đề"></div>
-                    </div>
-                    <div class="row g-2 mb-3">
-                        <div class="col-6"><input type="text" id="link-exam" class="form-control" placeholder="Link PDF Đề"></div>
-                        <div class="col-6"><input type="text" id="link-sol" class="form-control" placeholder="Link PDF Giải"></div>
-                    </div>
-
-                    <div class="border p-2 bg-light rounded mb-3">
-                        <label class="fw-bold text-success mb-2"><i class="bi bi-file-word"></i> Chọn File Word chứa Bảng Đáp Án:</label>
-                        <input type="file" id="word-upload" onchange="handleWordUpload(this)" class="form-control">
-                        <small class="text-muted fst-italic">Hỗ trợ đọc bảng đáp án Phần 1 (TN), Phần 2 (Đ/S), Phần 3 (Điền khuyết)</small>
-                    </div>
-
-                    <div class="row g-2 mb-2">
-                        <div class="col-4"><input id="num-mcq" class="form-control" placeholder="Số câu TN"></div>
-                        <div class="col-4"><input id="num-tf" class="form-control" placeholder="Số câu Đ/S"></div>
-                        <div class="col-4"><input id="num-short" class="form-control" placeholder="Số câu Ngắn"></div>
-                    </div>
+                    <div class="row g-2 mb-3"><div class="col-3"><input id="exam-id" class="form-control" placeholder="Mã Đề"></div><div class="col-9"><input id="exam-title" class="form-control" placeholder="Tên Đề Thi"></div></div>
+                    <div class="row g-2 mb-3"><div class="col-6"><input id="link-exam" class="form-control" placeholder="Link Đề (PDF - Dán Link Drive)"></div><div class="col-6"><input id="link-sol" class="form-control" placeholder="Link Giải (PDF)"></div></div>
+                    <div class="col-12 mb-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="is-essay"><label class="form-check-label fw-bold">Cho phép nộp Tự luận</label></div></div>
                     
-                    <button onclick="saveExamFinal()" id="btn-save" class="btn btn-primary w-100 fw-bold mt-2">LƯU ĐỀ THI</button>
+                    <div class="bg-light p-3 rounded border mb-3">
+                        <h6 class="fw-bold text-dark small mb-2">ĐÁP ÁN (Dán Link Drive File Word hoặc Nhập tay)</h6>
+                        <div class="input-group mb-2">
+                            <input type="text" id="word-link" class="form-control" placeholder="Dán link file Word đáp án trên Drive vào đây...">
+                            <button onclick="importWordFromDrive()" class="btn btn-warning fw-bold" id="btn-import-word">LẤY ĐÁP ÁN</button>
+                        </div>
+                        <div class="row g-2 align-items-end mt-2"><div class="col-3"><label class="small">TN</label><input type="number" id="num-mcq" class="form-control" value="0"></div><div class="col-3"><label class="small">Đ/S</label><input type="number" id="num-tf" class="form-control" value="0"></div><div class="col-3"><label class="small">Ngắn</label><input type="number" id="num-short" class="form-control" value="0"></div><div class="col-3"><button onclick="generateForm()" class="btn btn-secondary w-100 fw-bold">VẼ FORM</button></div></div>
+                        <div id="answer-area" class="mt-3 border-top pt-3 d-none" style="max-height:300px; overflow-y:auto;"></div>
+                    </div>
+                    <button onclick="saveExamFinal()" id="btn-save" class="btn btn-success w-100 py-3 fw-bold shadow">LƯU ĐỀ THI</button>
                 </div>
             </div>
 
             <div class="tab-pane fade" id="pills-rank">
-                <div class="card p-3 border-warning shadow-sm">
-                    <h6 class="fw-bold">KẾT QUẢ THI</h6>
+                <div class="card p-3 border-warning">
+                    <h6 class="fw-bold">XEM KẾT QUẢ</h6>
                     <div class="row g-2 mb-3">
-                        <div class="col-3"><select id="stat-grade" class="form-select" onchange="updateStatExamList()"><option value="6">6</option><option value="12">12</option></select></div>
+                        <div class="col-3"><select id="stat-grade" class="form-select" onchange="updateStatExamList()"><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option></select></div>
                         <div class="col-3"><select id="stat-type" class="form-select" onchange="updateStatExamList()"><option value="tx">TX</option><option value="gk1">GK1</option></select></div>
-                        <div class="col-4"><select id="stat-exam" class="form-select"><option value="">--</option></select></div>
-                        <div class="col-2"><button onclick="viewRankings()" class="btn btn-warning w-100">Xem</button></div>
+                        <div class="col-4"><select id="stat-exam" class="form-select"><option value="">-- Chọn Đề --</option></select></div>
+                        <div class="col-2"><button onclick="viewRankings()" class="btn btn-primary w-100 btn-sm">Xem</button></div>
                     </div>
-                    <table class="table table-bordered table-sm small"><thead class="table-dark"><tr><th>#</th><th>Tên</th><th>Điểm</th><th>TG</th></tr></thead><tbody id="rank-table-body"></tbody></table>
+                    <div class="table-responsive"><table class="table table-bordered small"><thead class="table-dark"><tr><th>#</th><th>Tên</th><th>Mã</th><th>Điểm</th><th>TG</th></tr></thead><tbody id="rank-table-body"></tbody></table></div>
                 </div>
             </div>
         </div>
     </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // ===============================================================
-    // DÁN LINK WEB APP CỦA BẠN VÀO ĐÂY
-    const API_URL = "https://script.google.com/macros/s/AKfycby7FKjCdaorqBhmTAJcvvuAzgA-Oughz46uciokQ8AGugTl9DnAvkkhy2e8K1ELm4BjBg/exec"; 
-    // ===============================================================
-
-    let allExams = [];
-    window.tempAnswers = {}; // Lưu tạm đáp án sau khi parse Word
-
-    window.onload = async () => {
-        try {
-            const res = await fetch(API_URL + "?action=getExams&role=admin&t="+Date.now());
-            const json = await res.json(); allExams = json.data||[]; updateStatExamList();
-        } catch(e){}
-    };
-
-    function toggleChapter() { document.getElementById('exam-chapter').disabled = (document.getElementById('exam-type').value !== 'tx'); }
-    function importStudents() { /* Logic import Excel cũ */ }
-    
-    // --- UPDATE: XỬ LÝ FILE WORD ---
-    function handleWordUpload(inp){
-        const f=inp.files[0]; if(!f) return;
-        const r=new FileReader();
-        r.onload=e=>mammoth.convertToHtml({arrayBuffer:e.target.result}).then(r=>parseAnsDoc(r.value));
-        r.readAsArrayBuffer(f);
-    }
-
-    function parseAnsDoc(html){
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        let config = { mcq: 0, tf: 0, short: 0 };
-        let answers = {};
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // === DÁN LINK WEB APP CỦA BẠN VÀO ĐÂY ===
+        const API_URL = "https://script.google.com/macros/s/AKfycbwXKZowo7dPAtSixjCoK_uqoRZKznhznY4TtSCO3F_C7cyGfX-2tfV51vQougaTiCpIyA/exec"; 
         
-        // Tìm các bảng trong file Word
-        const tables = doc.querySelectorAll('table');
-        tables.forEach(tbl => {
-            const txt = tbl.innerText;
-            const rows = tbl.querySelectorAll('tr');
+        let answerData = {}, allExamsForStat = [];
+        window.onload = async function() { try { const r=await fetch(API_URL+"?action=getExams&t="+Date.now());const j=await r.json(); allExamsForStat=j.data||[]; updateStatExamList(); } catch(e){} };
+        function toggleChapter() { const t=document.getElementById('exam-type').value; document.getElementById('div-chapter').style.display = (t==='tx')?'block':'none'; }
+        
+        // --- XỬ LÝ WORD (THUẬT TOÁN MỚI) ---
+        async function importWordFromDrive() {
+            const link = document.getElementById('word-link').value;
+            if(!link) return alert("Chưa nhập link!");
+            const btn = document.getElementById('btn-import-word'); btn.innerText = "Đang tải..."; btn.disabled = true;
+            try {
+                const res = await fetch(API_URL, {method:'POST', body:JSON.stringify({action:"getDriveFile", url:link})});
+                const json = await res.json();
+                if(!json.success) { alert("Lỗi: " + json.error); btn.innerText="LẤY ĐÁP ÁN"; btn.disabled=false; return; }
+                
+                // Decode Base64 -> Binary
+                const binStr = window.atob(json.data);
+                const bytes = new Uint8Array(binStr.length);
+                for(let i=0; i<binStr.length; i++) bytes[i] = binStr.charCodeAt(i);
+                
+                // Parse Word
+                const result = await mammoth.convertToHtml({arrayBuffer: bytes.buffer});
+                parseDoc(result.value);
+                btn.innerText = "ĐÃ LẤY XONG"; btn.disabled = false;
+            } catch(e) { alert("Lỗi: "+e); btn.innerText="LẤY ĐÁP ÁN"; btn.disabled=false; }
+        }
 
-            // 1. NHẬN DIỆN PHẦN 1 (MCQ): Có dạng "1.A" hoặc "1. A"
-            if(txt.match(/\d+[\.:\s]+[A-D]/)) {
-                 tbl.querySelectorAll('td').forEach(td => {
-                    // Regex tìm: Số câu + Dấu chấm/hai chấm + Khoảng trắng + Chữ cái A-D
-                    const matches = td.innerText.matchAll(/(\d+)\s*[\.:]\s*([A-D])/gi);
-                    for (const m of matches) {
-                        const q = parseInt(m[1]);
-                        answers[`p1_c${q}`] = m[2].toUpperCase();
-                        if(q > config.mcq) config.mcq = q;
-                    }
-                 });
-            }
+        function parseDoc(html) {
+            const doc = new DOMParser().parseFromString(html,'text/html'); 
+            let txt = doc.body.innerText;
+            
+            // Xử lý dấu phẩy dính liền
+            txt = txt.replace(/,/g, '\n').replace(/\t/g, '\n');
 
-            // 2. NHẬN DIỆN PHẦN 2 (ĐÚNG SAI): Có "Câu 1", "a) Đúng/Sai"
-            else if(txt.includes("a)") && (txt.includes("Đúng") || txt.includes("Sai"))) {
-                // Header (Câu 1, Câu 2...) để biết cột nào là câu nào
-                let colMap = [];
-                if(rows.length > 0) {
-                    rows[0].querySelectorAll('td').forEach((td, idx) => {
-                        const m = td.innerText.match(/Câu\s*(\d+)/i);
-                        if(m) colMap[idx] = parseInt(m[1]);
-                    });
+            let data = {}, mcq=0, tf=0, sh=0;
+            // Trắc nghiệm
+            let m; const reMCQ = /(\d+)[\.\s:–-]*([A-D])(?![a-z0-9])/gi; 
+            while((m=reMCQ.exec(txt))!==null) { const q=parseInt(m[1]); if(q<100){data[`p1_c${q}`]=m[2].toUpperCase(); if(q>mcq)mcq=q;} }
+
+            // Bảng (Đúng sai & TLN)
+            doc.querySelectorAll('table').forEach(t => {
+                const trs = t.querySelectorAll('tr'); const tText = t.innerText;
+                // Đúng Sai
+                if(tText.includes("Đúng") || tText.includes("Sai")) {
+                    let map={}; let headerRow = trs[0];
+                    headerRow.querySelectorAll('td').forEach((td, idx) => { let mt = td.innerText.match(/Câu\s*(\d+)/i); if(mt) map[idx] = parseInt(mt[1]); });
+                    for(let i=1; i<trs.length; i++) { trs[i].querySelectorAll('td').forEach((td, idx) => { if(map[idx]) { let sub = td.innerText.match(/^([a-d])/i); let val = td.innerText.match(/(Đúng|Sai|Đ|S)/i); if(sub && val) { let v = val[1].toUpperCase().startsWith('Đ') ? 'D' : 'S'; data[`p2_c${map[idx]}_${sub[1].toLowerCase()}`] = v; if(map[idx] > tf) tf = map[idx]; } } }); }
                 }
-                // Duyệt các dòng chứa ý a, b, c, d
-                for(let i=1; i<rows.length; i++) {
-                    rows[i].querySelectorAll('td').forEach((td, cIdx) => {
-                        const qNum = colMap[cIdx];
-                        if(qNum) {
-                            const raw = td.innerText.trim();
-                            const subM = raw.match(/^([a-d])\)/i);     // Tìm a) b)
-                            const valM = raw.match(/(Đúng|Sai)/i);     // Tìm Đúng/Sai
-                            if(subM && valM) {
-                                const sub = subM[1].toLowerCase();
-                                const val = valM[1].toLowerCase() === "đúng" ? "D" : "S";
-                                answers[`p2_c${qNum}_${sub}`] = val;
-                                if(qNum > config.tf) config.tf = qNum;
-                            }
-                        }
-                    });
+                // Trả lời ngắn
+                if(tText.includes("Chọn") || tText.includes("Đáp án") || tText.includes("Kết quả")) {
+                    let qRow = -1, aRow = -1; 
+                    for(let i=0; i<trs.length; i++) { let rowText = trs[i].innerText.toLowerCase(); if(rowText.includes("câu") || rowText.includes("bài")) qRow = i; if(rowText.includes("chọn") || rowText.includes("đáp án") || rowText.includes("kết quả")) aRow = i; }
+                    if(qRow !== -1 && aRow !== -1) { let qCells = trs[qRow].querySelectorAll('td'); let aCells = trs[aRow].querySelectorAll('td'); let maxLen = Math.min(qCells.length, aCells.length); for(let j=0; j<maxLen; j++) { let qNum = parseInt(qCells[j].innerText.replace(/\D/g,'')); let ans = aCells[j].innerText.replace(/Chọn|Đáp án|:|"/gi, '').trim(); if(!isNaN(qNum) && ans !== "") { data[`p3_c${qNum}`] = ans; if(qNum > sh) sh = qNum; } } }
                 }
-            }
+            });
+            document.getElementById('num-mcq').value = mcq; document.getElementById('num-tf').value = tf; document.getElementById('num-short').value = sh;
+            answerData = data; generateForm(); fillFormData(data); alert(`✅ Đã đọc: ${mcq} TN, ${tf} Đ/S, ${sh} TLN.`);
+        }
 
-            // 3. NHẬN DIỆN PHẦN 3 (TRẢ LỜI NGẮN): Hàng chứa số, hàng chứa đáp án
-            else {
-                // Thường bảng ngắn có hàng 1 là số câu (1, 2, 3..), hàng 2 là đáp án
-                if(rows.length >= 2) {
-                    const r0 = rows[0].querySelectorAll('td');
-                    const r1 = rows[1].querySelectorAll('td');
-                    // Check nếu r0 toàn số
-                    let isPart3 = false;
-                    r0.forEach((td, idx) => {
-                         const num = parseInt(td.innerText.trim());
-                         if(!isNaN(num) && r1[idx]) {
-                             // Lấy đáp án ở dòng dưới
-                             let ansVal = r1[idx].innerText.replace("Chọn","").trim(); // Xóa chữ "Chọn" nếu có
-                             if(ansVal) {
-                                 answers[`p3_c${num}`] = ansVal;
-                                 if(num > config.short) config.short = num;
-                                 isPart3 = true;
-                             }
-                         }
-                    });
-                }
-            }
-        });
-
-        // Điền số liệu vào form
-        document.getElementById('num-mcq').value = config.mcq;
-        document.getElementById('num-tf').value = config.tf;
-        document.getElementById('num-short').value = config.short;
-        window.tempAnswers = answers; // Lưu biến tạm
-        alert(`Đã đọc xong!\n- Trắc nghiệm: ${config.mcq}\n- Đúng/Sai: ${config.tf}\n- Ngắn: ${config.short}`);
-    }
-
-    async function saveExamFinal() {
-        const btn = document.getElementById('btn-save'); btn.innerText="Đang lưu..."; btn.disabled=true;
-        const cfg = {
-            mcq: parseInt(document.getElementById('num-mcq').value)||0,
-            tf: parseInt(document.getElementById('num-tf').value)||0,
-            short: parseInt(document.getElementById('num-short').value)||0
-        };
-        const py={
-            action:"addExam", 
-            id:document.getElementById('exam-id').value, title:document.getElementById('exam-title').value,
-            pdfLink:document.getElementById('link-exam').value, solLink:document.getElementById('link-sol').value,
-            duration:document.getElementById('exam-duration').value, isEssay:false,
-            classGrade:document.getElementById('exam-class').value, examType:document.getElementById('exam-type').value,
-            chapter:document.getElementById('exam-chapter').value,
-            totalQuestions: cfg.mcq + cfg.tf + cfg.short,
-            structure: { config: cfg, answers: window.tempAnswers || {} }
-        };
-        fetch(API_URL,{method:'POST',body:JSON.stringify(py)}).then(r=>r.json()).then(j=>{ alert("Lưu thành công!"); location.reload(); });
-    }
-    
-    // Logic bảng xếp hạng (như cũ)
-    function updateStatExamList(){ /* ... */ }
-    function viewRankings(){ /* ... */ }
-</script>
+        // ... Các hàm generateForm, fillFormData, updKey, importStudents, updateStatExamList, viewRankings, saveExamFinal (Giữ nguyên như phiên bản trước) ...
+        function generateForm() { const mcq=parseInt(document.getElementById('num-mcq').value)||0, tf=parseInt(document.getElementById('num-tf').value)||0, sh=parseInt(document.getElementById('num-short').value)||0; const div = document.getElementById('answer-area'); div.innerHTML=''; div.classList.remove('d-none'); if(mcq>0) { let h=`<h6 class="text-primary small fw-bold">I. TRẮC NGHIỆM</h6><div class="row g-1 mb-2">`; for(let i=1;i<=mcq;i++) h+=`<div class="col-3 col-md-2"><div class="input-group input-group-sm"><span class="input-group-text">${i}</span><select class="form-select px-1" id="in-p1-${i}" onchange="updKey('p1_c${i}',this.value)"><option>-</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div></div>`; div.innerHTML+=h+'</div>'; } if(tf>0) { let h=`<h6 class="text-primary small fw-bold">II. ĐÚNG SAI</h6><div class="row g-2 mb-2">`; for(let i=1;i<=tf;i++) h+=`<div class="col-md-6 border rounded p-1 bg-light d-flex align-items-center"><span class="small fw-bold me-2">C${i}:</span>`+['a','b','c','d'].map(s=>`<span class="small ms-1">${s})</span><select class="form-select-sm border py-0 px-0 ms-1" style="width:35px" id="in-p2-${i}-${s}" onchange="updKey('p2_c${i}_${s}',this.value)"><option>-</option><option value="D">Đ</option><option value="S">S</option></select>`).join('')+`</div>`; div.innerHTML+=h+'</div>'; } if(sh>0) { let h=`<h6 class="text-primary small fw-bold">III. TRẢ LỜI NGẮN</h6><div class="row g-2">`; for(let i=1;i<=sh;i++) h+=`<div class="col-6 col-md-3"><div class="input-group input-group-sm"><span class="input-group-text fw-bold">C${i}</span><input type="text" class="form-control fw-bold text-primary" id="in-p3-${i}" onblur="updKey('p3_c${i}',this.value)"></div></div>`; div.innerHTML+=h+'</div>'; } }
+        function fillFormData(d) { for(let k in d) { let id = k.startsWith("p1")?"in-p1-"+k.replace("p1_c","") : (k.startsWith("p2")?"in-p2-"+k.replace("p2_c","").replace("_","-") : "in-p3-"+k.replace("p3_c","")); let el=document.getElementById(id); if(el) el.value=d[k]; } }
+        function updKey(k,v) { answerData[k]=v.trim().toUpperCase(); }
+        function importStudents() { const f=document.getElementById('file-student').files[0];if(!f)return alert("Chọn file!");const r=new FileReader();r.onload=e=>{const w=XLSX.read(new Uint8Array(e.target.result),{type:'array'});const d=XLSX.utils.sheet_to_json(w.Sheets[w.SheetNames[0]],{header:1});const s=[];for(let i=1;i<d.length;i++)if(d[i][0])s.push([d[i][0],d[i][1],d[i][2]||""]);fetch(API_URL,{method:'POST',body:JSON.stringify({action:"importStudents",students:s})}).then(r=>r.json()).then(j=>{alert("OK")})};r.readAsArrayBuffer(f); }
+        function updateStatExamList() { const g=document.getElementById('stat-grade').value, t=document.getElementById('stat-type').value, s=document.getElementById('stat-exam'); s.innerHTML='<option value="">--Chọn--</option>'; allExamsForStat.filter(e=>e.classGrade==g&&e.examType==t).forEach(e=>s.innerHTML+=`<option value="${e.id}">${e.title}</option>`); }
+        function viewRankings() { const m=document.getElementById('stat-exam').value; if(!m)return alert("Chọn đề!"); const b=document.getElementById('rank-table-body'); b.innerHTML='<tr><td colspan="5">Đang tải...</td></tr>'; fetch(API_URL+`?action=getRankingsAdmin&maDe=${m}`).then(r=>r.json()).then(j=>{b.innerHTML=(j.data||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${r.tenHS}</td><td>${r.maHS}</td><td class="fw-bold text-danger">${r.diem}</td><td>${r.time}</td></tr>`).join('')||'<tr><td colspan="5">Không có dữ liệu</td></tr>'}); }
+        async function saveExamFinal() { const btn = document.getElementById('btn-save'); btn.innerText = "Đang lưu..."; btn.disabled = true; const payload = { action: "addExam", id: document.getElementById('exam-id').value, title: document.getElementById('exam-title').value, pdfLink: document.getElementById('link-exam').value, solLink: document.getElementById('link-sol').value, duration: document.getElementById('exam-duration').value, isEssay: document.getElementById('is-essay').checked, classGrade: document.getElementById('exam-class').value, examType: document.getElementById('exam-type').value, chapter: document.getElementById('exam-type').value==='tx' ? document.getElementById('exam-chapter').value : "", totalQuestions: parseInt(document.getElementById('num-mcq').value)+parseInt(document.getElementById('num-tf').value)+parseInt(document.getElementById('num-short').value), structure: { config: { mcq: parseInt(document.getElementById('num-mcq').value)||0, tf: parseInt(document.getElementById('num-tf').value)||0, short: parseInt(document.getElementById('num-short').value)||0, scoreP1: 3.0, scoreP3: 3.0 }, answers: answerData } }; try { await fetch(API_URL, {method:'POST', body:JSON.stringify(payload)}); alert("Thành công!"); location.reload(); } catch(e) { alert("Lỗi"); btn.disabled=false; } }
+    </script>
 </body>
 </html>
