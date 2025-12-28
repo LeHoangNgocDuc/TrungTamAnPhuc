@@ -11,12 +11,12 @@
     <script>if(!sessionStorage.getItem("isAdmin")) window.location.href="login.html";</script>
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-primary shadow mb-4"><div class="container"><span class="navbar-brand fw-bold">QUẢN TRỊ VIÊN</span><a href="index.html" target="_blank" class="btn btn-light btn-sm fw-bold">Về Trang Chủ</a></div></nav>
+    <nav class="navbar navbar-dark bg-primary shadow mb-4"><div class="container"><span class="navbar-brand fw-bold">QUẢN TRỊ VIÊN</span><a href="index.html" target="_blank" class="btn btn-light btn-sm fw-bold">Trang Chủ</a></div></nav>
     <div class="container">
         <ul class="nav nav-pills mb-4 bg-white p-2 rounded shadow-sm" id="pills-tab" role="tablist">
             <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-student">1. Quản Lý HS</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-exam">2. Nhập Đề Thi</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-rank">3. Kết Quả Thi</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-rank">3. Kết Quả</button></li>
         </ul>
 
         <div class="tab-content">
@@ -38,14 +38,9 @@
                     <div class="col-12 mb-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="is-essay"><label class="form-check-label fw-bold">Cho phép nộp Tự luận</label></div></div>
                     
                     <div class="bg-light p-3 rounded border mb-3">
-                        <h6 class="fw-bold text-dark small mb-2">ĐÁP ÁN (Upload file Word hoặc Nhập tay)</h6>
-                        
-                        <div class="input-group mb-3">
-                            <input type="file" id="word-upload" class="form-control" accept=".docx" onchange="handleWordUpload(this)">
-                            <button class="btn btn-warning fw-bold" disabled><i class="bi bi-file-earmark-word"></i> Chọn File Word</button>
-                        </div>
-
-                        <div class="row g-2 align-items-end mt-2"><div class="col-3"><label class="small">TN</label><input type="number" id="num-mcq" class="form-control" value="0"></div><div class="col-3"><label class="small">Đ/S</label><input type="number" id="num-tf" class="form-control" value="0"></div><div class="col-3"><label class="small">Ngắn</label><input type="number" id="num-short" class="form-control" value="0"></div><div class="col-3"><button onclick="generateForm()" class="btn btn-secondary w-100 fw-bold">HIỆN FORM</button></div></div>
+                        <h6 class="fw-bold text-dark small mb-2">ĐÁP ÁN (Dán link Word hoặc Nhập tay)</h6>
+                        <div class="input-group mb-2"><input type="text" id="word-link" class="form-control" placeholder="Link file Word đáp án..."><button onclick="importWordFromDrive()" class="btn btn-warning fw-bold" id="btn-import-word">LẤY ĐÁP ÁN</button></div>
+                        <div class="row g-2 align-items-end mt-2"><div class="col-3"><label class="small">TN</label><input type="number" id="num-mcq" class="form-control" value="0"></div><div class="col-3"><label class="small">Đ/S</label><input type="number" id="num-tf" class="form-control" value="0"></div><div class="col-3"><label class="small">Ngắn</label><input type="number" id="num-short" class="form-control" value="0"></div><div class="col-3"><button onclick="generateForm()" class="btn btn-secondary w-100 fw-bold">VẼ FORM</button></div></div>
                         <div id="answer-area" class="mt-3 border-top pt-3 d-none" style="max-height:300px; overflow-y:auto;"></div>
                     </div>
                     <button onclick="saveExamFinal()" id="btn-save" class="btn btn-success w-100 py-3 fw-bold shadow">LƯU ĐỀ THI</button>
@@ -69,71 +64,73 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbyXjFy0LZnQ7KL7lr-UxIv5OMx57M9DWv8FwxZyqQt48NKin_RHC8UhNtmI8eRFHimcMA/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbxZOzSSuRkKj9M_zfll7TKfSTQOt1PNFcxp0ucCZqav9XZL89JFvliOfj-BJQhpaM0PtA/exec"; 
         
         let answerData = {}, allExamsForStat = [];
         window.onload = async function() { try { const r=await fetch(API_URL+"?action=getExams&t="+Date.now());const j=await r.json(); allExamsForStat=j.data||[]; updateStatExamList(); } catch(e){} };
         function toggleChapter() { const t=document.getElementById('exam-type').value; document.getElementById('div-chapter').style.display = (t==='tx')?'block':'none'; }
         
-        // --- XỬ LÝ WORD CLIENT-SIDE (TRỰC TIẾP) ---
-        function handleWordUpload(input) {
-            const file = input.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const arrayBuffer = event.target.result;
-                mammoth.convertToHtml({arrayBuffer: arrayBuffer})
-                    .then(function(result) {
-                        parseDoc(result.value); // Gọi hàm phân tích
-                    })
-                    .catch(function(err) {
-                        alert("Lỗi đọc file Word: " + err);
-                    });
-            };
-            reader.readAsArrayBuffer(file);
+        async function importWordFromDrive() {
+            const link = document.getElementById('word-link').value; if(!link) return alert("Chưa nhập link!");
+            const btn = document.getElementById('btn-import-word'); btn.innerText = "Đang tải..."; btn.disabled = true;
+            try {
+                const res = await fetch(API_URL, {method:'POST', body:JSON.stringify({action:"getDriveFile", url:link})});
+                const json = await res.json();
+                if(!json.success) { alert("Lỗi: " + json.error); btn.innerText="LẤY ĐÁP ÁN"; btn.disabled=false; return; }
+                const binStr = window.atob(json.data); const bytes = new Uint8Array(binStr.length);
+                for(let i=0; i<binStr.length; i++) bytes[i] = binStr.charCodeAt(i);
+                const result = await mammoth.convertToHtml({arrayBuffer: bytes.buffer});
+                parseDoc(result.value); btn.innerText = "XONG"; btn.disabled = false;
+            } catch(e) { alert("Lỗi: "+e); btn.innerText="LẤY ĐÁP ÁN"; btn.disabled=false; }
         }
 
         function parseDoc(html) {
-            const doc = new DOMParser().parseFromString(html,'text/html'); 
-            let txt = doc.body.innerText;
-            
-            // Xử lý dấu phẩy -> xuống dòng để tách câu
-            txt = txt.replace(/,/g, '\n').replace(/\t/g, '\n');
+            const doc = new DOMParser().parseFromString(html,'text/html'); let txt = doc.body.innerText;
+            txt = txt.replace(/,/g, '\n').replace(/\t/g, '\n'); // Fix dấu phẩy
+            let mcq=0, tf=0, sh=0;
 
-            let data = {}, mcq=0, tf=0, sh=0;
-            // Trắc nghiệm: Tìm 1.A, 1A, 1. A
+            // 1. Trắc nghiệm (1.A, 1:A...)
             let m; const reMCQ = /(\d+)[\.\s:–-]*([A-D])(?![a-z0-9])/gi; 
-            while((m=reMCQ.exec(txt))!==null) { 
-                const q=parseInt(m[1]); 
-                if(q<100){data[`p1_c${q}`]=m[2].toUpperCase(); if(q>mcq)mcq=q;} 
-            }
+            while((m=reMCQ.exec(txt))!==null) { const q=parseInt(m[1]); if(q<100){answerData[`p1_c${q}`]=m[2].toUpperCase(); if(q>mcq)mcq=q;} }
 
-            // Bảng (Đúng sai & TLN)
+            // 2. Bảng (Đúng/Sai và Trả lời ngắn)
             doc.querySelectorAll('table').forEach(t => {
                 const trs = t.querySelectorAll('tr'); const tText = t.innerText;
-                // Đúng Sai
+                
+                // A. Đúng Sai (Tìm dòng a)
                 if(tText.includes("Đúng") || tText.includes("Sai")) {
                     let map={}; let headerRow = trs[0];
                     headerRow.querySelectorAll('td').forEach((td, idx) => { let mt = td.innerText.match(/Câu\s*(\d+)/i); if(mt) map[idx] = parseInt(mt[1]); });
-                    for(let i=1; i<trs.length; i++) { trs[i].querySelectorAll('td').forEach((td, idx) => { if(map[idx]) { let sub = td.innerText.match(/^([a-d])/i); let val = td.innerText.match(/(Đúng|Sai|Đ|S)/i); if(sub && val) { let v = val[1].toUpperCase().startsWith('Đ') ? 'D' : 'S'; data[`p2_c${map[idx]}_${sub[1].toLowerCase()}`] = v; if(map[idx] > tf) tf = map[idx]; } } }); }
+                    for(let i=1; i<trs.length; i++) { trs[i].querySelectorAll('td').forEach((td, idx) => { if(map[idx]) { let sub = td.innerText.match(/^([a-d])/i); let val = td.innerText.match(/(Đúng|Sai|Đ|S)/i); if(sub && val) { let v = val[1].toUpperCase().startsWith('Đ') ? 'D' : 'S'; answerData[`p2_c${map[idx]}_${sub[1].toLowerCase()}`] = v; if(map[idx] > tf) tf = map[idx]; } } }); }
                 }
-                // Trả lời ngắn (Bảng ngang: Câu | Chọn)
+                
+                // B. Trả lời ngắn (Tìm bảng ngang: Hàng 1 số câu, Hàng 2 đáp án)
                 if(tText.includes("Chọn") || tText.includes("Đáp án") || tText.includes("Kết quả")) {
-                    let qRow = -1, aRow = -1; 
-                    for(let i=0; i<trs.length; i++) { let rowText = trs[i].innerText.toLowerCase(); if(rowText.includes("câu") || rowText.includes("bài")) qRow = i; if(rowText.includes("chọn") || rowText.includes("đáp án") || rowText.includes("kết quả")) aRow = i; }
-                    if(qRow !== -1 && aRow !== -1) { let qCells = trs[qRow].querySelectorAll('td'); let aCells = trs[aRow].querySelectorAll('td'); let maxLen = Math.min(qCells.length, aCells.length); for(let j=0; j<maxLen; j++) { let qNum = parseInt(qCells[j].innerText.replace(/\D/g,'')); let ans = aCells[j].innerText.replace(/Chọn|Đáp án|:|"/gi, '').trim(); if(!isNaN(qNum) && ans !== "") { data[`p3_c${qNum}`] = ans; if(qNum > sh) sh = qNum; } } }
+                    let qRow = -1, aRow = -1;
+                    for(let i=0; i<trs.length; i++) { 
+                        let rTxt = trs[i].innerText.toLowerCase(); 
+                        if(rTxt.includes("câu") || rTxt.includes("bài")) qRow = i; 
+                        if(rTxt.includes("chọn") || rTxt.includes("đáp") || rTxt.includes("kết")) aRow = i; 
+                    }
+                    if(qRow !== -1 && aRow !== -1) {
+                        let qCells = trs[qRow].querySelectorAll('td'); let aCells = trs[aRow].querySelectorAll('td');
+                        let len = Math.min(qCells.length, aCells.length);
+                        for(let j=0; j<len; j++) {
+                            let qNum = parseInt(qCells[j].innerText.replace(/\D/g,''));
+                            let ans = aCells[j].innerText.replace(/Chọn|Đáp án|:|"/gi, '').trim();
+                            if(!isNaN(qNum) && ans !== "") { answerData[`p3_c${qNum}`] = ans; if(qNum > sh) sh = qNum; }
+                        }
+                    }
                 }
             });
-            
-            // Điền dữ liệu
-            document.getElementById('num-mcq').value = mcq; 
-            document.getElementById('num-tf').value = tf; 
-            document.getElementById('num-short').value = sh;
-            answerData = data; 
+
+            // Update số lượng (nhưng không xóa data cũ)
+            if(mcq>0) document.getElementById('num-mcq').value = mcq; 
+            if(tf>0) document.getElementById('num-tf').value = tf; 
+            if(sh>0) document.getElementById('num-short').value = sh;
             generateForm(); 
-            fillFormData(data); 
-            alert(`✅ Đã đọc xong!\n- Trắc nghiệm: ${mcq} câu\n- Đúng sai: ${tf} câu\n- Trả lời ngắn: ${sh} câu`);
+            fillFormData(); // Điền lại data vào form
+            alert(`✅ Đã cập nhật: ${mcq} TN, ${tf} Đ/S, ${sh} TLN.`);
         }
 
         function generateForm() {
@@ -143,8 +140,9 @@
             if(tf>0) { let h=`<h6 class="text-primary small fw-bold">II. ĐÚNG SAI</h6><div class="row g-2 mb-2">`; for(let i=1;i<=tf;i++) h+=`<div class="col-md-6 border rounded p-1 bg-light d-flex align-items-center"><span class="small fw-bold me-2">C${i}:</span>`+['a','b','c','d'].map(s=>`<span class="small ms-1">${s})</span><select class="form-select-sm border py-0 px-0 ms-1" style="width:35px" id="in-p2-${i}-${s}" onchange="updKey('p2_c${i}_${s}',this.value)"><option>-</option><option value="D">Đ</option><option value="S">S</option></select>`).join('')+`</div>`; div.innerHTML+=h+'</div>'; }
             if(sh>0) { let h=`<h6 class="text-primary small fw-bold">III. TRẢ LỜI NGẮN</h6><div class="row g-2">`; for(let i=1;i<=sh;i++) h+=`<div class="col-6 col-md-3"><div class="input-group input-group-sm"><span class="input-group-text fw-bold">C${i}</span><input type="text" class="form-control fw-bold text-primary" id="in-p3-${i}" onblur="updKey('p3_c${i}',this.value)"></div></div>`; div.innerHTML+=h+'</div>'; }
         }
-        function fillFormData(d) { for(let k in d) { let id = k.startsWith("p1")?"in-p1-"+k.replace("p1_c","") : (k.startsWith("p2")?"in-p2-"+k.replace("p2_c","").replace("_","-") : "in-p3-"+k.replace("p3_c","")); let el=document.getElementById(id); if(el) el.value=d[k]; } }
+        function fillFormData() { for(let k in answerData) { let id = k.startsWith("p1")?"in-p1-"+k.replace("p1_c","") : (k.startsWith("p2")?"in-p2-"+k.replace("p2_c","").replace("_","-") : "in-p3-"+k.replace("p3_c","")); let el=document.getElementById(id); if(el) el.value=answerData[k]; } }
         function updKey(k,v) { answerData[k]=v.trim().toUpperCase(); }
+        // Các hàm khác giữ nguyên...
         function importStudents() { const f=document.getElementById('file-student').files[0];if(!f)return alert("Chọn file!");const r=new FileReader();r.onload=e=>{const w=XLSX.read(new Uint8Array(e.target.result),{type:'array'});const d=XLSX.utils.sheet_to_json(w.Sheets[w.SheetNames[0]],{header:1});const s=[];for(let i=1;i<d.length;i++)if(d[i][0])s.push([d[i][0],d[i][1],d[i][2]||""]);fetch(API_URL,{method:'POST',body:JSON.stringify({action:"importStudents",students:s})}).then(r=>r.json()).then(j=>{alert("OK")})};r.readAsArrayBuffer(f); }
         function updateStatExamList() { const g=document.getElementById('stat-grade').value, t=document.getElementById('stat-type').value, s=document.getElementById('stat-exam'); s.innerHTML='<option value="">--Chọn--</option>'; allExamsForStat.filter(e=>e.classGrade==g&&e.examType==t).forEach(e=>s.innerHTML+=`<option value="${e.id}">${e.title}</option>`); }
         function viewRankings() { const m=document.getElementById('stat-exam').value; if(!m)return alert("Chọn đề!"); const b=document.getElementById('rank-table-body'); b.innerHTML='<tr><td colspan="5">Đang tải...</td></tr>'; fetch(API_URL+`?action=getRankingsAdmin&maDe=${m}`).then(r=>r.json()).then(j=>{b.innerHTML=(j.data||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${r.tenHS}</td><td>${r.maHS}</td><td class="fw-bold text-danger">${r.diem}</td><td>${r.time}</td></tr>`).join('')||'<tr><td colspan="5">Không có dữ liệu</td></tr>'}); }
