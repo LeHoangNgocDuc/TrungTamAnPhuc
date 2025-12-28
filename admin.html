@@ -98,6 +98,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // DÁN LINK WEB APP CỦA BẠN VÀO ĐÂY
         const API_URL = "https://script.google.com/macros/s/AKfycbxroDw6IXFnvOE3aOXCo27DXlGQEDVhxYvknqkhzXoA59XA1JcjfCCicmLYZOA_x-1l3w/exec"; 
         
         let answerData = {}, allExamsForStat = [];
@@ -127,7 +128,7 @@
             document.getElementById('div-chapter').style.display = (t==='tx') ? 'block' : 'none'; 
         }
 
-        // --- XỬ LÝ WORD (UPLOAD TRỰC TIẾP) ---
+        // --- XỬ LÝ WORD ---
         function handleWordUpload(input) {
             const file = input.files[0];
             if (!file) return;
@@ -143,58 +144,86 @@
         function parseDoc(html) {
             const doc = new DOMParser().parseFromString(html,'text/html'); 
             let txt = doc.body.innerText;
-            // Xóa dấu phẩy để tách câu trắc nghiệm dính liền
+            
+            // --- CỰC KỲ QUAN TRỌNG: Tách dấu phẩy thành xuống dòng ---
+            // Để xử lý trường hợp: "1.C,2.A,3.D..."
             txt = txt.replace(/,/g, '\n').replace(/\t/g, '\n');
 
             let mcq=0, tf=0, sh=0;
             let newData = {};
 
-            // 1. Trắc nghiệm
+            // 1. Quét Trắc nghiệm (Tìm 1.A, 1:A, 1. A...)
             let m; const reMCQ = /(\d+)[\.\s:–-]*([A-D])(?![a-z0-9])/gi; 
             while((m=reMCQ.exec(txt))!==null) { 
-                const q=parseInt(m[1]); if(q<100){ newData[`p1_c${q}`]=m[2].toUpperCase(); if(q>mcq) mcq=q; } 
+                const q=parseInt(m[1]); 
+                if(q<100){ newData[`p1_c${q}`]=m[2].toUpperCase(); if(q>mcq) mcq=q; } 
             }
 
-            // 2. Bảng (Đúng sai & TLN)
+            // 2. Quét Bảng (Đúng sai & TLN)
             doc.querySelectorAll('table').forEach(t => {
                 const trs = t.querySelectorAll('tr'); const tText = t.innerText;
-                // Đúng Sai
+                
+                // A. Đúng Sai (Bảng có chữ a) Đúng...)
                 if(tText.includes("Đúng") || tText.includes("Sai")) {
                     let map={}; let headerRow = trs[0];
+                    // Tìm map cột: "Câu 1", "Câu 2"...
                     headerRow.querySelectorAll('td').forEach((td, idx) => { let mt = td.innerText.match(/Câu\s*(\d+)/i); if(mt) map[idx] = parseInt(mt[1]); });
-                    for(let i=1; i<trs.length; i++) { trs[i].querySelectorAll('td').forEach((td, idx) => { if(map[idx]) { let sub = td.innerText.match(/^([a-d])/i); let val = td.innerText.match(/(Đúng|Sai|Đ|S)/i); if(sub && val) { let v = val[1].toUpperCase().startsWith('Đ') ? 'D' : 'S'; newData[`p2_c${map[idx]}_${sub[1].toLowerCase()}`] = v; if(map[idx] > tf) tf = map[idx]; } } }); }
+                    
+                    for(let i=1; i<trs.length; i++) { 
+                        trs[i].querySelectorAll('td').forEach((td, idx) => { 
+                            if(map[idx]) { 
+                                // Tìm a), b)... và Đúng/Sai
+                                let sub = td.innerText.match(/^([a-d])/i); 
+                                let val = td.innerText.match(/(Đúng|Sai|Đ|S)/i); 
+                                if(sub && val) { 
+                                    let v = val[1].toUpperCase().startsWith('Đ') ? 'D' : 'S'; 
+                                    newData[`p2_c${map[idx]}_${sub[1].toLowerCase()}`] = v; 
+                                    if(map[idx] > tf) tf = map[idx]; 
+                                } 
+                            } 
+                        }); 
+                    }
                 }
-                // Trả lời ngắn (Bảng Ngang: Câu | Chọn)
-                if(tText.includes("Chọn") || tText.includes("Đáp án")) {
+                
+                // B. Trả lời ngắn (Bảng có chữ "Câu" và "Chọn/Đáp án")
+                if(tText.includes("Chọn") || tText.includes("Đáp án") || tText.includes("Kết quả")) {
                     let qRow = -1, aRow = -1;
+                    // Tìm dòng chứa "Câu" và dòng chứa "Chọn"
                     for(let i=0; i<trs.length; i++) { 
                         let rTxt = trs[i].innerText.toLowerCase(); 
                         if(rTxt.includes("câu") || rTxt.includes("bài")) qRow = i; 
-                        if(rTxt.includes("chọn") || rTxt.includes("đáp")) aRow = i; 
+                        if(rTxt.includes("chọn") || rTxt.includes("đáp") || rTxt.includes("kết")) aRow = i; 
                     }
+                    
                     if(qRow !== -1 && aRow !== -1) {
                         let qCells = trs[qRow].querySelectorAll('td'); let aCells = trs[aRow].querySelectorAll('td');
                         let len = Math.min(qCells.length, aCells.length);
                         for(let j=0; j<len; j++) {
-                            let qNum = parseInt(qCells[j].innerText.replace(/\D/g,''));
-                            let ans = aCells[j].innerText.replace(/Chọn|Đáp án|:|"/gi, '').trim();
-                            if(!isNaN(qNum) && ans !== "") { newData[`p3_c${qNum}`] = ans; if(qNum > sh) sh = qNum; }
+                            let qNumText = qCells[j].innerText.replace(/\D/g,''); // Lấy số câu
+                            if(qNumText) {
+                                let qNum = parseInt(qNumText);
+                                let ans = aCells[j].innerText.replace(/Chọn|Đáp án|:|"/gi, '').trim();
+                                if(!isNaN(qNum) && ans !== "") { 
+                                    newData[`p3_c${qNum}`] = ans; 
+                                    if(qNum > sh) sh = qNum; 
+                                }
+                            }
                         }
                     }
                 }
             });
 
-            // Gộp dữ liệu mới vào cũ (không mất cái cũ)
+            // Cập nhật dữ liệu
             answerData = { ...answerData, ...newData };
             
-            // Cập nhật số lượng nếu tìm thấy nhiều hơn
-            if(mcq > parseInt(document.getElementById('num-mcq').value||0)) document.getElementById('num-mcq').value = mcq;
-            if(tf > parseInt(document.getElementById('num-tf').value||0)) document.getElementById('num-tf').value = tf;
-            if(sh > parseInt(document.getElementById('num-short').value||0)) document.getElementById('num-short').value = sh;
-
+            // Cập nhật ô input số lượng
+            if(mcq>0) document.getElementById('num-mcq').value = mcq; 
+            if(tf>0) document.getElementById('num-tf').value = tf; 
+            if(sh>0) document.getElementById('num-short').value = sh;
+            
             generateForm(); 
             fillFormData(); 
-            alert(`✅ Đã nhận diện:\n- Trắc nghiệm: ${mcq}\n- Đúng Sai: ${tf}\n- Trả lời ngắn: ${sh}`);
+            alert(`✅ Đã nhận diện:\n- Trắc nghiệm: ${mcq} câu\n- Đúng Sai: ${tf} câu\n- Trả lời ngắn: ${sh} câu`);
         }
 
         function generateForm() {
@@ -207,6 +236,7 @@
         function fillFormData() { for(let k in answerData) { let id = k.startsWith("p1")?"in-p1-"+k.replace("p1_c","") : (k.startsWith("p2")?"in-p2-"+k.replace("p2_c","").replace("_","-") : "in-p3-"+k.replace("p3_c","")); let el=document.getElementById(id); if(el) el.value=answerData[k]; } }
         function updKey(k,v) { answerData[k]=v.trim().toUpperCase(); }
         
+        // CÁC HÀM KHÁC
         function importStudents() { const f=document.getElementById('file-student').files[0];if(!f)return alert("Chọn file!");const r=new FileReader();r.onload=e=>{const w=XLSX.read(new Uint8Array(e.target.result),{type:'array'});const d=XLSX.utils.sheet_to_json(w.Sheets[w.SheetNames[0]],{header:1});const s=[];for(let i=1;i<d.length;i++)if(d[i][0])s.push([d[i][0],d[i][1],d[i][2]||""]);fetch(API_URL,{method:'POST',body:JSON.stringify({action:"importStudents",students:s})}).then(r=>r.json()).then(j=>{alert("OK")})};r.readAsArrayBuffer(f); }
         function updateStatExamList() { const g=document.getElementById('stat-grade').value, t=document.getElementById('stat-type').value, s=document.getElementById('stat-exam'); s.innerHTML='<option value="">--Chọn--</option>'; allExamsForStat.filter(e=>e.classGrade==g&&e.examType==t).forEach(e=>s.innerHTML+=`<option value="${e.id}">${e.title}</option>`); }
         function viewRankings() { const m=document.getElementById('stat-exam').value; if(!m)return alert("Chọn đề!"); const b=document.getElementById('rank-table-body'); b.innerHTML='<tr><td colspan="5">Đang tải...</td></tr>'; fetch(API_URL+`?action=getRankingsAdmin&maDe=${m}`).then(r=>r.json()).then(j=>{b.innerHTML=(j.data||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${r.tenHS}</td><td>${r.maHS}</td><td class="fw-bold text-danger">${r.diem}</td><td>${r.time}</td></tr>`).join('')||'<tr><td colspan="5">Không có dữ liệu</td></tr>'}); }
