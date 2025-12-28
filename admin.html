@@ -16,12 +16,12 @@
         <ul class="nav nav-pills mb-4 bg-white p-2 rounded shadow-sm" id="pills-tab" role="tablist">
             <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-student">1. Quản Lý HS</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-exam">2. Nhập Đề Thi</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-rank">3. Kết Quả Thi</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-rank">3. Kết Quả</button></li>
         </ul>
 
         <div class="tab-content">
             <div class="tab-pane fade show active" id="pills-student">
-                <div class="card p-3 border-success"><h6 class="fw-bold text-success">IMPORT HỌC SINH TỪ EXCEL</h6><input type="file" id="file-student" class="form-control mb-2"><button onclick="importStudents()" class="btn btn-success">Upload</button></div>
+                <div class="card p-3 border-success"><h6 class="fw-bold text-success">IMPORT HỌC SINH</h6><input type="file" id="file-student" class="form-control mb-2"><button onclick="importStudents()" class="btn btn-success">Upload</button></div>
             </div>
 
             <div class="tab-pane fade" id="pills-exam">
@@ -30,17 +30,17 @@
                     <div class="row g-2 mb-3">
                         <div class="col-3"><label class="small fw-bold">Khối</label><select id="exam-class" class="form-select"><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="TN">TN THPT</option></select></div>
                         <div class="col-3"><label class="small fw-bold">Loại</label><select id="exam-type" class="form-select" onchange="toggleChapter()"><option value="tx">Thường xuyên</option><option value="gk1">Giữa kỳ 1</option><option value="ck1">Cuối kỳ 1</option><option value="gk2">Giữa kỳ 2</option><option value="ck2">Cuối kỳ 2</option><option value="Lan1">Lần 1</option><option value="Lan2">Lần 2</option><option value="Lan3">Lần 3</option><option value="Lan4">Lần 4</option><option value="Lan5">Lần 5</option></select></div>
-                        <div class="col-3" id="div-chapter"><label class="small fw-bold">Chương</label><select id="exam-chapter" class="form-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></div>
+                        <div class="col-3" id="div-chapter"><label class="small fw-bold">Chương</label><select id="exam-chapter" class="form-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
                         <div class="col-3"><label class="small fw-bold">Phút</label><input type="number" id="exam-duration" class="form-control" value="90"></div>
                     </div>
                     <div class="row g-2 mb-3"><div class="col-3"><input id="exam-id" class="form-control" placeholder="Mã Đề"></div><div class="col-9"><input id="exam-title" class="form-control" placeholder="Tên Đề Thi"></div></div>
-                    <div class="row g-2 mb-3"><div class="col-6"><input id="link-exam" class="form-control" placeholder="Link Đề (PDF - Dán Link Drive)"></div><div class="col-6"><input id="link-sol" class="form-control" placeholder="Link Giải (PDF - Dán Link Drive)"></div></div>
+                    <div class="row g-2 mb-3"><div class="col-6"><input id="link-exam" class="form-control" placeholder="Link Đề PDF"></div><div class="col-6"><input id="link-sol" class="form-control" placeholder="Link Giải PDF"></div></div>
                     <div class="col-12 mb-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="is-essay"><label class="form-check-label fw-bold">Cho phép nộp Tự luận</label></div></div>
                     
                     <div class="bg-light p-3 rounded border mb-3">
-                        <h6 class="fw-bold text-dark small mb-2">ĐÁP ÁN (Dán Link File Word trên Drive)</h6>
+                        <h6 class="fw-bold text-dark small mb-2">ĐÁP ÁN (Dán link Word hoặc Nhập tay)</h6>
                         <div class="input-group mb-2">
-                            <input type="text" id="word-link" class="form-control" placeholder="Dán link file Word đáp án vào đây...">
+                            <input type="text" id="word-link" class="form-control" placeholder="Link file Word đáp án trên Drive...">
                             <button onclick="importWordFromDrive()" class="btn btn-warning fw-bold" id="btn-import-word">LẤY ĐÁP ÁN</button>
                         </div>
                         <div class="row g-2 align-items-end mt-2"><div class="col-3"><label class="small">TN</label><input type="number" id="num-mcq" class="form-control" value="0"></div><div class="col-3"><label class="small">Đ/S</label><input type="number" id="num-tf" class="form-control" value="0"></div><div class="col-3"><label class="small">Ngắn</label><input type="number" id="num-short" class="form-control" value="0"></div><div class="col-3"><button onclick="generateForm()" class="btn btn-secondary w-100 fw-bold">VẼ FORM</button></div></div>
@@ -54,7 +54,7 @@
                 <div class="card p-3 border-warning">
                     <h6 class="fw-bold">XEM KẾT QUẢ</h6>
                     <div class="row g-2 mb-3">
-                        <div class="col-3"><select id="stat-grade" class="form-select" onchange="updateStatExamList()"><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></div>
+                        <div class="col-3"><select id="stat-grade" class="form-select" onchange="updateStatExamList()"><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option></select></div>
                         <div class="col-3"><select id="stat-type" class="form-select" onchange="updateStatExamList()"><option value="tx">TX</option><option value="gk1">GK1</option></select></div>
                         <div class="col-4"><select id="stat-exam" class="form-select"><option value="">-- Chọn Đề --</option></select></div>
                         <div class="col-2"><button onclick="viewRankings()" class="btn btn-primary w-100 btn-sm">Xem</button></div>
@@ -67,26 +67,24 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwWAOW9NssQFis5Ufozjiju2CZq0yeeEggZaTKp8NE8ZsL6dMrQShFEGNLHBBzLrn7e9w/exec"; // THAY LINK CỦA BẠN
+        const API_URL = "https://script.google.com/macros/s/AKfycby8AATq_9Au84gj4H0njV477d8JC-6Ob3OG5DWob8l5hpsxkIUy6WqHREvoPUg2CYWBYQ/exec"; // Dán Link
         
         let answerData = {}, allExamsForStat = [];
         window.onload = async function() { try { const r=await fetch(API_URL+"?action=getExams&t="+Date.now());const j=await r.json(); allExamsForStat=j.data||[]; updateStatExamList(); } catch(e){} };
         function toggleChapter() { const t=document.getElementById('exam-type').value; document.getElementById('div-chapter').style.display = (t==='tx')?'block':'none'; }
         
         async function importWordFromDrive() {
-            const link = document.getElementById('word-link').value;
-            if(!link) return alert("Chưa nhập link!");
+            const link = document.getElementById('word-link').value; if(!link) return alert("Chưa nhập link!");
             const btn = document.getElementById('btn-import-word'); btn.innerText = "Đang tải..."; btn.disabled = true;
             try {
                 const res = await fetch(API_URL, {method:'POST', body:JSON.stringify({action:"getDriveFile", url:link})});
                 const json = await res.json();
                 if(!json.success) { alert("Lỗi: " + json.error); btn.innerText="LẤY ĐÁP ÁN"; btn.disabled=false; return; }
-                const binStr = window.atob(json.data);
-                const bytes = new Uint8Array(binStr.length);
+                const binStr = window.atob(json.data); const bytes = new Uint8Array(binStr.length);
                 for(let i=0; i<binStr.length; i++) bytes[i] = binStr.charCodeAt(i);
                 const result = await mammoth.convertToHtml({arrayBuffer: bytes.buffer});
                 parseDoc(result.value);
-                btn.innerText = "ĐÃ LẤY XONG"; btn.disabled = false;
+                btn.innerText = "XONG"; btn.disabled = false;
             } catch(e) { alert("Lỗi: "+e); btn.innerText="LẤY ĐÁP ÁN"; btn.disabled=false; }
         }
 
@@ -97,18 +95,21 @@
             let m; const reMCQ = /(\d+)[\.\s:–-]*([A-D])(?![a-z0-9])/gi; while((m=reMCQ.exec(txt))!==null) { const q=parseInt(m[1]); if(q<100){data[`p1_c${q}`]=m[2].toUpperCase(); if(q>mcq)mcq=q;} }
             doc.querySelectorAll('table').forEach(t => {
                 const trs = t.querySelectorAll('tr'); const tText = t.innerText;
+                // Đúng Sai
                 if(tText.includes("Đúng") || tText.includes("Sai")) {
                     let map={}; let headerRow = trs[0];
                     headerRow.querySelectorAll('td').forEach((td, idx) => { let mt = td.innerText.match(/Câu\s*(\d+)/i); if(mt) map[idx] = parseInt(mt[1]); });
                     for(let i=1; i<trs.length; i++) { trs[i].querySelectorAll('td').forEach((td, idx) => { if(map[idx]) { let sub = td.innerText.match(/^([a-d])/i); let val = td.innerText.match(/(Đúng|Sai|Đ|S)/i); if(sub && val) { let v = val[1].toUpperCase().startsWith('Đ') ? 'D' : 'S'; data[`p2_c${map[idx]}_${sub[1].toLowerCase()}`] = v; if(map[idx] > tf) tf = map[idx]; } } }); }
                 }
+                // Trả lời ngắn (Nhận diện bảng ngang và dọc)
                 if(tText.includes("Chọn") || tText.includes("Đáp án") || tText.includes("Kết quả")) {
-                    let qRow = -1, aRow = -1; for(let i=0; i<trs.length; i++) { let rowText = trs[i].innerText.toLowerCase(); if(rowText.includes("câu") || rowText.includes("bài")) qRow = i; if(rowText.includes("chọn") || rowText.includes("đáp án") || rowText.includes("kết quả")) aRow = i; }
+                    let qRow = -1, aRow = -1; 
+                    for(let i=0; i<trs.length; i++) { let rowText = trs[i].innerText.toLowerCase(); if(rowText.includes("câu") || rowText.includes("bài")) qRow = i; if(rowText.includes("chọn") || rowText.includes("đáp án") || rowText.includes("kết quả")) aRow = i; }
                     if(qRow !== -1 && aRow !== -1) { let qCells = trs[qRow].querySelectorAll('td'); let aCells = trs[aRow].querySelectorAll('td'); let maxLen = Math.min(qCells.length, aCells.length); for(let j=0; j<maxLen; j++) { let qNum = parseInt(qCells[j].innerText.replace(/\D/g,'')); let ans = aCells[j].innerText.replace(/Chọn|Đáp án|:|"/gi, '').trim(); if(!isNaN(qNum) && ans !== "") { data[`p3_c${qNum}`] = ans; if(qNum > sh) sh = qNum; } } }
                 }
             });
             document.getElementById('num-mcq').value = mcq; document.getElementById('num-tf').value = tf; document.getElementById('num-short').value = sh;
-            answerData = data; generateForm(); fillFormData(data); alert(`✅ Đã đọc: ${mcq} TN, ${tf} Đ/S, ${sh} TLN.`);
+            answerData = data; generateForm(); fillFormData(data); alert(`Đã đọc: ${mcq} TN, ${tf} Đ/S, ${sh} TLN.`);
         }
 
         function generateForm() {
