@@ -65,7 +65,10 @@
     </div>
     <nav class="main-nav">
         <div class="container d-flex justify-content-between">
-            <a href="#" class="nav-link-custom active" onclick="location.reload()">THI TRỰC TUYẾN</a>
+            <div>
+                <a href="#" class="nav-link-custom active" onclick="switchView('exam')">THI TRỰC TUYẾN</a>
+                <a href="#" class="nav-link-custom" onclick="switchView('stats')">BẢNG VÀNG</a>
+            </div>
             <a href="admin.html" class="nav-link-custom"><i class="bi bi-person-fill-lock"></i> Giáo Viên</a>
         </div>
     </nav>
@@ -94,6 +97,34 @@
         <div class="type-tabs" id="type-filters"></div>
         <div id="chapter-filters" class="mb-3 d-flex flex-wrap gap-2"></div>
         <div id="exam-list"></div>
+    </div>
+
+    <div id="view-stats" class="d-none">
+        <div class="section-title text-warning">BẢNG VÀNG THÀNH TÍCH</div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="card border-primary h-100">
+                    <div class="card-header bg-primary text-white fw-bold">Lịch sử làm bài</div>
+                    <div class="card-body p-0">
+                        <table class="table table-striped mb-0 small">
+                            <thead><tr><th>Thời gian</th><th>Đề thi</th><th>Điểm</th></tr></thead>
+                            <tbody id="stats-history"><tr><td colspan="3" class="text-center p-3">Chọn tên học sinh để xem</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card border-warning h-100">
+                    <div class="card-header bg-warning fw-bold">Top 10 Đồng Khối</div>
+                    <div class="card-body p-0">
+                        <table class="table table-striped mb-0 small">
+                            <thead><tr><th>#</th><th>Tên</th><th>Đề</th><th>Điểm</th></tr></thead>
+                            <tbody id="stats-ranking"><tr><td colspan="4" class="text-center p-3">Đang tải...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -129,13 +160,11 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwPWWfo_xck0SqSOcp5fYp8quRwQcCOoM1MIRZEsINEVXnjA_Ou9yP2Us01StbyEBgyiQ/exec"; 
-    
-    // DỮ LIỆU CHƯƠNG CHI TIẾT
     const CHAPTERS = {
-        "6": ["Tập hợp các số tự nhiên", "Tính chia hết trong tập hợp STN", "Số nguyên", "Một số hình phẳng trong thực tiễn", "Tính đối xứng của hình phẳng", "Phân số", "Số thập phân", "Những hình hình học cơ bản", "Dữ liệu và xác suất thực nghiệm"],
-        "7": ["Số hữu tỉ", "Số thực", "Góc và đường thẳng song song", "Tam giác bằng nhau", "Thu thập và biểu diễn dữ liệu", "Tỉ lệ thức và đại lượng tỉ lệ", "Biểu thức đại số", "Biến cố và xác suất", "Quan hệ trong tam giác", "Một số hình khối trong thực tiễn"],
-        "8": ["Đa thức", "Hằng đẳng thức đáng nhớ", "Tứ giác", "Định lí Thalès", "Dữ liệu và biểu đồ", "Phân thức đại số", "Phương trình bậc nhất", "Mở đầu về tính xác suất", "Tam giác đồng dạng", "Một số hình khối trong thực tiễn"],
-        "9": ["Hệ hai phương trình bậc nhất", "Phương trình bậc nhất một ẩn", "Căn bậc hai và căn bậc ba", "Hệ thức lượng trong tam giác vuông", "Đường tròn", "Hàm số y=ax^2", "Tần số và tần số tương đối", "Xác suất biến cố", "Đường tròn ngoại tiếp/nội tiếp", "Một số hình khối trong thực tiễn"]
+        "6": ["Chương 1: Tập hợp các số tự nhiên", "Chương 2: Tính chia hết trong tập hợp STN", "Chương 3: Số nguyên", "Chương 4: Một số hình phẳng trong thực tiễn", "Chương 5: Tính đối xứng của hình phẳng", "Chương 6: Phân số", "Chương 7: Số thập phân", "Chương 8: Những hình hình học cơ bản", "Chương 9: Dữ liệu và xác suất thực nghiệm"],
+        "7": ["Chương 1: Số hữu tỉ", "Chương 2: Số thực", "Chương 3: Góc và đường thẳng song song", "Chương 4: Tam giác bằng nhau", "Chương 5: Thu thập và biểu diễn dữ liệu", "Chương 6: Tỉ lệ thức và đại lượng tỉ lệ", "Chương 7: Biểu thức đại số", "Chương 8: Biến cố và xác suất", "Chương 9: Quan hệ trong tam giác", "Chương 10: Một số hình khối trong thực tiễn"],
+        "8": ["Chương 1: Đa thức", "Chương 2: Hằng đẳng thức đáng nhớ", "Chương 3: Tứ giác", "Chương 4: Định lí Thalès", "Chương 5: Dữ liệu và biểu đồ", "Chương 6: Phân thức đại số", "Chương 7: Phương trình bậc nhất", "Chương 8: Mở đầu về tính xác suất", "Chương 9: Tam giác đồng dạng", "Chương 10: Một số hình khối trong thực tiễn"],
+        "9": ["Chương 1: Hệ hai phương trình bậc nhất", "Chương 2: Phương trình bậc nhất một ẩn", "Chương 3: Căn bậc hai và căn bậc ba", "Chương 4: Hệ thức lượng trong tam giác vuông", "Chương 5: Đường tròn", "Chương 6: Hàm số y=ax^2", "Chương 7: Tần số và tần số tương đối", "Chương 8: Xác suất biến cố", "Chương 9: Đường tròn ngoại tiếp/nội tiếp", "Chương 10: Một số hình khối trong thực tiễn"]
     };
 
     let allExams=[], curState = { grade:6, examType:'tx', chapter:1 };
@@ -148,16 +177,24 @@
         selectGrade(6, document.querySelector('.filter-btn')); document.getElementById('loading').style.display='none';
     };
 
+    function switchView(view) {
+        document.getElementById('view-exam').classList.add('d-none');
+        document.getElementById('view-stats').classList.add('d-none');
+        document.getElementById(`view-${view}`).classList.remove('d-none');
+        document.querySelectorAll('.nav-link-custom').forEach(l=>l.classList.remove('active'));
+        if(view==='exam') document.querySelector('.nav-link-custom:first-child').classList.add('active');
+        else {
+            document.querySelectorAll('.nav-link-custom')[1].classList.add('active');
+            loadStats();
+        }
+    }
+
     function selectGrade(g, btn) {
         curState.grade = g; document.querySelectorAll('#view-exam .filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.getElementById('sel-grade').value = g; updateClassDropdown(g);
         const div = document.getElementById('type-filters'); let h = '';
-        if(g == 'TS10') { 
-            ['Lần 1','Lần 2','Lần 3','Lần 4','Lần 5'].forEach((t,i) => { let c=`Lan${i+1}`; let act=(i==0)?'active':''; if(i==0)curState.examType=c; h+=`<div class="type-item ${act}" onclick="setType('${c}',this)">${t}</div>`; }); 
-        } else if (g == '12') {
-            h=`<div class="type-item active" onclick="setType('tx',this)">Thường xuyên</div><div class="type-item" onclick="setType('gk1',this)">GK 1</div><div class="type-item" onclick="setType('ck1',this)">CK 1</div><div class="type-item" onclick="setType('gk2',this)">GK 2</div><div class="type-item" onclick="setType('ck2',this)">CK 2</div><div class="type-item" onclick="setType('tn_thpt',this)">TN THPT</div>`; curState.examType='tx';
-        } else { 
-            h=`<div class="type-item active" onclick="setType('tx',this)">Thường xuyên</div><div class="type-item" onclick="setType('gk1',this)">GK 1</div><div class="type-item" onclick="setType('ck1',this)">CK 1</div><div class="type-item" onclick="setType('gk2',this)">GK 2</div><div class="type-item" onclick="setType('ck2',this)">CK 2</div>`; curState.examType='tx'; 
-        }
+        if(g == 'TS10') { ['Lần 1','Lần 2','Lần 3','Lần 4','Lần 5'].forEach((t,i) => { let c=`Lan${i+1}`; let act=(i==0)?'active':''; if(i==0)curState.examType=c; h+=`<div class="type-item ${act}" onclick="setType('${c}',this)">${t}</div>`; }); } 
+        else if (g == '12') { h=`<div class="type-item active" onclick="setType('tx',this)">Thường xuyên</div><div class="type-item" onclick="setType('gk1',this)">GK 1</div><div class="type-item" onclick="setType('ck1',this)">CK 1</div><div class="type-item" onclick="setType('gk2',this)">GK 2</div><div class="type-item" onclick="setType('ck2',this)">CK 2</div><div class="type-item" onclick="setType('tn_thpt',this)">TN THPT</div>`; curState.examType='tx'; } 
+        else { h=`<div class="type-item active" onclick="setType('tx',this)">Thường xuyên</div><div class="type-item" onclick="setType('gk1',this)">GK 1</div><div class="type-item" onclick="setType('ck1',this)">CK 1</div><div class="type-item" onclick="setType('gk2',this)">GK 2</div><div class="type-item" onclick="setType('ck2',this)">CK 2</div>`; curState.examType='tx'; }
         div.innerHTML = h; renderChapters(); renderExams();
     }
     
@@ -166,19 +203,25 @@
     function renderChapters() {
         const div = document.getElementById('chapter-filters'); div.innerHTML='';
         if(curState.examType !== 'tx') return;
-        
         let cList = CHAPTERS[curState.grade] || ["Chương 1", "Chương 2", "Chương 3", "Chương 4", "Chương 5", "Chương 6"];
-        
         let h = '';
         cList.forEach((name, i) => {
             let act = (i+1==1)?'active':'';
-            // Button hiện số chương, tooltip hiện tên đầy đủ
-            h+=`<button class="btn btn-sm btn-outline-primary rounded-pill ${act}" title="${name}" onclick="curState.chapter=${i+1}; document.querySelectorAll('#chapter-filters button').forEach(b=>b.classList.remove('active')); this.classList.add('active'); renderExams()">Chương ${i+1}: ${name.split(':')[1] || name}</button>`;
+            h+=`<button class="btn btn-sm btn-outline-primary rounded-pill ${act}" title="${name}" onclick="curState.chapter=${i+1}; document.querySelectorAll('#chapter-filters button').forEach(b=>b.classList.remove('active')); this.classList.add('active'); renderExams()">Chương ${i+1}: ${name.split(':')[1]||name}</button>`;
         });
         div.innerHTML = h; curState.chapter = 1;
     }
 
     function renderExams() { const list = allExams.filter(e => e.classGrade == curState.grade && e.examType == curState.examType && (curState.examType!=='tx' || e.chapter == curState.chapter)); const div = document.getElementById('exam-list'); div.innerHTML = list.length ? list.map(e => `<div class="exam-card" onclick='preStart(${JSON.stringify(e).replace(/'/g,"&#39;")})'><div class="d-flex justify-content-between align-items-center"><div><b>${e.title}</b><div class="small text-muted">${e.duration}p | ${e.totalQuestions} câu</div></div><button class="btn btn-primary btn-sm rounded-pill fw-bold">Thi</button></div></div>`).join('') : '<p class="text-center text-muted py-4">Chưa có đề thi.</p>'; }
+
+    async function loadStats() {
+        if(!studentInfo.id) { document.getElementById('stats-history').innerHTML = '<tr><td colspan="3" class="text-center p-3 text-danger">Vui lòng chọn Tên Học Sinh trước!</td></tr>'; return; }
+        document.getElementById('stats-history').innerHTML = '<tr><td colspan="3" class="text-center p-3">Đang tải...</td></tr>';
+        try { const res = await fetch(API_URL, {method: 'POST', body: JSON.stringify({ action: "getStudentStats", maHS: studentInfo.id, grade: curState.grade })}); const j = await res.json();
+            document.getElementById('stats-history').innerHTML = j.history.map(r => `<tr><td>${r.time}</td><td>${r.examTitle}</td><td class="fw-bold text-primary">${r.score}</td></tr>`).join('') || '<tr><td colspan="3" class="text-center">Chưa làm bài nào</td></tr>';
+            document.getElementById('stats-ranking').innerHTML = j.ranking.map((r,i) => `<tr class="${r.name===studentInfo.name?'table-info':''}"><td>${i+1}</td><td>${r.name}</td><td>${r.exam}</td><td class="fw-bold text-danger">${r.score}</td></tr>`).join('') || '<tr><td colspan="4" class="text-center">Chưa có dữ liệu</td></tr>';
+        } catch(e) { alert("Lỗi tải thống kê"); }
+    }
 
     function updateClassDropdown(g) { const s=document.getElementById('sel-class'); s.innerHTML='<option value="">-Lớp-</option>'; let l=['A','B','C','D','E']; if(g>9)l=['A','B','C','D']; l.forEach(x=>s.innerHTML+=`<option value="${g}${x}">${g}${x}</option>`); }
     function manualGradeChange() { selectGrade(document.getElementById('sel-grade').value, document.querySelector('.scroll-row .filter-btn')); }
@@ -187,75 +230,14 @@
     async function preStart(e) { const v = document.getElementById('sel-student').value; if(!v || v.includes("Tên")) { alert("Chọn HS trước!"); return; } studentInfo={id:v.split('|')[0],name:v.split('|')[1]}; currentExam=e; const r=await fetch(API_URL, {method:'POST', body:JSON.stringify({action:'checkStudentHistory', maHS:studentInfo.id, maDe:e.id})}); const j=await r.json(); if(j.count>0) { historyData=j; document.getElementById('his-count').innerText=j.count; document.getElementById('his-score').innerText=j.lastScore; new bootstrap.Modal(document.getElementById('historyModal')).show(); } else startExam(true); }
     function reviewOldExam() { bootstrap.Modal.getInstance(document.getElementById('historyModal')).hide(); try { userAnswers=JSON.parse(historyData.lastAnswers) } catch(e){} startExam(false); document.querySelector('.btn-success').style.display='none'; document.getElementById('result-box').classList.remove('d-none'); document.getElementById('score-display').innerText=historyData.lastScore; if(currentExam.solutionLink) document.getElementById('sol-link-area').innerHTML=`<a href="${currentExam.solutionLink.replace('/view','/preview')}" target="_blank" class="btn btn-primary">XEM LỜI GIẢI</a>`; }
     function startExam(isNew) { if(document.getElementById('historyModal').classList.contains('show')) bootstrap.Modal.getInstance(document.getElementById('historyModal')).hide(); if(isNew) { userAnswers={}; document.getElementById('result-box').classList.add('d-none'); document.querySelector('.btn-success').style.display='block'; } qIdx=0; questionMap=[]; let st = (typeof currentExam.structure==='string'?JSON.parse(currentExam.structure):currentExam.structure); let c = st.config || {}; let gId = 1; for(let i=1;i<=c.mcq;i++) questionMap.push({type:'mcq',id:i,displayId:gId++,lbl:`Câu ${gId-1}`}); for(let i=1;i<=c.tf;i++) questionMap.push({type:'tf',id:i,displayId:gId++,lbl:`Câu ${gId-1}`}); for(let i=1;i<=c.short;i++) questionMap.push({type:'sh',id:i,displayId:gId++,lbl:`Câu ${gId-1}`}); document.querySelector('.main-container').classList.add('d-none'); document.querySelector('header').classList.add('d-none'); document.getElementById('exam-screen').style.display = 'flex'; document.getElementById('pdf-frame').src = currentExam.pdfLink.replace(/\/view.*/, '/preview'); if(isNew) startTimer(currentExam.duration); renderQ(0); }
-
-    function renderQ(i) { 
-        if(i<0||i>=questionMap.length) return; qIdx=i; const q=questionMap[i]; 
-        let h = `<div class="mb-3"><h5>${q.lbl}</h5></div>`; 
-        
-        if(q.type=='mcq') { 
-            h+=`<div class="mcq-row">`; 
-            ['A','B','C','D'].forEach(o => { 
-                let act = userAnswers['p1_c'+q.id] == o ? 'active-opt' : ''; 
-                h+=`<div class="opt-btn ${act}" onclick="ans('p1_c${q.id}','${o}')">${o}</div>` 
-            }); 
-            h+='</div>'; 
-        } else if(q.type=='tf') { 
-            h+=`<div class="tf-grid">`; ['a','b','c','d'].forEach(s => { 
-                let val = userAnswers['p2_c'+q.id+'_'+s];
-                let clsD = val==='D'?'active-d':''; let clsS = val==='S'?'active-s':'';
-                h+=`<div class="tf-item"><div><b>(${s})</b></div><div class="d-flex gap-1"><button class="tf-btn ${clsD}" onclick="ans('p2_c${q.id}_${s}','D')">Đúng</button><button class="tf-btn ${clsS}" onclick="ans('p2_c${q.id}_${s}','S')">Sai</button></div></div>`; 
-            }); h+='</div>'; 
-        } else { 
-            let v = userAnswers['p3_c'+q.id] || ''; 
-            h+=`<input type="text" id="short-input-${q.id}" class="form-control text-center fw-bold text-primary mt-3 fs-4" placeholder="Nhập đáp án...">`; 
-        } 
-        document.getElementById('question-content').innerHTML = h; 
-        
-        if(q.type === 'sh') {
-            const el = document.getElementById(`short-input-${q.id}`);
-            el.value = userAnswers['p3_c'+q.id] || '';
-            el.focus();
-            el.oninput = function() {
-                let val = this.value.replace(/\./g, ',').replace(/[^0-9,-]/g, '');
-                this.value = val;
-                userAnswers['p3_c'+q.id] = val;
-            };
-        }
-    }
-
+    function renderQ(i) { if(i<0||i>=questionMap.length) return; qIdx=i; const q=questionMap[i]; let h = `<div class="mb-3"><h5>${q.lbl}</h5></div>`; if(q.type=='mcq') { h+=`<div class="mcq-row">`; ['A','B','C','D'].forEach(o => { let act = userAnswers['p1_c'+q.id] == o ? 'active-opt' : ''; h+=`<div class="opt-btn ${act}" onclick="ans('p1_c${q.id}','${o}')">${o}</div>` }); h+='</div>'; } else if(q.type=='tf') { h+=`<div class="tf-grid">`; ['a','b','c','d'].forEach(s => { let val = userAnswers['p2_c'+q.id+'_'+s]; let clsD = val==='D'?'active-d':''; let clsS = val==='S'?'active-s':''; h+=`<div class="tf-item"><div><b>(${s})</b></div><div class="d-flex gap-1"><button class="tf-btn ${clsD}" onclick="ans('p2_c${q.id}_${s}','D')">Đúng</button><button class="tf-btn ${clsS}" onclick="ans('p2_c${q.id}_${s}','S')">Sai</button></div></div>`; }); h+='</div>'; } else { let v = userAnswers['p3_c'+q.id] || ''; h+=`<input type="text" id="short-input-${q.id}" class="form-control text-center fw-bold text-primary mt-3 fs-4" placeholder="Nhập đáp án...">`; } document.getElementById('question-content').innerHTML = h; if(q.type === 'sh') { const el = document.getElementById(`short-input-${q.id}`); el.value = userAnswers['p3_c'+q.id] || ''; el.focus(); el.oninput = function() { let val = this.value.replace(/\./g, ',').replace(/[^0-9,-]/g, ''); this.value = val; userAnswers['p3_c'+q.id] = val; }; } }
     function ans(k,v) { userAnswers[k]=v; renderQ(qIdx); }
     function prevQ(){renderQ(qIdx-1)} function nextQ(){renderQ(qIdx+1)} function jumpQ(){renderQ(document.getElementById('jump-input').value-1)}
     function startTimer(m){let t=m*60;const d=document.getElementById('exam-timer');clearInterval(timerInterval);timerInterval=setInterval(()=>{let mn=Math.floor(t/60),sc=t%60;d.innerText=`${mn}:${sc<10?'0':''}${sc}`;if(t--<=0){clearInterval(timerInterval);submitExam(true)}},1000)}
-    
     function toggleOverview() { const s=document.getElementById('overview-screen'); if(s.style.display=='flex')s.style.display='none'; else {renderOverview();s.style.display='flex';} }
-    
-    function renderOverview() {
-        const c=document.getElementById('overview-content'); c.innerHTML='';
-        let html = `<div class="part-header">I. TRẮC NGHIỆM</div><div class="q-grid">`;
-        questionMap.filter(q=>q.type=='mcq').forEach(q => { let v=userAnswers['p1_c'+q.id]||''; let cls=v?'q-done':''; let idx=questionMap.findIndex(x=>x.displayId==q.displayId); html+=`<div class="q-cell ${cls}" onclick="jumpTo(${idx})"><span>${q.displayId}</span><span class="q-val">${v}</span></div>`; });
-        html += `</div><div class="part-header">II. ĐÚNG SAI</div><div>`;
-        questionMap.filter(q=>q.type=='tf').forEach(q => { let idx=questionMap.findIndex(x=>x.displayId==q.displayId); let b=''; ['a','b','c','d'].forEach(s=>{ let v=userAnswers['p2_c'+q.id+'_'+s]; let t=v=='D'?'Đ':(v=='S'?'S':'-'); let c=v=='D'?'is-d':(v=='S'?'is-s':''); b+=`<span class="tf-badge ${c}">${s})${t}</span> `; }); html+=`<div class="tf-ov-row" onclick="jumpTo(${idx})"><span class="fw-bold">Câu ${q.displayId}</span><div>${b}</div></div>`; });
-        html += `</div><div class="part-header">III. TRẢ LỜI NGẮN</div><div class="q-grid">`;
-        questionMap.filter(q=>q.type=='sh').forEach(q => { let v=userAnswers['p3_c'+q.id]||''; let cls=v?'q-done':''; let idx=questionMap.findIndex(x=>x.displayId==q.displayId); html+=`<div class="q-cell ${cls}" onclick="jumpTo(${idx})"><span>${q.displayId}</span><span class="q-val">${v}</span></div>`; });
-        html += `</div>`; c.innerHTML = html;
-    }
+    function renderOverview() { const c=document.getElementById('overview-content'); c.innerHTML=''; let html = `<div class="part-header">I. TRẮC NGHIỆM</div><div class="q-grid">`; questionMap.filter(q=>q.type=='mcq').forEach(q => { let v=userAnswers['p1_c'+q.id]||''; let cls=v?'q-done':''; let idx=questionMap.findIndex(x=>x.displayId==q.displayId); html+=`<div class="q-cell ${cls}" onclick="jumpTo(${idx})"><span>${q.displayId}</span><span class="q-val">${v}</span></div>`; }); html += `</div><div class="part-header">II. ĐÚNG SAI</div><div>`; questionMap.filter(q=>q.type=='tf').forEach(q => { let idx=questionMap.findIndex(x=>x.displayId==q.displayId); let b=''; ['a','b','c','d'].forEach(s=>{ let v=userAnswers['p2_c'+q.id+'_'+s]; let t=v=='D'?'Đ':(v=='S'?'S':'-'); let c=v=='D'?'is-d':(v=='S'?'is-s':''); b+=`<span class="tf-badge ${c}">${s})${t}</span> `; }); html+=`<div class="tf-ov-row" onclick="jumpTo(${idx})"><span class="fw-bold">Câu ${q.displayId}</span><div>${b}</div></div>`; }); html += `</div><div class="part-header">III. TRẢ LỜI NGẮN</div><div class="q-grid">`; questionMap.filter(q=>q.type=='sh').forEach(q => { let v=userAnswers['p3_c'+q.id]||''; let cls=v?'q-done':''; let idx=questionMap.findIndex(x=>x.displayId==q.displayId); html+=`<div class="q-cell ${cls}" onclick="jumpTo(${idx})"><span>${q.displayId}</span><span class="q-val">${v}</span></div>`; }); html += `</div>`; c.innerHTML = html; }
     function jumpTo(i){ renderQ(i); document.getElementById('overview-screen').style.display='none'; }
-
-    async function submitExam(auto=false) {
-        if(!auto && !confirm("Nộp bài?")) return; clearInterval(timerInterval); document.getElementById('loading').style.display='flex';
-        let st=(typeof currentExam.structure==='string')?JSON.parse(currentExam.structure):currentExam.structure, k=st.answers||{}, cf=st.config||{}, s1=0, s2=0, s3=0;
-        let c1=0; for(let i=1; i<=cf.mcq; i++) if(userAnswers[`p1_c${i}`]===k[`p1_c${i}`]) c1++; if(cf.mcq>0) s1=(3.0/cf.mcq)*c1;
-        let c3=0; for(let i=1; i<=cf.short; i++) { let u=(userAnswers[`p3_c${i}`]||"").toUpperCase().trim(), ky=(k[`p3_c${i}`]||"").toUpperCase().trim(); if(u===ky&&ky!=="") c3++; } if(cf.short>0) s3=(3.0/cf.short)*c3;
-        for(let i=1; i<=cf.tf; i++) { let c=0; ['a','b','c','d'].forEach(s=>{ if(userAnswers[`p2_c${i}_${s}`]===k[`p2_c${i}_${s}`]) c++; }); if(c==1)s2+=0.1;else if(c==2)s2+=0.25;else if(c==3)s2+=0.5;else if(c==4)s2+=1.0; }
-        let total=(s1+s2+s3).toFixed(2); if(total>10) total=10;
-        try { await fetch(API_URL, {method:'POST', body:JSON.stringify({action:'submitExam', maHS:studentInfo.id, tenHS:studentInfo.name, maDe:currentExam.id, score:total, studentAnswers:userAnswers, detailResult:{}, images:[]})}); } catch(e){}
-        document.getElementById('nav-bar-fixed').style.display='none'; document.getElementById('result-box').classList.remove('d-none'); document.getElementById('score-display').innerText=total; document.getElementById('question-content').innerHTML='';
-        if(currentExam.solutionLink) {
-            let viewLink = currentExam.solutionLink.replace('/view','/preview');
-            document.getElementById('sol-link-area').innerHTML = `<a href="${viewLink}" target="_blank" class="btn btn-primary fw-bold px-4">XEM LỜI GIẢI</a>`;
-        }
-        document.getElementById('loading').style.display='none';
-    }
+    async function submitExam(auto=false) { if(!auto && !confirm("Nộp bài?")) return; clearInterval(timerInterval); document.getElementById('loading').style.display='flex'; let st=(typeof currentExam.structure==='string')?JSON.parse(currentExam.structure):currentExam.structure, k=st.answers||{}, cf=st.config||{}, s1=0, s2=0, s3=0; let c1=0; for(let i=1; i<=cf.mcq; i++) if(userAnswers[`p1_c${i}`]===k[`p1_c${i}`]) c1++; if(cf.mcq>0) s1=(3.0/cf.mcq)*c1; let c3=0; for(let i=1; i<=cf.short; i++) { let u=(userAnswers[`p3_c${i}`]||"").toUpperCase().trim(), ky=(k[`p3_c${i}`]||"").toUpperCase().trim(); if(u===ky&&ky!=="") c3++; } if(cf.short>0) s3=(3.0/cf.short)*c3; for(let i=1; i<=cf.tf; i++) { let c=0; ['a','b','c','d'].forEach(s=>{ if(userAnswers[`p2_c${i}_${s}`]===k[`p2_c${i}_${s}`]) c++; }); if(c==1)s2+=0.1;else if(c==2)s2+=0.25;else if(c==3)s2+=0.5;else if(c==4)s2+=1.0; } let total=(s1+s2+s3).toFixed(2); if(total>10) total=10; try { await fetch(API_URL, {method:'POST', body:JSON.stringify({action:'submitExam', maHS:studentInfo.id, tenHS:studentInfo.name, maDe:currentExam.id, score:total, studentAnswers:userAnswers, detailResult:{}, images:[]})}); } catch(e){} document.getElementById('nav-bar-fixed').style.display='none'; document.getElementById('result-box').classList.remove('d-none'); document.getElementById('score-display').innerText=total; document.getElementById('question-content').innerHTML=''; if(currentExam.solutionLink) { let viewLink = currentExam.solutionLink.replace('/view','/preview'); document.getElementById('sol-link-area').innerHTML = `<a href="${viewLink}" target="_blank" class="btn btn-primary fw-bold px-4">XEM LỜI GIẢI</a>`; } document.getElementById('loading').style.display='none'; }
 </script>
 </body>
 </html>
